@@ -1,0 +1,94 @@
+﻿  DataStream.cpp
+C:\Vunder\Telltale\TelltaleToolLib\TelltaleToolLib\ToolLibrary\DataStream\DataStream.cpp(4,25): warning C4083: expected ':'; found identifier 'C4267'
+C:\Vunder\Telltale\TelltaleToolLib\TelltaleToolLib\ToolLibrary\DataStream\DataStream.h(148,12): warning C4227: anachronism used: qualifiers on reference are ignored
+C:\Vunder\Telltale\TelltaleToolLib\TelltaleToolLib\ToolLibrary\DataStream\DataStream.h(178,57): warning C4227: anachronism used: qualifiers on reference are ignored
+C:\Vunder\Telltale\TelltaleToolLib\TelltaleToolLib\ToolLibrary\DataStream\DataStream.h(218,21): warning C4227: anachronism used: qualifiers on reference are ignored
+C:\Vunder\Telltale\TelltaleToolLib\TelltaleToolLib\ToolLibrary\DataStream\DataStream.h(219,59): warning C4227: anachronism used: qualifiers on reference are ignored
+C:\Vunder\Telltale\TelltaleToolLib\TelltaleToolLib\ToolLibrary\DataStream\DataStream.h(257,53): warning C4227: anachronism used: qualifiers on reference are ignored
+C:\Vunder\Telltale\TelltaleToolLib\TelltaleToolLib\ToolLibrary\DataStream\DataStream.h(284,71): warning C4227: anachronism used: qualifiers on reference are ignored
+C:\Vunder\Telltale\TelltaleToolLib\TelltaleToolLib\ToolLibrary\DataStream\DataStream.h(368,59): warning C4227: anachronism used: qualifiers on reference are ignored
+  FSB5.cpp
+C:\Vunder\Telltale\TelltaleToolLib\TelltaleToolLib\ToolLibrary\DataStream\DataStream.h(148,12): warning C4227: anachronism used: qualifiers on reference are ignored
+C:\Vunder\Telltale\TelltaleToolLib\TelltaleToolLib\ToolLibrary\DataStream\DataStream.h(178,57): warning C4227: anachronism used: qualifiers on reference are ignored
+C:\Vunder\Telltale\TelltaleToolLib\TelltaleToolLib\ToolLibrary\DataStream\DataStream.h(218,21): warning C4227: anachronism used: qualifiers on reference are ignored
+C:\Vunder\Telltale\TelltaleToolLib\TelltaleToolLib\ToolLibrary\DataStream\DataStream.h(219,59): warning C4227: anachronism used: qualifiers on reference are ignored
+C:\Vunder\Telltale\TelltaleToolLib\TelltaleToolLib\ToolLibrary\DataStream\DataStream.h(257,53): warning C4227: anachronism used: qualifiers on reference are ignored
+C:\Vunder\Telltale\TelltaleToolLib\TelltaleToolLib\ToolLibrary\DataStream\DataStream.h(284,71): warning C4227: anachronism used: qualifiers on reference are ignored
+C:\Vunder\Telltale\TelltaleToolLib\TelltaleToolLib\ToolLibrary\DataStream\DataStream.h(368,59): warning C4227: anachronism used: qualifiers on reference are ignored
+  HashDB.cpp
+C:\Vunder\Telltale\TelltaleToolLib\TelltaleToolLib\ToolLibrary\HashDB\HashDB.cpp(1,25): warning C4083: expected ':'; found identifier 'C4267'
+C:\Vunder\Telltale\TelltaleToolLib\TelltaleToolLib\ToolLibrary\HashDB\HashDB.cpp(2,10): warning C4067: unexpected tokens following preprocessor directive - expected a newline
+C:\Vunder\Telltale\TelltaleToolLib\TelltaleToolLib\ToolLibrary\DataStream\DataStream.h(148,12): warning C4227: anachronism used: qualifiers on reference are ignored
+C:\Vunder\Telltale\TelltaleToolLib\TelltaleToolLib\ToolLibrary\DataStream\DataStream.h(178,57): warning C4227: anachronism used: qualifiers on reference are ignored
+C:\Vunder\Telltale\TelltaleToolLib\TelltaleToolLib\ToolLibrary\DataStream\DataStream.h(218,21): warning C4227: anachronism used: qualifiers on reference are ignored
+C:\Vunder\Telltale\TelltaleToolLib\TelltaleToolLib\ToolLibrary\DataStream\DataStream.h(219,59): warning C4227: anachronism used: qualifiers on reference are ignored
+C:\Vunder\Telltale\TelltaleToolLib\TelltaleToolLib\ToolLibrary\DataStream\DataStream.h(257,53): warning C4227: anachronism used: qualifiers on reference are ignored
+C:\Vunder\Telltale\TelltaleToolLib\TelltaleToolLib\ToolLibrary\DataStream\DataStream.h(284,71): warning C4227: anachronism used: qualifiers on reference are ignored
+C:\Vunder\Telltale\TelltaleToolLib\TelltaleToolLib\ToolLibrary\DataStream\DataStream.h(368,59): warning C4227: anachronism used: qualifiers on reference are ignored
+C:\Vunder\Telltale\TelltaleToolLib\TelltaleToolLib\ToolLibrary\HashManager.h(210,15): warning C4319: '~': zero extending 'unsigned int' to '__int64' of greater size
+  Meta.cpp
+C:\Vunder\Visual Studio\IDE\VC\Tools\MSVC\14.35.32215\include\bit(12): warning STL4038: The contents of <bit> are available only with C++20 or later.
+C:\Vunder\Telltale\TelltaleToolLib\TelltaleToolLib\ToolLibrary\VersDB.h(40,74): warning C4838: conversion from 'int' to 'unsigned int' requires a narrowing conversion
+C:\Vunder\Telltale\TelltaleToolLib\TelltaleToolLib\ToolLibrary\Meta.cpp(550,21): warning C4838: conversion from 'u64' to 'u32' requires a narrowing conversion
+  MetaStream_JSON.cpp
+  T3EffectCache.cpp
+C:\Vunder\Telltale\TelltaleToolLib\TelltaleToolLib\ToolLibrary\DataStream\DataStream.h(148,12): warning C4227: anachronism used: qualifiers on reference are ignored
+C:\Vunder\Telltale\TelltaleToolLib\TelltaleToolLib\ToolLibrary\DataStream\DataStream.h(178,57): warning C4227: anachronism used: qualifiers on reference are ignored
+C:\Vunder\Telltale\TelltaleToolLib\TelltaleToolLib\ToolLibrary\DataStream\DataStream.h(218,21): warning C4227: anachronism used: qualifiers on reference are ignored
+C:\Vunder\Telltale\TelltaleToolLib\TelltaleToolLib\ToolLibrary\DataStream\DataStream.h(219,59): warning C4227: anachronism used: qualifiers on reference are ignored
+C:\Vunder\Telltale\TelltaleToolLib\TelltaleToolLib\ToolLibrary\DataStream\DataStream.h(257,53): warning C4227: anachronism used: qualifiers on reference are ignored
+C:\Vunder\Telltale\TelltaleToolLib\TelltaleToolLib\ToolLibrary\DataStream\DataStream.h(284,71): warning C4227: anachronism used: qualifiers on reference are ignored
+C:\Vunder\Telltale\TelltaleToolLib\TelltaleToolLib\ToolLibrary\DataStream\DataStream.h(368,59): warning C4227: anachronism used: qualifiers on reference are ignored
+  TTArchive2.cpp
+C:\Vunder\Telltale\TelltaleToolLib\TelltaleToolLib\ToolLibrary\TTArchive2.cpp(1,25): warning C4083: expected ':'; found identifier 'C4267'
+C:\Vunder\Telltale\TelltaleToolLib\TelltaleToolLib\ToolLibrary\DataStream\DataStream.h(148,12): warning C4227: anachronism used: qualifiers on reference are ignored
+C:\Vunder\Telltale\TelltaleToolLib\TelltaleToolLib\ToolLibrary\DataStream\DataStream.h(178,57): warning C4227: anachronism used: qualifiers on reference are ignored
+C:\Vunder\Telltale\TelltaleToolLib\TelltaleToolLib\ToolLibrary\DataStream\DataStream.h(218,21): warning C4227: anachronism used: qualifiers on reference are ignored
+C:\Vunder\Telltale\TelltaleToolLib\TelltaleToolLib\ToolLibrary\DataStream\DataStream.h(219,59): warning C4227: anachronism used: qualifiers on reference are ignored
+C:\Vunder\Telltale\TelltaleToolLib\TelltaleToolLib\ToolLibrary\DataStream\DataStream.h(257,53): warning C4227: anachronism used: qualifiers on reference are ignored
+C:\Vunder\Telltale\TelltaleToolLib\TelltaleToolLib\ToolLibrary\DataStream\DataStream.h(284,71): warning C4227: anachronism used: qualifiers on reference are ignored
+C:\Vunder\Telltale\TelltaleToolLib\TelltaleToolLib\ToolLibrary\DataStream\DataStream.h(368,59): warning C4227: anachronism used: qualifiers on reference are ignored
+  TelltaleToolLibrary.cpp
+C:\Vunder\Telltale\TelltaleToolLib\TelltaleToolLib\ToolLibrary\TelltaleToolLibrary.cpp(3,25): warning C4083: expected ':'; found identifier 'C4267'
+C:\Vunder\Telltale\TelltaleToolLib\TelltaleToolLib\ToolLibrary\DataStream\DataStream.h(148,12): warning C4227: anachronism used: qualifiers on reference are ignored
+C:\Vunder\Telltale\TelltaleToolLib\TelltaleToolLib\ToolLibrary\DataStream\DataStream.h(178,57): warning C4227: anachronism used: qualifiers on reference are ignored
+C:\Vunder\Telltale\TelltaleToolLib\TelltaleToolLib\ToolLibrary\DataStream\DataStream.h(218,21): warning C4227: anachronism used: qualifiers on reference are ignored
+C:\Vunder\Telltale\TelltaleToolLib\TelltaleToolLib\ToolLibrary\DataStream\DataStream.h(219,59): warning C4227: anachronism used: qualifiers on reference are ignored
+C:\Vunder\Telltale\TelltaleToolLib\TelltaleToolLib\ToolLibrary\DataStream\DataStream.h(257,53): warning C4227: anachronism used: qualifiers on reference are ignored
+C:\Vunder\Telltale\TelltaleToolLib\TelltaleToolLib\ToolLibrary\DataStream\DataStream.h(284,71): warning C4227: anachronism used: qualifiers on reference are ignored
+C:\Vunder\Telltale\TelltaleToolLib\TelltaleToolLib\ToolLibrary\DataStream\DataStream.h(368,59): warning C4227: anachronism used: qualifiers on reference are ignored
+C:\Vunder\Telltale\TelltaleToolLib\TelltaleToolLib\ToolLibrary\MetaInitialize.h(1454,4): warning C4002: too many arguments for function-like macro invocation 'FIRSTMEM'
+C:\Vunder\Telltale\TelltaleToolLib\TelltaleToolLib\ToolLibrary\MetaInitialize.h(5639,4): warning C4002: too many arguments for function-like macro invocation 'DEFINEDCARRAY'
+C:\Vunder\Telltale\TelltaleToolLib\TelltaleToolLib\ToolLibrary\VersDB.h(40,74): warning C4838: conversion from 'int' to 'unsigned int' requires a narrowing conversion
+C:\Vunder\Telltale\TelltaleToolLib\TelltaleToolLib\ToolLibrary\TelltaleToolLibrary.cpp(653,140): warning C4312: 'type cast': conversion from 'int' to 'void *' of greater size
+C:\Vunder\Telltale\TelltaleToolLib\TelltaleToolLib\ToolLibrary\TelltaleToolLibrary.cpp(669,44): warning C4312: 'type cast': conversion from 'int' to 'void *' of greater size
+C:\Vunder\Telltale\TelltaleToolLib\TelltaleToolLib\ToolLibrary\Types\DCArray.h(78,9): warning C4101: 'buf': unreferenced local variable
+C:\Vunder\Telltale\TelltaleToolLib\TelltaleToolLib\ToolLibrary\Types\DCArray.h(52,1): message : while compiling class template member function 'MetaOpResult DCArray<LegacyD3DMesh::LocalTransformEntry>::MetaOperation_SerializeAsync(void *,MetaClassDescription *,MetaMemberDescription *,void *)'
+C:\Vunder\Telltale\TelltaleToolLib\TelltaleToolLib\ToolLibrary\MetaInitialize.h(5798,4): message : see reference to function template instantiation 'MetaOpResult DCArray<LegacyD3DMesh::LocalTransformEntry>::MetaOperation_SerializeAsync(void *,MetaClassDescription *,MetaMemberDescription *,void *)' being compiled
+C:\Vunder\Telltale\TelltaleToolLib\TelltaleToolLib\ToolLibrary\MetaInitialize.h(5798,4): message : see reference to class template instantiation 'DCArray<LegacyD3DMesh::LocalTransformEntry>' being compiled
+  EventStorage.cpp
+  T3Texture.cpp
+C:\Vunder\Telltale\TelltaleToolLib\TelltaleToolLib\ToolLibrary\Types\T3Texture.cpp(5,25): warning C4083: expected ':'; found identifier 'C4267'
+  VorbisHeaders.cpp
+C:\Vunder\Telltale\TelltaleToolLib\TelltaleToolLib\ToolLibrary\DataStream\DataStream.h(148,12): warning C4227: anachronism used: qualifiers on reference are ignored
+C:\Vunder\Telltale\TelltaleToolLib\TelltaleToolLib\ToolLibrary\DataStream\DataStream.h(178,57): warning C4227: anachronism used: qualifiers on reference are ignored
+C:\Vunder\Telltale\TelltaleToolLib\TelltaleToolLib\ToolLibrary\DataStream\DataStream.h(218,21): warning C4227: anachronism used: qualifiers on reference are ignored
+C:\Vunder\Telltale\TelltaleToolLib\TelltaleToolLib\ToolLibrary\DataStream\DataStream.h(219,59): warning C4227: anachronism used: qualifiers on reference are ignored
+C:\Vunder\Telltale\TelltaleToolLib\TelltaleToolLib\ToolLibrary\DataStream\DataStream.h(257,53): warning C4227: anachronism used: qualifiers on reference are ignored
+C:\Vunder\Telltale\TelltaleToolLib\TelltaleToolLib\ToolLibrary\DataStream\DataStream.h(284,71): warning C4227: anachronism used: qualifiers on reference are ignored
+C:\Vunder\Telltale\TelltaleToolLib\TelltaleToolLib\ToolLibrary\DataStream\DataStream.h(368,59): warning C4227: anachronism used: qualifiers on reference are ignored
+  cmd.cpp
+C:\Vunder\Telltale\TelltaleToolLib\TelltaleToolLib\ToolLibrary\DataStream\DataStream.h(148,12): warning C4227: anachronism used: qualifiers on reference are ignored
+C:\Vunder\Telltale\TelltaleToolLib\TelltaleToolLib\ToolLibrary\DataStream\DataStream.h(178,57): warning C4227: anachronism used: qualifiers on reference are ignored
+C:\Vunder\Telltale\TelltaleToolLib\TelltaleToolLib\ToolLibrary\DataStream\DataStream.h(218,21): warning C4227: anachronism used: qualifiers on reference are ignored
+C:\Vunder\Telltale\TelltaleToolLib\TelltaleToolLib\ToolLibrary\DataStream\DataStream.h(219,59): warning C4227: anachronism used: qualifiers on reference are ignored
+C:\Vunder\Telltale\TelltaleToolLib\TelltaleToolLib\ToolLibrary\DataStream\DataStream.h(257,53): warning C4227: anachronism used: qualifiers on reference are ignored
+C:\Vunder\Telltale\TelltaleToolLib\TelltaleToolLib\ToolLibrary\DataStream\DataStream.h(284,71): warning C4227: anachronism used: qualifiers on reference are ignored
+C:\Vunder\Telltale\TelltaleToolLib\TelltaleToolLib\ToolLibrary\DataStream\DataStream.h(368,59): warning C4227: anachronism used: qualifiers on reference are ignored
+     Creating library C:\Vunder\Telltale\Telltale Inspector\x64\Release\TelltaleToolLib.lib and object C:\Vunder\Telltale\Telltale Inspector\x64\Release\TelltaleToolLib.exp
+  Generating code
+  232 of 37773 functions ( 0.6%) were compiled, the rest were copied from previous compilation.
+    11 functions were new in current compilation
+    35 functions had inline decision re-evaluated but remain unchanged
+  Finished generating code
+  TelltaleToolLib.vcxproj -> C:\Vunder\Telltale\Telltale Inspector\x64\Release\TelltaleToolLib.dll

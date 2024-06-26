@@ -1,0 +1,480 @@
+﻿  bitwise.c
+  framing.c
+  decompile.c
+C:\Vunder\Telltale\TelltaleToolLib\TelltaleToolLib\ToolLibrary\Lua\decompile.c(1413,13): warning C4267: 'initializing': conversion from 'size_t' to 'int', possible loss of data
+C:\Vunder\Telltale\TelltaleToolLib\TelltaleToolLib\ToolLibrary\Lua\decompile.c(1442,12): warning C4267: 'initializing': conversion from 'size_t' to 'int', possible loss of data
+C:\Vunder\Telltale\TelltaleToolLib\TelltaleToolLib\ToolLibrary\Lua\decompile.c(1723,18): warning C4477: 'fprintf' : format string '%x' requires an argument of type 'unsigned int', but variadic argument 2 has type 'LoopItem *'
+C:\Vunder\Telltale\TelltaleToolLib\TelltaleToolLib\ToolLibrary\Lua\decompile.c(1723,18): warning C4313: 'fprintf': '%x' in format string conflicts with argument 2 of type 'LoopItem *'
+C:\Vunder\Telltale\TelltaleToolLib\TelltaleToolLib\ToolLibrary\Lua\decompile.c(1723,18): warning C4477: 'fprintf' : format string '%x' requires an argument of type 'unsigned int', but variadic argument 8 has type 'AstStatement *'
+C:\Vunder\Telltale\TelltaleToolLib\TelltaleToolLib\ToolLibrary\Lua\decompile.c(1723,18): warning C4313: 'fprintf': '%x' in format string conflicts with argument 8 of type 'AstStatement *'
+C:\Vunder\Telltale\TelltaleToolLib\TelltaleToolLib\ToolLibrary\Lua\decompile.c(3006,15): warning C4267: '=': conversion from 'size_t' to 'int', possible loss of data
+  disassemble.c
+C:\Vunder\Telltale\TelltaleToolLib\TelltaleToolLib\ToolLibrary\Lua\disassemble.c(59,22): warning C4267: 'initializing': conversion from 'size_t' to 'int', possible loss of data
+  expression.c
+  guess.c
+  lapi.c
+  lauxlib.c
+  lbaselib.c
+C:\Vunder\Telltale\TelltaleToolLib\TelltaleToolLib\ToolLibrary\Lua\lbaselib.c(137,22): warning C4267: 'function': conversion from 'size_t' to 'lua_Integer', possible loss of data
+  lbitlib.c
+  lcode.c
+  lcorolib.c
+  lctype.c
+  ldblib.c
+  ldebug.c
+  ldo.c
+  ldump.c
+C:\Vunder\Telltale\TelltaleToolLib\TelltaleToolLib\ToolLibrary\Lua\ldump.c(70,31): warning C4267: 'initializing': conversion from 'size_t' to 'unsigned int', possible loss of data
+  lfunc.c
+  lgc.c
+  linit.c
+  Generating Code...
+  Compiling...
+  liolib.c
+  llex.c
+  lmathlib.c
+C:\Vunder\Telltale\TelltaleToolLib\TelltaleToolLib\ToolLibrary\Lua\lmathlib.c(33,21): warning C4244: 'function': conversion from 'double' to 'lua_Number', possible loss of data
+C:\Vunder\Telltale\TelltaleToolLib\TelltaleToolLib\ToolLibrary\Lua\lmathlib.c(38,21): warning C4244: 'function': conversion from 'double' to 'lua_Number', possible loss of data
+C:\Vunder\Telltale\TelltaleToolLib\TelltaleToolLib\ToolLibrary\Lua\lmathlib.c(43,21): warning C4244: 'function': conversion from 'double' to 'lua_Number', possible loss of data
+C:\Vunder\Telltale\TelltaleToolLib\TelltaleToolLib\ToolLibrary\Lua\lmathlib.c(48,21): warning C4244: 'function': conversion from 'double' to 'lua_Number', possible loss of data
+C:\Vunder\Telltale\TelltaleToolLib\TelltaleToolLib\ToolLibrary\Lua\lmathlib.c(53,21): warning C4244: 'function': conversion from 'double' to 'lua_Number', possible loss of data
+C:\Vunder\Telltale\TelltaleToolLib\TelltaleToolLib\ToolLibrary\Lua\lmathlib.c(58,21): warning C4244: 'function': conversion from 'double' to 'lua_Number', possible loss of data
+C:\Vunder\Telltale\TelltaleToolLib\TelltaleToolLib\ToolLibrary\Lua\lmathlib.c(63,21): warning C4244: 'function': conversion from 'double' to 'lua_Number', possible loss of data
+C:\Vunder\Telltale\TelltaleToolLib\TelltaleToolLib\ToolLibrary\Lua\lmathlib.c(68,21): warning C4244: 'function': conversion from 'double' to 'lua_Number', possible loss of data
+C:\Vunder\Telltale\TelltaleToolLib\TelltaleToolLib\ToolLibrary\Lua\lmathlib.c(73,21): warning C4244: 'function': conversion from 'double' to 'lua_Number', possible loss of data
+C:\Vunder\Telltale\TelltaleToolLib\TelltaleToolLib\ToolLibrary\Lua\lmathlib.c(78,21): warning C4244: 'function': conversion from 'double' to 'lua_Number', possible loss of data
+C:\Vunder\Telltale\TelltaleToolLib\TelltaleToolLib\ToolLibrary\Lua\lmathlib.c(83,21): warning C4244: 'function': conversion from 'double' to 'lua_Number', possible loss of data
+C:\Vunder\Telltale\TelltaleToolLib\TelltaleToolLib\ToolLibrary\Lua\lmathlib.c(89,21): warning C4244: 'function': conversion from 'double' to 'lua_Number', possible loss of data
+C:\Vunder\Telltale\TelltaleToolLib\TelltaleToolLib\ToolLibrary\Lua\lmathlib.c(94,21): warning C4244: 'function': conversion from 'double' to 'lua_Number', possible loss of data
+C:\Vunder\Telltale\TelltaleToolLib\TelltaleToolLib\ToolLibrary\Lua\lmathlib.c(99,21): warning C4244: 'function': conversion from 'double' to 'lua_Number', possible loss of data
+C:\Vunder\Telltale\TelltaleToolLib\TelltaleToolLib\ToolLibrary\Lua\lmathlib.c(106,54): warning C4133: 'function': incompatible types - from 'lua_Number *' to 'double *'
+C:\Vunder\Telltale\TelltaleToolLib\TelltaleToolLib\ToolLibrary\Lua\lmathlib.c(106,19): warning C4244: 'initializing': conversion from 'double' to 'lua_Number', possible loss of data
+C:\Vunder\Telltale\TelltaleToolLib\TelltaleToolLib\ToolLibrary\Lua\lmathlib.c(113,21): warning C4244: 'function': conversion from 'double' to 'lua_Number', possible loss of data
+C:\Vunder\Telltale\TelltaleToolLib\TelltaleToolLib\ToolLibrary\Lua\lmathlib.c(118,21): warning C4244: 'function': conversion from 'double' to 'lua_Number', possible loss of data
+C:\Vunder\Telltale\TelltaleToolLib\TelltaleToolLib\ToolLibrary\Lua\lmathlib.c(127,11): warning C4244: '=': conversion from 'double' to 'lua_Number', possible loss of data
+C:\Vunder\Telltale\TelltaleToolLib\TelltaleToolLib\ToolLibrary\Lua\lmathlib.c(130,29): warning C4244: '=': conversion from 'double' to 'lua_Number', possible loss of data
+C:\Vunder\Telltale\TelltaleToolLib\TelltaleToolLib\ToolLibrary\Lua\lmathlib.c(131,28): warning C4244: '=': conversion from 'double' to 'lua_Number', possible loss of data
+C:\Vunder\Telltale\TelltaleToolLib\TelltaleToolLib\ToolLibrary\Lua\lmathlib.c(145,21): warning C4244: 'function': conversion from 'double' to 'lua_Number', possible loss of data
+C:\Vunder\Telltale\TelltaleToolLib\TelltaleToolLib\ToolLibrary\Lua\lmathlib.c(150,43): warning C4244: 'function': conversion from 'double' to 'lua_Number', possible loss of data
+C:\Vunder\Telltale\TelltaleToolLib\TelltaleToolLib\ToolLibrary\Lua\lmathlib.c(155,43): warning C4244: 'function': conversion from 'double' to 'lua_Number', possible loss of data
+C:\Vunder\Telltale\TelltaleToolLib\TelltaleToolLib\ToolLibrary\Lua\lmathlib.c(161,21): warning C4244: 'function': conversion from 'double' to 'lua_Number', possible loss of data
+C:\Vunder\Telltale\TelltaleToolLib\TelltaleToolLib\ToolLibrary\Lua\lmathlib.c(167,21): warning C4244: 'function': conversion from 'double' to 'lua_Number', possible loss of data
+C:\Vunder\Telltale\TelltaleToolLib\TelltaleToolLib\ToolLibrary\Lua\lmathlib.c(214,42): warning C4244: 'function': conversion from 'double' to 'lua_Number', possible loss of data
+C:\Vunder\Telltale\TelltaleToolLib\TelltaleToolLib\ToolLibrary\Lua\lmathlib.c(221,48): warning C4244: 'function': conversion from 'double' to 'lua_Number', possible loss of data
+C:\Vunder\Telltale\TelltaleToolLib\TelltaleToolLib\ToolLibrary\Lua\lmathlib.c(277,23): warning C4305: 'function': truncation from 'double' to 'lua_Number'
+  lmem.c
+  loadlib.c
+  lobject.c
+C:\Vunder\Telltale\TelltaleToolLib\TelltaleToolLib\ToolLibrary\Lua\lobject.c(79,28): warning C4244: 'return': conversion from 'double' to 'lua_Number', possible loss of data
+C:\Vunder\Telltale\TelltaleToolLib\TelltaleToolLib\ToolLibrary\Lua\lobject.c(80,28): warning C4244: 'return': conversion from 'double' to 'lua_Number', possible loss of data
+C:\Vunder\Telltale\TelltaleToolLib\TelltaleToolLib\ToolLibrary\Lua\lobject.c(107,20): warning C4244: '=': conversion from 'double' to 'lua_Number', possible loss of data
+C:\Vunder\Telltale\TelltaleToolLib\TelltaleToolLib\ToolLibrary\Lua\lobject.c(152,10): warning C4244: 'return': conversion from 'double' to 'lua_Number', possible loss of data
+  lopcodes.c
+  loslib.c
+C:\Vunder\Telltale\TelltaleToolLib\TelltaleToolLib\ToolLibrary\Lua\loslib.c(266,21): warning C4244: 'function': conversion from 'double' to 'lua_Number', possible loss of data
+  lparser.c
+  lstate.c
+  lstring.c
+  lstrlib.c
+C:\Vunder\Telltale\TelltaleToolLib\TelltaleToolLib\ToolLibrary\Lua\lstrlib.c(135,48): warning C4267: 'function': conversion from 'size_t' to 'lua_Integer', possible loss of data
+C:\Vunder\Telltale\TelltaleToolLib\TelltaleToolLib\ToolLibrary\Lua\lstrlib.c(505,65): warning C4244: 'function': conversion from '__int64' to 'lua_Integer', possible loss of data
+C:\Vunder\Telltale\TelltaleToolLib\TelltaleToolLib\ToolLibrary\Lua\lstrlib.c(549,33): warning C4244: 'function': conversion from '__int64' to 'lua_Integer', possible loss of data
+C:\Vunder\Telltale\TelltaleToolLib\TelltaleToolLib\ToolLibrary\Lua\lstrlib.c(550,33): warning C4267: 'function': conversion from 'size_t' to 'lua_Integer', possible loss of data
+C:\Vunder\Telltale\TelltaleToolLib\TelltaleToolLib\ToolLibrary\Lua\lstrlib.c(570,37): warning C4244: 'function': conversion from '__int64' to 'lua_Integer', possible loss of data
+C:\Vunder\Telltale\TelltaleToolLib\TelltaleToolLib\ToolLibrary\Lua\lstrlib.c(571,34): warning C4244: 'function': conversion from '__int64' to 'lua_Integer', possible loss of data
+C:\Vunder\Telltale\TelltaleToolLib\TelltaleToolLib\ToolLibrary\Lua\lstrlib.c(610,31): warning C4244: 'initializing': conversion from '__int64' to 'lua_Integer', possible loss of data
+C:\Vunder\Telltale\TelltaleToolLib\TelltaleToolLib\ToolLibrary\Lua\lstrlib.c(693,44): warning C4267: 'function': conversion from 'size_t' to 'lua_Integer', possible loss of data
+C:\Vunder\Telltale\TelltaleToolLib\TelltaleToolLib\ToolLibrary\Lua\lstrlib.c(726,22): warning C4267: 'function': conversion from 'size_t' to 'lua_Integer', possible loss of data
+  ltable.c
+  ltablib.c
+  ltm.c
+  lua.c
+  luac.c
+  luadec.c
+  lundump.c
+  lvm.c
+C:\Vunder\Telltale\TelltaleToolLib\TelltaleToolLib\ToolLibrary\Lua\lvm.c(619,7): warning C4244: '=': conversion from 'double' to 'lua_Number', possible loss of data
+C:\Vunder\Telltale\TelltaleToolLib\TelltaleToolLib\ToolLibrary\Lua\lvm.c(622,7): warning C4244: '=': conversion from 'double' to 'lua_Number', possible loss of data
+  Generating Code...
+  Compiling...
+  lzio.c
+  macro-array.c
+  proto.c
+C:\Vunder\Telltale\TelltaleToolLib\TelltaleToolLib\ToolLibrary\Lua\proto.c(244,10): warning C4267: '+=': conversion from 'size_t' to 'int', possible loss of data
+C:\Vunder\Telltale\TelltaleToolLib\TelltaleToolLib\ToolLibrary\Lua\proto.c(151,12): warning C4267: 'initializing': conversion from 'size_t' to 'int', possible loss of data
+  statement.c
+  StringBuffer.c
+C:\Vunder\Telltale\TelltaleToolLib\TelltaleToolLib\ToolLibrary\Lua\StringBuffer.c(27,13): warning C4267: 'initializing': conversion from 'size_t' to 'int', possible loss of data
+C:\Vunder\Telltale\TelltaleToolLib\TelltaleToolLib\ToolLibrary\Lua\StringBuffer.c(64,12): warning C4267: 'initializing': conversion from 'size_t' to 'int', possible loss of data
+C:\Vunder\Telltale\TelltaleToolLib\TelltaleToolLib\ToolLibrary\Lua\StringBuffer.c(72,12): warning C4267: 'initializing': conversion from 'size_t' to 'int', possible loss of data
+C:\Vunder\Telltale\TelltaleToolLib\TelltaleToolLib\ToolLibrary\Lua\StringBuffer.c(81,12): warning C4267: 'initializing': conversion from 'size_t' to 'int', possible loss of data
+C:\Vunder\Telltale\TelltaleToolLib\TelltaleToolLib\ToolLibrary\Lua\StringBuffer.c(159,19): warning C4267: '=': conversion from 'size_t' to 'int', possible loss of data
+  structs.c
+  adler32.c
+  compress.c
+  crc32.c
+  deflate.c
+  infback.c
+  inffast.c
+  inflate.c
+  inftrees.c
+  trees.c
+  uncompr.c
+  zutil.c
+  analysis.c
+  bitrate.c
+C:\Vunder\Telltale\TelltaleToolLib\TelltaleToolLib\vorbis\bitrate.c(41,22): warning C4244: '=': conversion from 'double' to 'long', possible loss of data
+C:\Vunder\Telltale\TelltaleToolLib\TelltaleToolLib\vorbis\bitrate.c(42,22): warning C4244: '=': conversion from 'double' to 'long', possible loss of data
+C:\Vunder\Telltale\TelltaleToolLib\TelltaleToolLib\vorbis\bitrate.c(43,22): warning C4244: '=': conversion from 'double' to 'long', possible loss of data
+C:\Vunder\Telltale\TelltaleToolLib\TelltaleToolLib\vorbis\bitrate.c(50,43): warning C4244: 'initializing': conversion from 'double' to 'long', possible loss of data
+C:\Vunder\Telltale\TelltaleToolLib\TelltaleToolLib\vorbis\bitrate.c(134,12): warning C4244: '=': conversion from 'double' to 'int', possible loss of data
+C:\Vunder\Telltale\TelltaleToolLib\TelltaleToolLib\vorbis\bitrate.c(82,15): warning C4244: 'initializing': conversion from 'double' to 'int', possible loss of data
+C:\Vunder\Telltale\TelltaleToolLib\TelltaleToolLib\vorbis\bitrate.c(87,39): warning C4244: 'initializing': conversion from 'double' to 'long', possible loss of data
+  block.c
+C:\Vunder\Telltale\TelltaleToolLib\TelltaleToolLib\vorbis\block.c(863,34): warning C4244: 'initializing': conversion from 'ogg_int64_t' to 'long', possible loss of data
+C:\Vunder\Telltale\TelltaleToolLib\TelltaleToolLib\vorbis\block.c(901,33): warning C4244: 'initializing': conversion from 'ogg_int64_t' to 'long', possible loss of data
+  Generating Code...
+  Compiling...
+  codebook.c
+C:\Vunder\Telltale\TelltaleToolLib\TelltaleToolLib\vorbis\codebook.c(182,31): warning C4244: '=': conversion from 'long' to 'char', possible loss of data
+C:\Vunder\Telltale\TelltaleToolLib\TelltaleToolLib\vorbis\codebook.c(191,29): warning C4244: '=': conversion from 'long' to 'char', possible loss of data
+C:\Vunder\Telltale\TelltaleToolLib\TelltaleToolLib\vorbis\codebook.c(213,28): warning C4244: '=': conversion from 'long' to 'char', possible loss of data
+  envelope.c
+C:\Vunder\Telltale\TelltaleToolLib\TelltaleToolLib\vorbis\envelope.c(47,20): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+C:\Vunder\Telltale\TelltaleToolLib\TelltaleToolLib\vorbis\envelope.c(64,28): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+C:\Vunder\Telltale\TelltaleToolLib\TelltaleToolLib\vorbis\envelope.c(67,24): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+C:\Vunder\Telltale\TelltaleToolLib\TelltaleToolLib\vorbis\envelope.c(144,26): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+C:\Vunder\Telltale\TelltaleToolLib\TelltaleToolLib\vorbis\envelope.c(126,46): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+  floor0.c
+C:\Vunder\Telltale\TelltaleToolLib\TelltaleToolLib\vorbis\floor0.c(125,25): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+C:\Vunder\Telltale\TelltaleToolLib\TelltaleToolLib\vorbis\floor0.c(135,15): warning C4244: 'initializing': conversion from 'double' to 'int', possible loss of data
+  floor1.c
+C:\Vunder\Telltale\TelltaleToolLib\TelltaleToolLib\vorbis\floor1.c(209,56): warning C4244: '=': conversion from '__int64' to 'int', possible loss of data
+C:\Vunder\Telltale\TelltaleToolLib\TelltaleToolLib\vorbis\floor1.c(274,23): warning C4244: 'initializing': conversion from 'const float' to 'int', possible loss of data
+C:\Vunder\Telltale\TelltaleToolLib\TelltaleToolLib\vorbis\floor1.c(498,11): warning C4244: '=': conversion from 'double' to 'int', possible loss of data
+C:\Vunder\Telltale\TelltaleToolLib\TelltaleToolLib\vorbis\floor1.c(499,11): warning C4244: '=': conversion from 'double' to 'int', possible loss of data
+  info.c
+C:\Vunder\Telltale\TelltaleToolLib\TelltaleToolLib\vorbis\info.c(45,12): warning C4244: '=': conversion from 'long' to 'char', possible loss of data
+C:\Vunder\Telltale\TelltaleToolLib\TelltaleToolLib\vorbis\info.c(62,37): warning C4267: '=': conversion from 'size_t' to 'int', possible loss of data
+C:\Vunder\Telltale\TelltaleToolLib\TelltaleToolLib\vorbis\info.c(94,27): warning C4267: 'initializing': conversion from 'size_t' to 'int', possible loss of data
+C:\Vunder\Telltale\TelltaleToolLib\TelltaleToolLib\vorbis\info.c(117,27): warning C4267: 'initializing': conversion from 'size_t' to 'int', possible loss of data
+C:\Vunder\Telltale\TelltaleToolLib\TelltaleToolLib\vorbis\info.c(480,15): warning C4267: 'initializing': conversion from 'size_t' to 'int', possible loss of data
+  lookup.c
+  lpc.c
+C:\Vunder\Telltale\TelltaleToolLib\TelltaleToolLib\vorbis\lpc.c(129,10): warning C4244: 'return': conversion from 'double' to 'float', possible loss of data
+  lsp.c
+C:\Vunder\Telltale\TelltaleToolLib\TelltaleToolLib\vorbis\lsp.c(252,29): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+C:\Vunder\Telltale\TelltaleToolLib\TelltaleToolLib\vorbis\lsp.c(276,7): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+C:\Vunder\Telltale\TelltaleToolLib\TelltaleToolLib\vorbis\lsp.c(259,16): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+C:\Vunder\Telltale\TelltaleToolLib\TelltaleToolLib\vorbis\lsp.c(350,12): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+C:\Vunder\Telltale\TelltaleToolLib\TelltaleToolLib\vorbis\lsp.c(397,34): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+C:\Vunder\Telltale\TelltaleToolLib\TelltaleToolLib\vorbis\lsp.c(449,16): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+C:\Vunder\Telltale\TelltaleToolLib\TelltaleToolLib\vorbis\lsp.c(452,18): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+  mapping0.c
+C:\Vunder\Telltale\TelltaleToolLib\TelltaleToolLib\vorbis\mapping0.c(264,27): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+C:\Vunder\Telltale\TelltaleToolLib\TelltaleToolLib\vorbis\mapping0.c(310,35): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+C:\Vunder\Telltale\TelltaleToolLib\TelltaleToolLib\vorbis\mapping0.c(327,55): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+C:\Vunder\Telltale\TelltaleToolLib\TelltaleToolLib\vorbis\mapping0.c(385,34): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+  mdct.c
+C:\Vunder\Telltale\TelltaleToolLib\TelltaleToolLib\vorbis\mdct.c(57,27): warning C4244: '=': conversion from 'double' to 'int', possible loss of data
+C:\Vunder\Telltale\TelltaleToolLib\TelltaleToolLib\vorbis\mdct.c(65,12): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+C:\Vunder\Telltale\TelltaleToolLib\TelltaleToolLib\vorbis\mdct.c(66,14): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+C:\Vunder\Telltale\TelltaleToolLib\TelltaleToolLib\vorbis\mdct.c(67,15): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+C:\Vunder\Telltale\TelltaleToolLib\TelltaleToolLib\vorbis\mdct.c(68,17): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+C:\Vunder\Telltale\TelltaleToolLib\TelltaleToolLib\vorbis\mdct.c(71,14): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+C:\Vunder\Telltale\TelltaleToolLib\TelltaleToolLib\vorbis\mdct.c(72,16): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+  misc.c
+  psy.c
+C:\Vunder\Telltale\TelltaleToolLib\TelltaleToolLib\vorbis\psy.c(136,68): warning C4244: 'function': conversion from 'double' to 'float', possible loss of data
+C:\Vunder\Telltale\TelltaleToolLib\TelltaleToolLib\vorbis\psy.c(138,43): warning C4244: 'function': conversion from 'double' to 'float', possible loss of data
+C:\Vunder\Telltale\TelltaleToolLib\TelltaleToolLib\vorbis\psy.c(172,9): warning C4244: '=': conversion from 'double' to 'int', possible loss of data
+C:\Vunder\Telltale\TelltaleToolLib\TelltaleToolLib\vorbis\psy.c(173,16): warning C4244: '=': conversion from 'double' to 'int', possible loss of data
+C:\Vunder\Telltale\TelltaleToolLib\TelltaleToolLib\vorbis\psy.c(174,16): warning C4244: '=': conversion from 'double' to 'int', possible loss of data
+C:\Vunder\Telltale\TelltaleToolLib\TelltaleToolLib\vorbis\psy.c(253,20): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
+C:\Vunder\Telltale\TelltaleToolLib\TelltaleToolLib\vorbis\psy.c(258,20): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
+C:\Vunder\Telltale\TelltaleToolLib\TelltaleToolLib\vorbis\psy.c(191,49): warning C4244: 'initializing': conversion from 'double' to 'int', possible loss of data
+C:\Vunder\Telltale\TelltaleToolLib\TelltaleToolLib\vorbis\psy.c(192,55): warning C4244: 'initializing': conversion from 'double' to 'int', possible loss of data
+C:\Vunder\Telltale\TelltaleToolLib\TelltaleToolLib\vorbis\psy.c(216,49): warning C4244: 'initializing': conversion from 'double' to 'int', possible loss of data
+C:\Vunder\Telltale\TelltaleToolLib\TelltaleToolLib\vorbis\psy.c(217,55): warning C4244: 'initializing': conversion from 'double' to 'int', possible loss of data
+C:\Vunder\Telltale\TelltaleToolLib\TelltaleToolLib\vorbis\psy.c(238,39): warning C4244: 'initializing': conversion from 'double' to 'int', possible loss of data
+C:\Vunder\Telltale\TelltaleToolLib\TelltaleToolLib\vorbis\psy.c(273,61): warning C4244: '=': conversion from 'double' to 'long', possible loss of data
+C:\Vunder\Telltale\TelltaleToolLib\TelltaleToolLib\vorbis\psy.c(275,54): warning C4244: '=': conversion from 'double' to 'long', possible loss of data
+C:\Vunder\Telltale\TelltaleToolLib\TelltaleToolLib\vorbis\psy.c(276,53): warning C4244: '=': conversion from 'double' to 'long', possible loss of data
+C:\Vunder\Telltale\TelltaleToolLib\TelltaleToolLib\vorbis\psy.c(289,39): warning C4305: '=': truncation from 'double' to 'float'
+C:\Vunder\Telltale\TelltaleToolLib\TelltaleToolLib\vorbis\psy.c(290,41): warning C4305: '=': truncation from 'double' to 'float'
+C:\Vunder\Telltale\TelltaleToolLib\TelltaleToolLib\vorbis\psy.c(300,23): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+C:\Vunder\Telltale\TelltaleToolLib\TelltaleToolLib\vorbis\psy.c(324,62): warning C4244: '=': conversion from 'double' to 'long', possible loss of data
+C:\Vunder\Telltale\TelltaleToolLib\TelltaleToolLib\vorbis\psy.c(326,54): warning C4244: 'function': conversion from 'double' to 'float', possible loss of data
+C:\Vunder\Telltale\TelltaleToolLib\TelltaleToolLib\vorbis\psy.c(346,48): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+C:\Vunder\Telltale\TelltaleToolLib\TelltaleToolLib\vorbis\psy.c(295,16): warning C4244: 'initializing': conversion from 'double' to 'int', possible loss of data
+C:\Vunder\Telltale\TelltaleToolLib\TelltaleToolLib\vorbis\psy.c(311,16): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+C:\Vunder\Telltale\TelltaleToolLib\TelltaleToolLib\vorbis\psy.c(335,42): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+C:\Vunder\Telltale\TelltaleToolLib\TelltaleToolLib\vorbis\psy.c(401,46): warning C4244: '=': conversion from 'const float' to 'int', possible loss of data
+C:\Vunder\Telltale\TelltaleToolLib\TelltaleToolLib\vorbis\psy.c(403,14): warning C4244: '=': conversion from 'const float' to 'int', possible loss of data
+C:\Vunder\Telltale\TelltaleToolLib\TelltaleToolLib\vorbis\psy.c(570,13): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+C:\Vunder\Telltale\TelltaleToolLib\TelltaleToolLib\vorbis\psy.c(742,22): warning C4244: 'initializing': conversion from 'double' to 'int', possible loss of data
+C:\Vunder\Telltale\TelltaleToolLib\TelltaleToolLib\vorbis\psy.c(804,21): warning C4305: '=': truncation from 'double' to 'float'
+C:\Vunder\Telltale\TelltaleToolLib\TelltaleToolLib\vorbis\psy.c(810,17): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+C:\Vunder\Telltale\TelltaleToolLib\TelltaleToolLib\vorbis\psy.c(817,31): warning C4305: '=': truncation from 'double' to 'float'
+C:\Vunder\Telltale\TelltaleToolLib\TelltaleToolLib\vorbis\psy.c(821,17): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+C:\Vunder\Telltale\TelltaleToolLib\TelltaleToolLib\vorbis\psy.c(925,28): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+C:\Vunder\Telltale\TelltaleToolLib\TelltaleToolLib\vorbis\psy.c(956,18): warning C4244: '=': conversion from 'double' to 'int', possible loss of data
+C:\Vunder\Telltale\TelltaleToolLib\TelltaleToolLib\vorbis\psy.c(958,18): warning C4244: '=': conversion from 'double' to 'int', possible loss of data
+C:\Vunder\Telltale\TelltaleToolLib\TelltaleToolLib\vorbis\psy.c(979,20): warning C4244: '=': conversion from 'double' to 'int', possible loss of data
+C:\Vunder\Telltale\TelltaleToolLib\TelltaleToolLib\vorbis\psy.c(981,20): warning C4244: '=': conversion from 'double' to 'int', possible loss of data
+C:\Vunder\Telltale\TelltaleToolLib\TelltaleToolLib\vorbis\psy.c(995,16): warning C4244: '=': conversion from 'float' to 'int', possible loss of data
+C:\Vunder\Telltale\TelltaleToolLib\TelltaleToolLib\vorbis\psy.c(993,20): warning C4244: 'initializing': conversion from '__int64' to 'int', possible loss of data
+C:\Vunder\Telltale\TelltaleToolLib\TelltaleToolLib\vorbis\psy.c(1053,41): warning C4244: '=': conversion from 'const double' to 'float', possible loss of data
+C:\Vunder\Telltale\TelltaleToolLib\TelltaleToolLib\vorbis\psy.c(1131,36): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+C:\Vunder\Telltale\TelltaleToolLib\TelltaleToolLib\vorbis\psy.c(1160,26): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+C:\Vunder\Telltale\TelltaleToolLib\TelltaleToolLib\vorbis\psy.c(1179,52): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+C:\Vunder\Telltale\TelltaleToolLib\TelltaleToolLib\vorbis\psy.c(1181,52): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+C:\Vunder\Telltale\TelltaleToolLib\TelltaleToolLib\vorbis\psy.c(1024,36): warning C4244: 'initializing': conversion from 'const double' to 'float', possible loss of data
+C:\Vunder\Telltale\TelltaleToolLib\TelltaleToolLib\vorbis\psy.c(1025,37): warning C4244: 'initializing': conversion from 'const double' to 'float', possible loss of data
+  registry.c
+  res0.c
+C:\Vunder\Telltale\TelltaleToolLib\TelltaleToolLib\vorbis\res0.c(439,12): warning C4244: '*=': conversion from 'float' to 'int', possible loss of data
+C:\Vunder\Telltale\TelltaleToolLib\TelltaleToolLib\vorbis\res0.c(419,19): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+  sharedbook.c
+C:\Vunder\Telltale\TelltaleToolLib\TelltaleToolLib\vorbis\sharedbook.c(53,8): warning C4244: '=': conversion from 'double' to 'long', possible loss of data
+C:\Vunder\Telltale\TelltaleToolLib\TelltaleToolLib\vorbis\sharedbook.c(54,8): warning C4244: '=': conversion from 'double' to 'long', possible loss of data
+C:\Vunder\Telltale\TelltaleToolLib\TelltaleToolLib\vorbis\sharedbook.c(73,9): warning C4244: 'return': conversion from 'double' to 'float', possible loss of data
+C:\Vunder\Telltale\TelltaleToolLib\TelltaleToolLib\vorbis\sharedbook.c(173,8): warning C4244: '=': conversion from 'double' to 'long', possible loss of data
+C:\Vunder\Telltale\TelltaleToolLib\TelltaleToolLib\vorbis\sharedbook.c(237,39): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+C:\Vunder\Telltale\TelltaleToolLib\TelltaleToolLib\vorbis\sharedbook.c(257,39): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+C:\Vunder\Telltale\TelltaleToolLib\TelltaleToolLib\vorbis\sharedbook.c(236,35): warning C4244: 'initializing': conversion from 'long' to 'float', possible loss of data
+C:\Vunder\Telltale\TelltaleToolLib\TelltaleToolLib\vorbis\sharedbook.c(256,35): warning C4244: 'initializing': conversion from 'long' to 'float', possible loss of data
+C:\Vunder\Telltale\TelltaleToolLib\TelltaleToolLib\vorbis\sharedbook.c(370,28): warning C4244: 'initializing': conversion from '__int64' to 'int', possible loss of data
+  smallft.c
+C:\Vunder\Telltale\TelltaleToolLib\TelltaleToolLib\vorbis\smallft.c(98,17): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+C:\Vunder\Telltale\TelltaleToolLib\TelltaleToolLib\vorbis\smallft.c(99,17): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+C:\Vunder\Telltale\TelltaleToolLib\TelltaleToolLib\vorbis\smallft.c(282,7): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+C:\Vunder\Telltale\TelltaleToolLib\TelltaleToolLib\vorbis\smallft.c(283,7): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+C:\Vunder\Telltale\TelltaleToolLib\TelltaleToolLib\vorbis\smallft.c(852,7): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+C:\Vunder\Telltale\TelltaleToolLib\TelltaleToolLib\vorbis\smallft.c(853,7): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+  synthesis.c
+  vorbisenc.c
+C:\Vunder\Telltale\TelltaleToolLib\TelltaleToolLib\vorbis\modes\psych_44.h(26,5): warning C4244: 'initializing': conversion from 'double' to 'int', possible loss of data
+C:\Vunder\Telltale\TelltaleToolLib\TelltaleToolLib\vorbis\modes\psych_44.h(26,12): warning C4244: 'initializing': conversion from 'double' to 'int', possible loss of data
+C:\Vunder\Telltale\TelltaleToolLib\TelltaleToolLib\vorbis\modes\psych_44.h(26,18): warning C4244: 'initializing': conversion from 'double' to 'int', possible loss of data
+C:\Vunder\Telltale\TelltaleToolLib\TelltaleToolLib\vorbis\modes\psych_44.h(26,34): warning C4244: 'initializing': conversion from 'double' to 'int', possible loss of data
+C:\Vunder\Telltale\TelltaleToolLib\TelltaleToolLib\vorbis\modes\psych_44.h(26,39): warning C4244: 'initializing': conversion from 'double' to 'int', possible loss of data
+C:\Vunder\Telltale\TelltaleToolLib\TelltaleToolLib\vorbis\modes\psych_44.h(32,5): warning C4244: 'initializing': conversion from 'double' to 'int', possible loss of data
+C:\Vunder\Telltale\TelltaleToolLib\TelltaleToolLib\vorbis\modes\psych_44.h(32,12): warning C4244: 'initializing': conversion from 'double' to 'int', possible loss of data
+C:\Vunder\Telltale\TelltaleToolLib\TelltaleToolLib\vorbis\modes\psych_44.h(32,18): warning C4244: 'initializing': conversion from 'double' to 'int', possible loss of data
+C:\Vunder\Telltale\TelltaleToolLib\TelltaleToolLib\vorbis\modes\psych_44.h(32,34): warning C4244: 'initializing': conversion from 'double' to 'int', possible loss of data
+C:\Vunder\Telltale\TelltaleToolLib\TelltaleToolLib\vorbis\modes\psych_44.h(32,39): warning C4244: 'initializing': conversion from 'double' to 'int', possible loss of data
+C:\Vunder\Telltale\TelltaleToolLib\TelltaleToolLib\vorbis\modes\psych_44.h(38,5): warning C4244: 'initializing': conversion from 'double' to 'int', possible loss of data
+C:\Vunder\Telltale\TelltaleToolLib\TelltaleToolLib\vorbis\modes\psych_44.h(38,12): warning C4244: 'initializing': conversion from 'double' to 'int', possible loss of data
+C:\Vunder\Telltale\TelltaleToolLib\TelltaleToolLib\vorbis\modes\psych_44.h(38,18): warning C4244: 'initializing': conversion from 'double' to 'int', possible loss of data
+C:\Vunder\Telltale\TelltaleToolLib\TelltaleToolLib\vorbis\modes\psych_44.h(38,34): warning C4244: 'initializing': conversion from 'double' to 'int', possible loss of data
+C:\Vunder\Telltale\TelltaleToolLib\TelltaleToolLib\vorbis\modes\psych_44.h(38,39): warning C4244: 'initializing': conversion from 'double' to 'int', possible loss of data
+C:\Vunder\Telltale\TelltaleToolLib\TelltaleToolLib\vorbis\modes\psych_44.h(44,5): warning C4244: 'initializing': conversion from 'double' to 'int', possible loss of data
+C:\Vunder\Telltale\TelltaleToolLib\TelltaleToolLib\vorbis\modes\psych_44.h(44,12): warning C4244: 'initializing': conversion from 'double' to 'int', possible loss of data
+C:\Vunder\Telltale\TelltaleToolLib\TelltaleToolLib\vorbis\modes\psych_44.h(44,18): warning C4244: 'initializing': conversion from 'double' to 'int', possible loss of data
+C:\Vunder\Telltale\TelltaleToolLib\TelltaleToolLib\vorbis\modes\psych_44.h(44,34): warning C4244: 'initializing': conversion from 'double' to 'int', possible loss of data
+C:\Vunder\Telltale\TelltaleToolLib\TelltaleToolLib\vorbis\modes\psych_44.h(44,39): warning C4244: 'initializing': conversion from 'double' to 'int', possible loss of data
+C:\Vunder\Telltale\TelltaleToolLib\TelltaleToolLib\vorbis\modes\psych_44.h(50,5): warning C4244: 'initializing': conversion from 'double' to 'int', possible loss of data
+C:\Vunder\Telltale\TelltaleToolLib\TelltaleToolLib\vorbis\modes\psych_44.h(50,12): warning C4244: 'initializing': conversion from 'double' to 'int', possible loss of data
+C:\Vunder\Telltale\TelltaleToolLib\TelltaleToolLib\vorbis\modes\psych_44.h(50,18): warning C4244: 'initializing': conversion from 'double' to 'int', possible loss of data
+C:\Vunder\Telltale\TelltaleToolLib\TelltaleToolLib\vorbis\modes\psych_44.h(50,34): warning C4244: 'initializing': conversion from 'double' to 'int', possible loss of data
+C:\Vunder\Telltale\TelltaleToolLib\TelltaleToolLib\vorbis\modes\psych_44.h(50,39): warning C4244: 'initializing': conversion from 'double' to 'int', possible loss of data
+C:\Vunder\Telltale\TelltaleToolLib\TelltaleToolLib\vorbis\vorbisenc.c(247,58): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+C:\Vunder\Telltale\TelltaleToolLib\TelltaleToolLib\vorbis\vorbisenc.c(248,60): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+C:\Vunder\Telltale\TelltaleToolLib\TelltaleToolLib\vorbis\vorbisenc.c(250,31): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+C:\Vunder\Telltale\TelltaleToolLib\TelltaleToolLib\vorbis\vorbisenc.c(230,12): warning C4244: 'initializing': conversion from 'double' to 'int', possible loss of data
+C:\Vunder\Telltale\TelltaleToolLib\TelltaleToolLib\vorbis\vorbisenc.c(271,56): warning C4244: '=': conversion from 'double' to 'int', possible loss of data
+C:\Vunder\Telltale\TelltaleToolLib\TelltaleToolLib\vorbis\vorbisenc.c(272,56): warning C4244: '=': conversion from 'double' to 'int', possible loss of data
+C:\Vunder\Telltale\TelltaleToolLib\TelltaleToolLib\vorbis\vorbisenc.c(273,29): warning C4244: '=': conversion from 'float' to 'int', possible loss of data
+C:\Vunder\Telltale\TelltaleToolLib\TelltaleToolLib\vorbis\vorbisenc.c(275,40): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+C:\Vunder\Telltale\TelltaleToolLib\TelltaleToolLib\vorbis\vorbisenc.c(276,52): warning C4244: '=': conversion from 'double' to 'int', possible loss of data
+C:\Vunder\Telltale\TelltaleToolLib\TelltaleToolLib\vorbis\vorbisenc.c(277,52): warning C4244: '=': conversion from 'double' to 'int', possible loss of data
+C:\Vunder\Telltale\TelltaleToolLib\TelltaleToolLib\vorbis\vorbisenc.c(283,56): warning C4244: '=': conversion from 'double' to 'int', possible loss of data
+C:\Vunder\Telltale\TelltaleToolLib\TelltaleToolLib\vorbis\vorbisenc.c(284,56): warning C4244: '=': conversion from 'double' to 'int', possible loss of data
+C:\Vunder\Telltale\TelltaleToolLib\TelltaleToolLib\vorbis\vorbisenc.c(285,29): warning C4244: '=': conversion from 'float' to 'int', possible loss of data
+C:\Vunder\Telltale\TelltaleToolLib\TelltaleToolLib\vorbis\vorbisenc.c(288,50): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+C:\Vunder\Telltale\TelltaleToolLib\TelltaleToolLib\vorbis\vorbisenc.c(290,52): warning C4244: '=': conversion from 'double' to 'int', possible loss of data
+C:\Vunder\Telltale\TelltaleToolLib\TelltaleToolLib\vorbis\vorbisenc.c(291,52): warning C4244: '=': conversion from 'double' to 'int', possible loss of data
+C:\Vunder\Telltale\TelltaleToolLib\TelltaleToolLib\vorbis\vorbisenc.c(257,13): warning C4244: 'initializing': conversion from 'const double' to 'float', possible loss of data
+C:\Vunder\Telltale\TelltaleToolLib\TelltaleToolLib\vorbis\vorbisenc.c(258,12): warning C4244: 'initializing': conversion from 'float' to 'int', possible loss of data
+C:\Vunder\Telltale\TelltaleToolLib\TelltaleToolLib\vorbis\vorbisenc.c(270,39): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+C:\Vunder\Telltale\TelltaleToolLib\TelltaleToolLib\vorbis\vorbisenc.c(281,49): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+C:\Vunder\Telltale\TelltaleToolLib\TelltaleToolLib\vorbis\vorbisenc.c(311,10): warning C4244: 'initializing': conversion from 'double' to 'int', possible loss of data
+C:\Vunder\Telltale\TelltaleToolLib\TelltaleToolLib\vorbis\vorbisenc.c(344,46): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+C:\Vunder\Telltale\TelltaleToolLib\TelltaleToolLib\vorbis\vorbisenc.c(345,46): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+C:\Vunder\Telltale\TelltaleToolLib\TelltaleToolLib\vorbis\vorbisenc.c(346,46): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+C:\Vunder\Telltale\TelltaleToolLib\TelltaleToolLib\vorbis\vorbisenc.c(347,44): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+C:\Vunder\Telltale\TelltaleToolLib\TelltaleToolLib\vorbis\vorbisenc.c(348,38): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+C:\Vunder\Telltale\TelltaleToolLib\TelltaleToolLib\vorbis\vorbisenc.c(350,34): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+C:\Vunder\Telltale\TelltaleToolLib\TelltaleToolLib\vorbis\vorbisenc.c(353,42): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+C:\Vunder\Telltale\TelltaleToolLib\TelltaleToolLib\vorbis\vorbisenc.c(337,12): warning C4244: 'initializing': conversion from 'double' to 'int', possible loss of data
+C:\Vunder\Telltale\TelltaleToolLib\TelltaleToolLib\vorbis\vorbisenc.c(376,46): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+C:\Vunder\Telltale\TelltaleToolLib\TelltaleToolLib\vorbis\vorbisenc.c(361,12): warning C4244: 'initializing': conversion from 'double' to 'int', possible loss of data
+C:\Vunder\Telltale\TelltaleToolLib\TelltaleToolLib\vorbis\vorbisenc.c(387,41): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+C:\Vunder\Telltale\TelltaleToolLib\TelltaleToolLib\vorbis\vorbisenc.c(382,10): warning C4244: 'initializing': conversion from 'double' to 'int', possible loss of data
+C:\Vunder\Telltale\TelltaleToolLib\TelltaleToolLib\vorbis\vorbisenc.c(402,39): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+C:\Vunder\Telltale\TelltaleToolLib\TelltaleToolLib\vorbis\vorbisenc.c(409,50): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+C:\Vunder\Telltale\TelltaleToolLib\TelltaleToolLib\vorbis\vorbisenc.c(416,26): warning C4244: '+=': conversion from 'double' to 'float', possible loss of data
+C:\Vunder\Telltale\TelltaleToolLib\TelltaleToolLib\vorbis\vorbisenc.c(397,12): warning C4244: 'initializing': conversion from 'double' to 'int', possible loss of data
+C:\Vunder\Telltale\TelltaleToolLib\TelltaleToolLib\vorbis\vorbisenc.c(428,23): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+C:\Vunder\Telltale\TelltaleToolLib\TelltaleToolLib\vorbis\vorbisenc.c(429,23): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+C:\Vunder\Telltale\TelltaleToolLib\TelltaleToolLib\vorbis\vorbisenc.c(446,10): warning C4244: 'initializing': conversion from 'double' to 'int', possible loss of data
+C:\Vunder\Telltale\TelltaleToolLib\TelltaleToolLib\vorbis\vorbisenc.c(528,18): warning C4244: '=': conversion from 'double' to 'int', possible loss of data
+C:\Vunder\Telltale\TelltaleToolLib\TelltaleToolLib\vorbis\vorbisenc.c(592,14): warning C4244: 'initializing': conversion from 'double' to 'int', possible loss of data
+C:\Vunder\Telltale\TelltaleToolLib\TelltaleToolLib\vorbis\vorbisenc.c(621,12): warning C4244: 'initializing': conversion from 'double' to 'int', possible loss of data
+C:\Vunder\Telltale\TelltaleToolLib\TelltaleToolLib\vorbis\vorbisenc.c(658,24): warning C4244: 'initializing': conversion from 'const double' to 'float', possible loss of data
+C:\Vunder\Telltale\TelltaleToolLib\TelltaleToolLib\vorbis\vorbisenc.c(659,25): warning C4244: 'initializing': conversion from 'const double' to 'float', possible loss of data
+C:\Vunder\Telltale\TelltaleToolLib\TelltaleToolLib\vorbis\vorbisenc.c(660,30): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+C:\Vunder\Telltale\TelltaleToolLib\TelltaleToolLib\vorbis\vorbisenc.c(717,36): warning C4244: 'function': conversion from 'double' to 'int', possible loss of data
+C:\Vunder\Telltale\TelltaleToolLib\TelltaleToolLib\vorbis\vorbisenc.c(834,25): warning C4244: '=': conversion from 'double' to 'long', possible loss of data
+C:\Vunder\Telltale\TelltaleToolLib\TelltaleToolLib\vorbis\vorbisenc.c(840,53): warning C4244: '=': conversion from 'double' to 'long', possible loss of data
+C:\Vunder\Telltale\TelltaleToolLib\TelltaleToolLib\vorbis\vorbisenc.c(842,24): warning C4244: '=': conversion from 'double' to 'long', possible loss of data
+C:\Vunder\Telltale\TelltaleToolLib\TelltaleToolLib\vorbis\vorbisenc.c(877,8): warning C4244: '=': conversion from 'double' to 'int', possible loss of data
+C:\Vunder\Telltale\TelltaleToolLib\TelltaleToolLib\vorbis\vorbisenc.c(913,20): warning C4305: '+=': truncation from 'double' to 'float'
+C:\Vunder\Telltale\TelltaleToolLib\TelltaleToolLib\vorbis\vorbisenc.c(914,31): warning C4305: '=': truncation from 'double' to 'float'
+C:\Vunder\Telltale\TelltaleToolLib\TelltaleToolLib\vorbis\vorbisenc.c(967,50): warning C4244: '=': conversion from 'double' to 'long', possible loss of data
+C:\Vunder\Telltale\TelltaleToolLib\TelltaleToolLib\vorbis\vorbisenc.c(969,36): warning C4244: '=': conversion from 'double' to 'long', possible loss of data
+C:\Vunder\Telltale\TelltaleToolLib\TelltaleToolLib\vorbis\vorbisenc.c(979,11): warning C4244: '=': conversion from 'long' to 'float', possible loss of data
+C:\Vunder\Telltale\TelltaleToolLib\TelltaleToolLib\vorbis\vorbisenc.c(990,18): warning C4244: '=': conversion from 'double' to 'long', possible loss of data
+C:\Vunder\Telltale\TelltaleToolLib\TelltaleToolLib\vorbis\vorbisenc.c(1074,63): warning C4244: '=': conversion from 'double' to 'long', possible loss of data
+C:\Vunder\Telltale\TelltaleToolLib\TelltaleToolLib\vorbis\vorbisenc.c(1090,46): warning C4244: '=': conversion from 'double' to 'long', possible loss of data
+C:\Vunder\Telltale\TelltaleToolLib\TelltaleToolLib\vorbis\vorbisenc.c(1093,33): warning C4244: '=': conversion from 'double' to 'long', possible loss of data
+  vorbisfile.c
+C:\Vunder\Telltale\TelltaleToolLib\TelltaleToolLib\vorbis\vorbisfile.c(71,30): warning C4267: 'initializing': conversion from 'size_t' to 'long', possible loss of data
+C:\Vunder\Telltale\TelltaleToolLib\TelltaleToolLib\vorbis\vorbisfile.c(258,30): warning C4244: 'function': conversion from 'ogg_int64_t' to 'long', possible loss of data
+C:\Vunder\Telltale\TelltaleToolLib\TelltaleToolLib\vorbis\vorbisfile.c(276,15): warning C4244: '=': conversion from 'ogg_int64_t' to 'int', possible loss of data
+C:\Vunder\Telltale\TelltaleToolLib\TelltaleToolLib\vorbis\vorbisfile.c(548,21): warning C4244: 'return': conversion from 'ogg_int64_t' to 'int', possible loss of data
+C:\Vunder\Telltale\TelltaleToolLib\TelltaleToolLib\vorbis\vorbisfile.c(569,19): warning C4244: 'return': conversion from 'ogg_int64_t' to 'int', possible loss of data
+C:\Vunder\Telltale\TelltaleToolLib\TelltaleToolLib\vorbis\vorbisfile.c(572,19): warning C4244: 'return': conversion from 'ogg_int64_t' to 'int', possible loss of data
+C:\Vunder\Telltale\TelltaleToolLib\TelltaleToolLib\vorbis\vorbisfile.c(582,19): warning C4244: 'return': conversion from 'ogg_int64_t' to 'int', possible loss of data
+C:\Vunder\Telltale\TelltaleToolLib\TelltaleToolLib\vorbis\vorbisfile.c(644,19): warning C4244: 'return': conversion from 'ogg_int64_t' to 'int', possible loss of data
+C:\Vunder\Telltale\TelltaleToolLib\TelltaleToolLib\vorbis\vorbisfile.c(877,18): warning C4244: 'function': conversion from 'ogg_int64_t' to 'long', possible loss of data
+C:\Vunder\Telltale\TelltaleToolLib\TelltaleToolLib\vorbis\vorbisfile.c(1121,14): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+C:\Vunder\Telltale\TelltaleToolLib\TelltaleToolLib\vorbis\vorbisfile.c(1122,11): warning C4244: 'return': conversion from 'double' to 'long', possible loss of data
+C:\Vunder\Telltale\TelltaleToolLib\TelltaleToolLib\vorbis\vorbisfile.c(1126,13): warning C4244: 'return': conversion from 'double' to 'long', possible loss of data
+C:\Vunder\Telltale\TelltaleToolLib\TelltaleToolLib\vorbis\vorbisfile.c(1154,51): warning C4244: '=': conversion from 'double' to 'long', possible loss of data
+C:\Vunder\Telltale\TelltaleToolLib\TelltaleToolLib\vorbis\vorbisfile.c(1763,33): warning C4244: '=': conversion from 'ogg_int64_t' to 'long', possible loss of data
+C:\Vunder\Telltale\TelltaleToolLib\TelltaleToolLib\vorbis\vorbisfile.c(1800,33): warning C4244: 'initializing': conversion from 'double' to 'ogg_int64_t', possible loss of data
+C:\Vunder\Telltale\TelltaleToolLib\TelltaleToolLib\vorbis\vorbisfile.c(1830,33): warning C4244: 'initializing': conversion from 'double' to 'ogg_int64_t', possible loss of data
+C:\Vunder\Telltale\TelltaleToolLib\TelltaleToolLib\vorbis\vorbisfile.c(2169,18): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+  window.c
+  Generating Code...
+  Blowfish.cpp
+C:\Vunder\Telltale\TelltaleToolLib\TelltaleToolLib\ToolLibrary\Blowfish.cpp(7,25): warning C4083: expected ':'; found identifier 'C4267'
+C:\Vunder\Telltale\TelltaleToolLib\TelltaleToolLib\ToolLibrary\Blowfish.cpp(41,18): warning C4244: '=': conversion from 'unsigned __int64' to 'unsigned long', possible loss of data
+C:\Vunder\Telltale\TelltaleToolLib\TelltaleToolLib\ToolLibrary\Blowfish.cpp(42,8): warning C4244: '=': conversion from 'unsigned __int64' to 'unsigned long', possible loss of data
+C:\Vunder\Telltale\TelltaleToolLib\TelltaleToolLib\ToolLibrary\Blowfish.cpp(43,8): warning C4244: '=': conversion from 'unsigned __int64' to 'unsigned long', possible loss of data
+C:\Vunder\Telltale\TelltaleToolLib\TelltaleToolLib\ToolLibrary\Blowfish.cpp(52,28): warning C4267: 'argument': conversion from 'size_t' to 'int', possible loss of data
+C:\Vunder\Telltale\TelltaleToolLib\TelltaleToolLib\ToolLibrary\Blowfish.cpp(56,28): warning C4267: 'argument': conversion from 'size_t' to 'int', possible loss of data
+C:\Vunder\Telltale\TelltaleToolLib\TelltaleToolLib\ToolLibrary\Blowfish.cpp(81,28): warning C4267: 'argument': conversion from 'size_t' to 'int', possible loss of data
+C:\Vunder\Telltale\TelltaleToolLib\TelltaleToolLib\ToolLibrary\Blowfish.cpp(85,28): warning C4267: 'argument': conversion from 'size_t' to 'int', possible loss of data
+C:\Vunder\Telltale\TelltaleToolLib\TelltaleToolLib\ToolLibrary\Blowfish.cpp(102,11): warning C4244: '=': conversion from 'unsigned __int64' to 'unsigned long', possible loss of data
+C:\Vunder\Telltale\TelltaleToolLib\TelltaleToolLib\ToolLibrary\Blowfish.cpp(114,10): warning C4244: '=': conversion from 'unsigned __int64' to 'unsigned long', possible loss of data
+C:\Vunder\Telltale\TelltaleToolLib\TelltaleToolLib\ToolLibrary\Blowfish.cpp(115,10): warning C4244: '=': conversion from 'unsigned __int64' to 'unsigned long', possible loss of data
+C:\Vunder\Telltale\TelltaleToolLib\TelltaleToolLib\ToolLibrary\Blowfish.cpp(133,11): warning C4244: '=': conversion from 'unsigned __int64' to 'unsigned long', possible loss of data
+C:\Vunder\Telltale\TelltaleToolLib\TelltaleToolLib\ToolLibrary\Blowfish.cpp(147,10): warning C4244: '=': conversion from 'unsigned __int64' to 'unsigned long', possible loss of data
+C:\Vunder\Telltale\TelltaleToolLib\TelltaleToolLib\ToolLibrary\Blowfish.cpp(148,10): warning C4244: '=': conversion from 'unsigned __int64' to 'unsigned long', possible loss of data
+C:\Vunder\Telltale\TelltaleToolLib\TelltaleToolLib\ToolLibrary\Blowfish.cpp(270,26): warning C4244: '=': conversion from 'unsigned __int64' to 'unsigned long', possible loss of data
+C:\Vunder\Telltale\TelltaleToolLib\TelltaleToolLib\ToolLibrary\Blowfish.cpp(271,26): warning C4244: '=': conversion from 'unsigned __int64' to 'unsigned long', possible loss of data
+C:\Vunder\Telltale\TelltaleToolLib\TelltaleToolLib\ToolLibrary\Blowfish.cpp(272,26): warning C4244: '=': conversion from 'unsigned __int64' to 'unsigned long', possible loss of data
+C:\Vunder\Telltale\TelltaleToolLib\TelltaleToolLib\ToolLibrary\Blowfish.cpp(273,26): warning C4244: '=': conversion from 'unsigned __int64' to 'unsigned long', possible loss of data
+C:\Vunder\Telltale\TelltaleToolLib\TelltaleToolLib\ToolLibrary\Blowfish.cpp(274,26): warning C4244: '=': conversion from 'unsigned __int64' to 'unsigned long', possible loss of data
+C:\Vunder\Telltale\TelltaleToolLib\TelltaleToolLib\ToolLibrary\Blowfish.cpp(288,10): warning C4244: '=': conversion from 'unsigned __int64' to 'unsigned long', possible loss of data
+C:\Vunder\Telltale\TelltaleToolLib\TelltaleToolLib\ToolLibrary\Blowfish.cpp(289,10): warning C4244: '=': conversion from 'unsigned __int64' to 'unsigned long', possible loss of data
+C:\Vunder\Telltale\TelltaleToolLib\TelltaleToolLib\ToolLibrary\Blowfish.cpp(308,26): warning C4244: '=': conversion from 'unsigned __int64' to 'unsigned long', possible loss of data
+C:\Vunder\Telltale\TelltaleToolLib\TelltaleToolLib\ToolLibrary\Blowfish.cpp(309,26): warning C4244: '=': conversion from 'unsigned __int64' to 'unsigned long', possible loss of data
+C:\Vunder\Telltale\TelltaleToolLib\TelltaleToolLib\ToolLibrary\Blowfish.cpp(310,26): warning C4244: '=': conversion from 'unsigned __int64' to 'unsigned long', possible loss of data
+C:\Vunder\Telltale\TelltaleToolLib\TelltaleToolLib\ToolLibrary\Blowfish.cpp(311,26): warning C4244: '=': conversion from 'unsigned __int64' to 'unsigned long', possible loss of data
+C:\Vunder\Telltale\TelltaleToolLib\TelltaleToolLib\ToolLibrary\Blowfish.cpp(327,10): warning C4244: '=': conversion from 'unsigned __int64' to 'unsigned long', possible loss of data
+C:\Vunder\Telltale\TelltaleToolLib\TelltaleToolLib\ToolLibrary\Blowfish.cpp(328,10): warning C4244: '=': conversion from 'unsigned __int64' to 'unsigned long', possible loss of data
+C:\Vunder\Telltale\TelltaleToolLib\TelltaleToolLib\ToolLibrary\Blowfish.cpp(355,33): warning C4244: 'argument': conversion from 'unsigned __int64' to 'unsigned long', possible loss of data
+  cmd.cpp
+C:\Vunder\Telltale\TelltaleToolLib\TelltaleToolLib\ToolLibrary\DataStream\DataStream.h(148,12): warning C4227: anachronism used: qualifiers on reference are ignored
+C:\Vunder\Telltale\TelltaleToolLib\TelltaleToolLib\ToolLibrary\DataStream\DataStream.h(178,57): warning C4227: anachronism used: qualifiers on reference are ignored
+C:\Vunder\Telltale\TelltaleToolLib\TelltaleToolLib\ToolLibrary\DataStream\DataStream.h(218,21): warning C4227: anachronism used: qualifiers on reference are ignored
+C:\Vunder\Telltale\TelltaleToolLib\TelltaleToolLib\ToolLibrary\DataStream\DataStream.h(219,59): warning C4227: anachronism used: qualifiers on reference are ignored
+C:\Vunder\Telltale\TelltaleToolLib\TelltaleToolLib\ToolLibrary\DataStream\DataStream.h(257,53): warning C4227: anachronism used: qualifiers on reference are ignored
+C:\Vunder\Telltale\TelltaleToolLib\TelltaleToolLib\ToolLibrary\DataStream\DataStream.h(284,71): warning C4227: anachronism used: qualifiers on reference are ignored
+C:\Vunder\Telltale\TelltaleToolLib\TelltaleToolLib\ToolLibrary\DataStream\DataStream.h(368,59): warning C4227: anachronism used: qualifiers on reference are ignored
+  Compression.cpp
+C:\Vunder\Telltale\TelltaleToolLib\TelltaleToolLib\ToolLibrary\Compression.cpp(5,25): warning C4083: expected ':'; found identifier 'C4267'
+C:\Vunder\Telltale\TelltaleToolLib\TelltaleToolLib\ToolLibrary\Compression.cpp(20,25): warning C4244: '=': conversion from '__int64' to 'unsigned int', possible loss of data
+  DataStream.cpp
+C:\Vunder\Telltale\TelltaleToolLib\TelltaleToolLib\ToolLibrary\DataStream\DataStream.cpp(4,25): warning C4083: expected ':'; found identifier 'C4267'
+C:\Vunder\Telltale\TelltaleToolLib\TelltaleToolLib\ToolLibrary\DataStream\DataStream.h(148,12): warning C4227: anachronism used: qualifiers on reference are ignored
+C:\Vunder\Telltale\TelltaleToolLib\TelltaleToolLib\ToolLibrary\DataStream\DataStream.h(178,57): warning C4227: anachronism used: qualifiers on reference are ignored
+C:\Vunder\Telltale\TelltaleToolLib\TelltaleToolLib\ToolLibrary\DataStream\DataStream.h(218,21): warning C4227: anachronism used: qualifiers on reference are ignored
+C:\Vunder\Telltale\TelltaleToolLib\TelltaleToolLib\ToolLibrary\DataStream\DataStream.h(219,59): warning C4227: anachronism used: qualifiers on reference are ignored
+C:\Vunder\Telltale\TelltaleToolLib\TelltaleToolLib\ToolLibrary\DataStream\DataStream.h(257,53): warning C4227: anachronism used: qualifiers on reference are ignored
+C:\Vunder\Telltale\TelltaleToolLib\TelltaleToolLib\ToolLibrary\DataStream\DataStream.h(284,71): warning C4227: anachronism used: qualifiers on reference are ignored
+C:\Vunder\Telltale\TelltaleToolLib\TelltaleToolLib\ToolLibrary\DataStream\DataStream.h(368,59): warning C4227: anachronism used: qualifiers on reference are ignored
+  FSB5.cpp
+C:\Vunder\Telltale\TelltaleToolLib\TelltaleToolLib\ToolLibrary\DataStream\DataStream.h(148,12): warning C4227: anachronism used: qualifiers on reference are ignored
+C:\Vunder\Telltale\TelltaleToolLib\TelltaleToolLib\ToolLibrary\DataStream\DataStream.h(178,57): warning C4227: anachronism used: qualifiers on reference are ignored
+C:\Vunder\Telltale\TelltaleToolLib\TelltaleToolLib\ToolLibrary\DataStream\DataStream.h(218,21): warning C4227: anachronism used: qualifiers on reference are ignored
+C:\Vunder\Telltale\TelltaleToolLib\TelltaleToolLib\ToolLibrary\DataStream\DataStream.h(219,59): warning C4227: anachronism used: qualifiers on reference are ignored
+C:\Vunder\Telltale\TelltaleToolLib\TelltaleToolLib\ToolLibrary\DataStream\DataStream.h(257,53): warning C4227: anachronism used: qualifiers on reference are ignored
+C:\Vunder\Telltale\TelltaleToolLib\TelltaleToolLib\ToolLibrary\DataStream\DataStream.h(284,71): warning C4227: anachronism used: qualifiers on reference are ignored
+C:\Vunder\Telltale\TelltaleToolLib\TelltaleToolLib\ToolLibrary\DataStream\DataStream.h(368,59): warning C4227: anachronism used: qualifiers on reference are ignored
+  HashDB.cpp
+C:\Vunder\Telltale\TelltaleToolLib\TelltaleToolLib\ToolLibrary\HashDB\HashDB.cpp(1,25): warning C4083: expected ':'; found identifier 'C4267'
+C:\Vunder\Telltale\TelltaleToolLib\TelltaleToolLib\ToolLibrary\HashDB\HashDB.cpp(2,10): warning C4067: unexpected tokens following preprocessor directive - expected a newline
+C:\Vunder\Telltale\TelltaleToolLib\TelltaleToolLib\ToolLibrary\DataStream\DataStream.h(148,12): warning C4227: anachronism used: qualifiers on reference are ignored
+C:\Vunder\Telltale\TelltaleToolLib\TelltaleToolLib\ToolLibrary\DataStream\DataStream.h(178,57): warning C4227: anachronism used: qualifiers on reference are ignored
+C:\Vunder\Telltale\TelltaleToolLib\TelltaleToolLib\ToolLibrary\DataStream\DataStream.h(218,21): warning C4227: anachronism used: qualifiers on reference are ignored
+C:\Vunder\Telltale\TelltaleToolLib\TelltaleToolLib\ToolLibrary\DataStream\DataStream.h(219,59): warning C4227: anachronism used: qualifiers on reference are ignored
+C:\Vunder\Telltale\TelltaleToolLib\TelltaleToolLib\ToolLibrary\DataStream\DataStream.h(257,53): warning C4227: anachronism used: qualifiers on reference are ignored
+C:\Vunder\Telltale\TelltaleToolLib\TelltaleToolLib\ToolLibrary\DataStream\DataStream.h(284,71): warning C4227: anachronism used: qualifiers on reference are ignored
+C:\Vunder\Telltale\TelltaleToolLib\TelltaleToolLib\ToolLibrary\DataStream\DataStream.h(368,59): warning C4227: anachronism used: qualifiers on reference are ignored
+C:\Vunder\Telltale\TelltaleToolLib\TelltaleToolLib\ToolLibrary\HashManager.h(210,15): warning C4319: '~': zero extending 'unsigned int' to '__int64' of greater size
+  Meta.cpp
+C:\Vunder\Visual Studio\IDE\VC\Tools\MSVC\14.35.32215\include\bit(12): warning STL4038: The contents of <bit> are available only with C++20 or later.
+C:\Vunder\Telltale\TelltaleToolLib\TelltaleToolLib\ToolLibrary\VersDB.h(40,74): warning C4838: conversion from 'int' to 'unsigned int' requires a narrowing conversion
+C:\Vunder\Telltale\TelltaleToolLib\TelltaleToolLib\ToolLibrary\Meta.cpp(550,21): warning C4838: conversion from 'u64' to 'u32' requires a narrowing conversion
+  MetaStream_JSON.cpp
+  T3EffectCache.cpp
+C:\Vunder\Telltale\TelltaleToolLib\TelltaleToolLib\ToolLibrary\DataStream\DataStream.h(148,12): warning C4227: anachronism used: qualifiers on reference are ignored
+C:\Vunder\Telltale\TelltaleToolLib\TelltaleToolLib\ToolLibrary\DataStream\DataStream.h(178,57): warning C4227: anachronism used: qualifiers on reference are ignored
+C:\Vunder\Telltale\TelltaleToolLib\TelltaleToolLib\ToolLibrary\DataStream\DataStream.h(218,21): warning C4227: anachronism used: qualifiers on reference are ignored
+C:\Vunder\Telltale\TelltaleToolLib\TelltaleToolLib\ToolLibrary\DataStream\DataStream.h(219,59): warning C4227: anachronism used: qualifiers on reference are ignored
+C:\Vunder\Telltale\TelltaleToolLib\TelltaleToolLib\ToolLibrary\DataStream\DataStream.h(257,53): warning C4227: anachronism used: qualifiers on reference are ignored
+C:\Vunder\Telltale\TelltaleToolLib\TelltaleToolLib\ToolLibrary\DataStream\DataStream.h(284,71): warning C4227: anachronism used: qualifiers on reference are ignored
+C:\Vunder\Telltale\TelltaleToolLib\TelltaleToolLib\ToolLibrary\DataStream\DataStream.h(368,59): warning C4227: anachronism used: qualifiers on reference are ignored
+  TelltaleToolLibrary.cpp
+C:\Vunder\Telltale\TelltaleToolLib\TelltaleToolLib\ToolLibrary\TelltaleToolLibrary.cpp(3,25): warning C4083: expected ':'; found identifier 'C4267'
+C:\Vunder\Telltale\TelltaleToolLib\TelltaleToolLib\ToolLibrary\DataStream\DataStream.h(148,12): warning C4227: anachronism used: qualifiers on reference are ignored
+C:\Vunder\Telltale\TelltaleToolLib\TelltaleToolLib\ToolLibrary\DataStream\DataStream.h(178,57): warning C4227: anachronism used: qualifiers on reference are ignored
+C:\Vunder\Telltale\TelltaleToolLib\TelltaleToolLib\ToolLibrary\DataStream\DataStream.h(218,21): warning C4227: anachronism used: qualifiers on reference are ignored
+C:\Vunder\Telltale\TelltaleToolLib\TelltaleToolLib\ToolLibrary\DataStream\DataStream.h(219,59): warning C4227: anachronism used: qualifiers on reference are ignored
+C:\Vunder\Telltale\TelltaleToolLib\TelltaleToolLib\ToolLibrary\DataStream\DataStream.h(257,53): warning C4227: anachronism used: qualifiers on reference are ignored
+C:\Vunder\Telltale\TelltaleToolLib\TelltaleToolLib\ToolLibrary\DataStream\DataStream.h(284,71): warning C4227: anachronism used: qualifiers on reference are ignored
+C:\Vunder\Telltale\TelltaleToolLib\TelltaleToolLib\ToolLibrary\DataStream\DataStream.h(368,59): warning C4227: anachronism used: qualifiers on reference are ignored
+C:\Vunder\Telltale\TelltaleToolLib\TelltaleToolLib\ToolLibrary\MetaInitialize.h(1454,4): warning C4002: too many arguments for function-like macro invocation 'FIRSTMEM'
+C:\Vunder\Telltale\TelltaleToolLib\TelltaleToolLib\ToolLibrary\MetaInitialize.h(5639,4): warning C4002: too many arguments for function-like macro invocation 'DEFINEDCARRAY'
+C:\Vunder\Telltale\TelltaleToolLib\TelltaleToolLib\ToolLibrary\VersDB.h(40,74): warning C4838: conversion from 'int' to 'unsigned int' requires a narrowing conversion
+C:\Vunder\Telltale\TelltaleToolLib\TelltaleToolLib\ToolLibrary\Types\DCArray.h(78,9): warning C4101: 'buf': unreferenced local variable
+C:\Vunder\Telltale\TelltaleToolLib\TelltaleToolLib\ToolLibrary\Types\DCArray.h(52,1): message : while compiling class template member function 'MetaOpResult DCArray<LegacyD3DMesh::LocalTransformEntry>::MetaOperation_SerializeAsync(void *,MetaClassDescription *,MetaMemberDescription *,void *)'
+C:\Vunder\Telltale\TelltaleToolLib\TelltaleToolLib\ToolLibrary\MetaInitialize.h(5798,4): message : see reference to function template instantiation 'MetaOpResult DCArray<LegacyD3DMesh::LocalTransformEntry>::MetaOperation_SerializeAsync(void *,MetaClassDescription *,MetaMemberDescription *,void *)' being compiled
+C:\Vunder\Telltale\TelltaleToolLib\TelltaleToolLib\ToolLibrary\MetaInitialize.h(5798,4): message : see reference to class template instantiation 'DCArray<LegacyD3DMesh::LocalTransformEntry>' being compiled
+  TTArchive2.cpp
+C:\Vunder\Telltale\TelltaleToolLib\TelltaleToolLib\ToolLibrary\TTArchive2.cpp(1,25): warning C4083: expected ':'; found identifier 'C4267'
+C:\Vunder\Telltale\TelltaleToolLib\TelltaleToolLib\ToolLibrary\DataStream\DataStream.h(148,12): warning C4227: anachronism used: qualifiers on reference are ignored
+C:\Vunder\Telltale\TelltaleToolLib\TelltaleToolLib\ToolLibrary\DataStream\DataStream.h(178,57): warning C4227: anachronism used: qualifiers on reference are ignored
+C:\Vunder\Telltale\TelltaleToolLib\TelltaleToolLib\ToolLibrary\DataStream\DataStream.h(218,21): warning C4227: anachronism used: qualifiers on reference are ignored
+C:\Vunder\Telltale\TelltaleToolLib\TelltaleToolLib\ToolLibrary\DataStream\DataStream.h(219,59): warning C4227: anachronism used: qualifiers on reference are ignored
+C:\Vunder\Telltale\TelltaleToolLib\TelltaleToolLib\ToolLibrary\DataStream\DataStream.h(257,53): warning C4227: anachronism used: qualifiers on reference are ignored
+C:\Vunder\Telltale\TelltaleToolLib\TelltaleToolLib\ToolLibrary\DataStream\DataStream.h(284,71): warning C4227: anachronism used: qualifiers on reference are ignored
+C:\Vunder\Telltale\TelltaleToolLib\TelltaleToolLib\ToolLibrary\DataStream\DataStream.h(368,59): warning C4227: anachronism used: qualifiers on reference are ignored
+  EventStorage.cpp
+  T3Texture.cpp
+C:\Vunder\Telltale\TelltaleToolLib\TelltaleToolLib\ToolLibrary\Types\T3Texture.cpp(5,25): warning C4083: expected ':'; found identifier 'C4267'
+  VorbisHeaders.cpp
+C:\Vunder\Telltale\TelltaleToolLib\TelltaleToolLib\ToolLibrary\DataStream\DataStream.h(148,12): warning C4227: anachronism used: qualifiers on reference are ignored
+C:\Vunder\Telltale\TelltaleToolLib\TelltaleToolLib\ToolLibrary\DataStream\DataStream.h(178,57): warning C4227: anachronism used: qualifiers on reference are ignored
+C:\Vunder\Telltale\TelltaleToolLib\TelltaleToolLib\ToolLibrary\DataStream\DataStream.h(218,21): warning C4227: anachronism used: qualifiers on reference are ignored
+C:\Vunder\Telltale\TelltaleToolLib\TelltaleToolLib\ToolLibrary\DataStream\DataStream.h(219,59): warning C4227: anachronism used: qualifiers on reference are ignored
+C:\Vunder\Telltale\TelltaleToolLib\TelltaleToolLib\ToolLibrary\DataStream\DataStream.h(257,53): warning C4227: anachronism used: qualifiers on reference are ignored
+C:\Vunder\Telltale\TelltaleToolLib\TelltaleToolLib\ToolLibrary\DataStream\DataStream.h(284,71): warning C4227: anachronism used: qualifiers on reference are ignored
+C:\Vunder\Telltale\TelltaleToolLib\TelltaleToolLib\ToolLibrary\DataStream\DataStream.h(368,59): warning C4227: anachronism used: qualifiers on reference are ignored
+  Generating Code...
+  TelltaleToolLib.vcxproj -> C:\Vunder\Telltale\Telltale Inspector\x64\Debug\TelltaleToolLib.lib

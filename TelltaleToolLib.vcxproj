@@ -1,0 +1,445 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Debug|x64">
+      <Configuration>Debug</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|x64">
+      <Configuration>Release</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <VCProjectVersion>16.0</VCProjectVersion>
+    <Keyword>Win32Proj</Keyword>
+    <ProjectGuid>{84d57aaa-ef9c-4454-ae33-b624e1f61a84}</ProjectGuid>
+    <RootNamespace>TelltaleToolLib</RootNamespace>
+    <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v143</PlatformToolset>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v143</PlatformToolset>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v143</PlatformToolset>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v143</PlatformToolset>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="Shared">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <SDLCheck>true</SDLCheck>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <ConformanceMode>true</ConformanceMode>
+    </ClCompile>
+    <Link>
+      <SubSystem>Console</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <SDLCheck>true</SDLCheck>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <ConformanceMode>true</ConformanceMode>
+    </ClCompile>
+    <Link>
+      <SubSystem>Console</SubSystem>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <SDLCheck>true</SDLCheck>
+      <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions);_CRT_SECURE_NO_WARNINGS;BUILDING_INSPECTOR</PreprocessorDefinitions>
+      <ConformanceMode>true</ConformanceMode>
+      <AdditionalOptions>/bigobj</AdditionalOptions>
+      <LanguageStandard>stdcpp17</LanguageStandard>
+    </ClCompile>
+    <Link>
+      <SubSystem>Console</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <SDLCheck>true</SDLCheck>
+      <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions);_CRT_SECURE_NO_WARNINGS;BUILDING_INSPECTOR</PreprocessorDefinitions>
+      <ConformanceMode>true</ConformanceMode>
+      <AdditionalOptions>/bigobj</AdditionalOptions>
+      <LanguageStandard>stdcpp17</LanguageStandard>
+    </ClCompile>
+    <Link>
+      <SubSystem>Console</SubSystem>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalDependencies>shlwapi.lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClCompile Include="ogg\bitwise.c" />
+    <ClCompile Include="ogg\framing.c" />
+    <ClCompile Include="ToolLibrary\Blowfish.cpp" />
+    <ClCompile Include="ToolLibrary\cmd.cpp" />
+    <ClCompile Include="ToolLibrary\Compression.cpp" />
+    <ClCompile Include="ToolLibrary\DataStream\DataStream.cpp" />
+    <ClCompile Include="ToolLibrary\FSB5.cpp" />
+    <ClCompile Include="ToolLibrary\HashDB\HashDB.cpp" />
+    <ClCompile Include="ToolLibrary\Lua\decompile.c" />
+    <ClCompile Include="ToolLibrary\Lua\disassemble.c" />
+    <ClCompile Include="ToolLibrary\Lua\expression.c" />
+    <ClCompile Include="ToolLibrary\Lua\guess.c" />
+    <ClCompile Include="ToolLibrary\Lua\lapi.c" />
+    <ClCompile Include="ToolLibrary\Lua\lauxlib.c" />
+    <ClCompile Include="ToolLibrary\Lua\lbaselib.c" />
+    <ClCompile Include="ToolLibrary\Lua\lbitlib.c" />
+    <ClCompile Include="ToolLibrary\Lua\lcode.c" />
+    <ClCompile Include="ToolLibrary\Lua\lcorolib.c" />
+    <ClCompile Include="ToolLibrary\Lua\lctype.c" />
+    <ClCompile Include="ToolLibrary\Lua\ldblib.c" />
+    <ClCompile Include="ToolLibrary\Lua\ldebug.c" />
+    <ClCompile Include="ToolLibrary\Lua\ldo.c" />
+    <ClCompile Include="ToolLibrary\Lua\ldump.c" />
+    <ClCompile Include="ToolLibrary\Lua\lfunc.c" />
+    <ClCompile Include="ToolLibrary\Lua\lgc.c" />
+    <ClCompile Include="ToolLibrary\Lua\linit.c" />
+    <ClCompile Include="ToolLibrary\Lua\liolib.c" />
+    <ClCompile Include="ToolLibrary\Lua\llex.c" />
+    <ClCompile Include="ToolLibrary\Lua\lmathlib.c" />
+    <ClCompile Include="ToolLibrary\Lua\lmem.c" />
+    <ClCompile Include="ToolLibrary\Lua\loadlib.c" />
+    <ClCompile Include="ToolLibrary\Lua\lobject.c" />
+    <ClCompile Include="ToolLibrary\Lua\lopcodes.c" />
+    <ClCompile Include="ToolLibrary\Lua\loslib.c" />
+    <ClCompile Include="ToolLibrary\Lua\lparser.c" />
+    <ClCompile Include="ToolLibrary\Lua\lstate.c" />
+    <ClCompile Include="ToolLibrary\Lua\lstring.c" />
+    <ClCompile Include="ToolLibrary\Lua\lstrlib.c" />
+    <ClCompile Include="ToolLibrary\Lua\ltable.c" />
+    <ClCompile Include="ToolLibrary\Lua\ltablib.c" />
+    <ClCompile Include="ToolLibrary\Lua\ltm.c" />
+    <ClCompile Include="ToolLibrary\Lua\lua.c" />
+    <ClCompile Include="ToolLibrary\Lua\luac.c" />
+    <ClCompile Include="ToolLibrary\Lua\luadec.c" />
+    <ClCompile Include="ToolLibrary\Lua\lundump.c" />
+    <ClCompile Include="ToolLibrary\Lua\lvm.c" />
+    <ClCompile Include="ToolLibrary\Lua\lzio.c" />
+    <ClCompile Include="ToolLibrary\Lua\macro-array.c" />
+    <ClCompile Include="ToolLibrary\Lua\proto.c" />
+    <ClCompile Include="ToolLibrary\Lua\statement.c" />
+    <ClCompile Include="ToolLibrary\Lua\StringBuffer.c" />
+    <ClCompile Include="ToolLibrary\Lua\structs.c" />
+    <ClCompile Include="ToolLibrary\Meta.cpp" />
+    <ClCompile Include="ToolLibrary\MetaStream_JSON.cpp" />
+    <ClCompile Include="ToolLibrary\Shader\T3EffectCache.cpp" />
+    <ClCompile Include="ToolLibrary\TelltaleToolLibrary.cpp" />
+    <ClCompile Include="ToolLibrary\TTArchive2.cpp" />
+    <ClCompile Include="ToolLibrary\Types\EventStorage.cpp" />
+    <ClCompile Include="ToolLibrary\Types\T3Texture.cpp" />
+    <ClCompile Include="ToolLibrary\VorbisHeaders.cpp" />
+    <ClCompile Include="ToolLibrary\Zlib\adler32.c" />
+    <ClCompile Include="ToolLibrary\Zlib\compress.c" />
+    <ClCompile Include="ToolLibrary\Zlib\crc32.c" />
+    <ClCompile Include="ToolLibrary\Zlib\deflate.c" />
+    <ClCompile Include="ToolLibrary\Zlib\infback.c" />
+    <ClCompile Include="ToolLibrary\Zlib\inffast.c" />
+    <ClCompile Include="ToolLibrary\Zlib\inflate.c" />
+    <ClCompile Include="ToolLibrary\Zlib\inftrees.c" />
+    <ClCompile Include="ToolLibrary\Zlib\trees.c" />
+    <ClCompile Include="ToolLibrary\Zlib\uncompr.c" />
+    <ClCompile Include="ToolLibrary\Zlib\zutil.c" />
+    <ClCompile Include="vorbis\analysis.c" />
+    <ClCompile Include="vorbis\bitrate.c" />
+    <ClCompile Include="vorbis\block.c" />
+    <ClCompile Include="vorbis\codebook.c" />
+    <ClCompile Include="vorbis\envelope.c" />
+    <ClCompile Include="vorbis\floor0.c" />
+    <ClCompile Include="vorbis\floor1.c" />
+    <ClCompile Include="vorbis\info.c" />
+    <ClCompile Include="vorbis\lookup.c" />
+    <ClCompile Include="vorbis\lpc.c" />
+    <ClCompile Include="vorbis\lsp.c" />
+    <ClCompile Include="vorbis\mapping0.c" />
+    <ClCompile Include="vorbis\mdct.c" />
+    <ClCompile Include="vorbis\misc.c" />
+    <ClCompile Include="vorbis\psy.c" />
+    <ClCompile Include="vorbis\registry.c" />
+    <ClCompile Include="vorbis\res0.c" />
+    <ClCompile Include="vorbis\sharedbook.c" />
+    <ClCompile Include="vorbis\smallft.c" />
+    <ClCompile Include="vorbis\synthesis.c" />
+    <ClCompile Include="vorbis\vorbisenc.c" />
+    <ClCompile Include="vorbis\vorbisfile.c" />
+    <ClCompile Include="vorbis\window.c" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="ogg\config_types.h" />
+    <ClInclude Include="ogg\crctable.h" />
+    <ClInclude Include="ogg\ogg.h" />
+    <ClInclude Include="ogg\os_types.h" />
+    <ClInclude Include="ToolLibrary\Base64.h" />
+    <ClInclude Include="ToolLibrary\Blowfish.h" />
+    <ClInclude Include="ToolLibrary\Compression.h" />
+    <ClInclude Include="ToolLibrary\DataStream\DataStream.h" />
+    <ClInclude Include="ToolLibrary\FSB5.h" />
+    <ClInclude Include="ToolLibrary\HashDB\HashDB.h" />
+    <ClInclude Include="ToolLibrary\HashManager.h" />
+    <ClInclude Include="ToolLibrary\LegacyTypes\D3DMeshLegacy.h" />
+    <ClInclude Include="ToolLibrary\Lua\common.h" />
+    <ClInclude Include="ToolLibrary\Lua\decompile.h" />
+    <ClInclude Include="ToolLibrary\Lua\disassemble.h" />
+    <ClInclude Include="ToolLibrary\Lua\expression.h" />
+    <ClInclude Include="ToolLibrary\Lua\lapi.h" />
+    <ClInclude Include="ToolLibrary\Lua\lauxlib.h" />
+    <ClInclude Include="ToolLibrary\Lua\lcode.h" />
+    <ClInclude Include="ToolLibrary\Lua\lctype.h" />
+    <ClInclude Include="ToolLibrary\Lua\ldebug.h" />
+    <ClInclude Include="ToolLibrary\Lua\ldo.h" />
+    <ClInclude Include="ToolLibrary\Lua\lfunc.h" />
+    <ClInclude Include="ToolLibrary\Lua\lgc.h" />
+    <ClInclude Include="ToolLibrary\Lua\llex.h" />
+    <ClInclude Include="ToolLibrary\Lua\llimits.h" />
+    <ClInclude Include="ToolLibrary\Lua\lmem.h" />
+    <ClInclude Include="ToolLibrary\Lua\lobject.h" />
+    <ClInclude Include="ToolLibrary\Lua\lopcodes.h" />
+    <ClInclude Include="ToolLibrary\Lua\lparser.h" />
+    <ClInclude Include="ToolLibrary\Lua\lstate.h" />
+    <ClInclude Include="ToolLibrary\Lua\lstring.h" />
+    <ClInclude Include="ToolLibrary\Lua\ltable.h" />
+    <ClInclude Include="ToolLibrary\Lua\ltm.h" />
+    <ClInclude Include="ToolLibrary\Lua\lua-compat.h" />
+    <ClInclude Include="ToolLibrary\Lua\lua.h" />
+    <ClInclude Include="ToolLibrary\Lua\lua.hpp" />
+    <ClInclude Include="ToolLibrary\Lua\luaconf.h" />
+    <ClInclude Include="ToolLibrary\Lua\lualib.h" />
+    <ClInclude Include="ToolLibrary\Lua\lundump.h" />
+    <ClInclude Include="ToolLibrary\Lua\lvm.h" />
+    <ClInclude Include="ToolLibrary\Lua\lzio.h" />
+    <ClInclude Include="ToolLibrary\Lua\macro-array.h" />
+    <ClInclude Include="ToolLibrary\Lua\proto.h" />
+    <ClInclude Include="ToolLibrary\Lua\srcversion.h" />
+    <ClInclude Include="ToolLibrary\Lua\statement.h" />
+    <ClInclude Include="ToolLibrary\Lua\StringBuffer.h" />
+    <ClInclude Include="ToolLibrary\Lua\structs.h" />
+    <ClInclude Include="ToolLibrary\Meta.hpp" />
+    <ClInclude Include="ToolLibrary\MetaInitHelpers.h" />
+    <ClInclude Include="ToolLibrary\MetaInitialize.h" />
+    <ClInclude Include="ToolLibrary\MetaStream_JSON.hpp" />
+    <ClInclude Include="ToolLibrary\NlohmannJSON.hpp" />
+    <ClInclude Include="ToolLibrary\rapidjson\allocators.h" />
+    <ClInclude Include="ToolLibrary\rapidjson\cursorstreamwrapper.h" />
+    <ClInclude Include="ToolLibrary\rapidjson\document.h" />
+    <ClInclude Include="ToolLibrary\rapidjson\encodedstream.h" />
+    <ClInclude Include="ToolLibrary\rapidjson\encodings.h" />
+    <ClInclude Include="ToolLibrary\rapidjson\error\en.h" />
+    <ClInclude Include="ToolLibrary\rapidjson\error\error.h" />
+    <ClInclude Include="ToolLibrary\rapidjson\filereadstream.h" />
+    <ClInclude Include="ToolLibrary\rapidjson\filewritestream.h" />
+    <ClInclude Include="ToolLibrary\rapidjson\fwd.h" />
+    <ClInclude Include="ToolLibrary\rapidjson\internal\biginteger.h" />
+    <ClInclude Include="ToolLibrary\rapidjson\internal\clzll.h" />
+    <ClInclude Include="ToolLibrary\rapidjson\internal\diyfp.h" />
+    <ClInclude Include="ToolLibrary\rapidjson\internal\dtoa.h" />
+    <ClInclude Include="ToolLibrary\rapidjson\internal\ieee754.h" />
+    <ClInclude Include="ToolLibrary\rapidjson\internal\itoa.h" />
+    <ClInclude Include="ToolLibrary\rapidjson\internal\meta.h" />
+    <ClInclude Include="ToolLibrary\rapidjson\internal\pow10.h" />
+    <ClInclude Include="ToolLibrary\rapidjson\internal\regex.h" />
+    <ClInclude Include="ToolLibrary\rapidjson\internal\stack.h" />
+    <ClInclude Include="ToolLibrary\rapidjson\internal\strfunc.h" />
+    <ClInclude Include="ToolLibrary\rapidjson\internal\strtod.h" />
+    <ClInclude Include="ToolLibrary\rapidjson\internal\swap.h" />
+    <ClInclude Include="ToolLibrary\rapidjson\istreamwrapper.h" />
+    <ClInclude Include="ToolLibrary\rapidjson\LookaheadParse.h" />
+    <ClInclude Include="ToolLibrary\rapidjson\memorybuffer.h" />
+    <ClInclude Include="ToolLibrary\rapidjson\memorystream.h" />
+    <ClInclude Include="ToolLibrary\rapidjson\msinttypes\inttypes.h" />
+    <ClInclude Include="ToolLibrary\rapidjson\msinttypes\stdint.h" />
+    <ClInclude Include="ToolLibrary\rapidjson\ostreamwrapper.h" />
+    <ClInclude Include="ToolLibrary\rapidjson\pointer.h" />
+    <ClInclude Include="ToolLibrary\rapidjson\prettywriter.h" />
+    <ClInclude Include="ToolLibrary\rapidjson\rapidjson.h" />
+    <ClInclude Include="ToolLibrary\rapidjson\reader.h" />
+    <ClInclude Include="ToolLibrary\rapidjson\schema.h" />
+    <ClInclude Include="ToolLibrary\rapidjson\stream.h" />
+    <ClInclude Include="ToolLibrary\rapidjson\stringbuffer.h" />
+    <ClInclude Include="ToolLibrary\rapidjson\uri.h" />
+    <ClInclude Include="ToolLibrary\rapidjson\writer.h" />
+    <ClInclude Include="ToolLibrary\Shader\T3EffectCache.h" />
+    <ClInclude Include="ToolLibrary\TelltaleToolLibrary.h" />
+    <ClInclude Include="ToolLibrary\TTArchive2.hpp" />
+    <ClInclude Include="ToolLibrary\Types\ActorAgentMapper.h" />
+    <ClInclude Include="ToolLibrary\Types\AgentMap.h" />
+    <ClInclude Include="ToolLibrary\Types\AnimatedValueInterface.h" />
+    <ClInclude Include="ToolLibrary\Types\Animation.h" />
+    <ClInclude Include="ToolLibrary\Types\AnimOrChore.h" />
+    <ClInclude Include="ToolLibrary\Types\AssetCollection.h" />
+    <ClInclude Include="ToolLibrary\Types\BlendGraph.h" />
+    <ClInclude Include="ToolLibrary\Types\Chore.h" />
+    <ClInclude Include="ToolLibrary\Types\Container.h" />
+    <ClInclude Include="ToolLibrary\Types\D3DMesh.h" />
+    <ClInclude Include="ToolLibrary\Types\DCArray.h" />
+    <ClInclude Include="ToolLibrary\Types\Deque.h" />
+    <ClInclude Include="ToolLibrary\Types\Dialog.h" />
+    <ClInclude Include="ToolLibrary\Types\DlgSystemSettings.h" />
+    <ClInclude Include="ToolLibrary\Types\EnlightenData.h" />
+    <ClInclude Include="ToolLibrary\Types\EventStorage.h" />
+    <ClInclude Include="ToolLibrary\Types\Font.h" />
+    <ClInclude Include="ToolLibrary\Types\HandleObjectInfo.h" />
+    <ClInclude Include="ToolLibrary\Types\InputMapper.h" />
+    <ClInclude Include="ToolLibrary\Types\KeyframedValue.h" />
+    <ClInclude Include="ToolLibrary\Types\LanguageDatabase.h" />
+    <ClInclude Include="ToolLibrary\Types\LanguageDB.h" />
+    <ClInclude Include="ToolLibrary\Types\LanguageLookupMap.h" />
+    <ClInclude Include="ToolLibrary\Types\LanguageRegister.h" />
+    <ClInclude Include="ToolLibrary\Types\LightProbeData.h" />
+    <ClInclude Include="ToolLibrary\Types\List.h" />
+    <ClInclude Include="ToolLibrary\Types\LocalizationRegistry.h" />
+    <ClInclude Include="ToolLibrary\Types\LocomotionDB.h" />
+    <ClInclude Include="ToolLibrary\Types\Map.h" />
+    <ClInclude Include="ToolLibrary\Types\Note.h" />
+    <ClInclude Include="ToolLibrary\Types\ObjectSpaceIntrinsics.h" />
+    <ClInclude Include="ToolLibrary\Types\ParticleProperties.h" />
+    <ClInclude Include="ToolLibrary\Types\ParticleSprite.h" />
+    <ClInclude Include="ToolLibrary\Types\PhonemeTable.h" />
+    <ClInclude Include="ToolLibrary\Types\PreloadPackage.h" />
+    <ClInclude Include="ToolLibrary\Types\Procedural.h" />
+    <ClInclude Include="ToolLibrary\Types\PropertySet.h" />
+    <ClInclude Include="ToolLibrary\Types\Rect.h" />
+    <ClInclude Include="ToolLibrary\Types\ResourceBundle.h" />
+    <ClInclude Include="ToolLibrary\Types\Rules.h" />
+    <ClInclude Include="ToolLibrary\Types\SArray.h" />
+    <ClInclude Include="ToolLibrary\Types\Scene.h" />
+    <ClInclude Include="ToolLibrary\Types\Set.h" />
+    <ClInclude Include="ToolLibrary\Types\Skeleton.h" />
+    <ClInclude Include="ToolLibrary\Types\SoundAmbience.h" />
+    <ClInclude Include="ToolLibrary\Types\SoundBusSystem.h" />
+    <ClInclude Include="ToolLibrary\Types\SoundData.h" />
+    <ClInclude Include="ToolLibrary\Types\SoundEventBankMap.h" />
+    <ClInclude Include="ToolLibrary\Types\SoundFootsteps.h" />
+    <ClInclude Include="ToolLibrary\Types\SoundReverbDefinition.h" />
+    <ClInclude Include="ToolLibrary\Types\StyleGuide.h" />
+    <ClInclude Include="ToolLibrary\Types\T3OverlayData.h" />
+    <ClInclude Include="ToolLibrary\Types\T3Texture.h" />
+    <ClInclude Include="ToolLibrary\Types\ToolProps.h" />
+    <ClInclude Include="ToolLibrary\Types\TRange.h" />
+    <ClInclude Include="ToolLibrary\Types\TransitionMap.h" />
+    <ClInclude Include="ToolLibrary\Types\TRect.h" />
+    <ClInclude Include="ToolLibrary\Types\TypeIncludes.h" />
+    <ClInclude Include="ToolLibrary\Types\WalkBoxes.h" />
+    <ClInclude Include="ToolLibrary\VersDB.h" />
+    <ClInclude Include="ToolLibrary\Zlib\crc32.h" />
+    <ClInclude Include="ToolLibrary\Zlib\deflate.h" />
+    <ClInclude Include="ToolLibrary\Zlib\inffast.h" />
+    <ClInclude Include="ToolLibrary\Zlib\inffixed.h" />
+    <ClInclude Include="ToolLibrary\Zlib\inflate.h" />
+    <ClInclude Include="ToolLibrary\Zlib\inftrees.h" />
+    <ClInclude Include="ToolLibrary\Zlib\trees.h" />
+    <ClInclude Include="ToolLibrary\Zlib\zconf.h" />
+    <ClInclude Include="ToolLibrary\Zlib\zlib.h" />
+    <ClInclude Include="ToolLibrary\Zlib\zutil.h" />
+    <ClInclude Include="vorbis\backends.h" />
+    <ClInclude Include="vorbis\bitrate.h" />
+    <ClInclude Include="vorbis\books\coupled\res_books_51.h" />
+    <ClInclude Include="vorbis\books\coupled\res_books_stereo.h" />
+    <ClInclude Include="vorbis\books\floor\floor_books.h" />
+    <ClInclude Include="vorbis\books\uncoupled\res_books_uncoupled.h" />
+    <ClInclude Include="vorbis\codebook.h" />
+    <ClInclude Include="vorbis\codec.h" />
+    <ClInclude Include="vorbis\codec_internal.h" />
+    <ClInclude Include="vorbis\envelope.h" />
+    <ClInclude Include="vorbis\highlevel.h" />
+    <ClInclude Include="vorbis\lookup.h" />
+    <ClInclude Include="vorbis\lookup_data.h" />
+    <ClInclude Include="vorbis\lpc.h" />
+    <ClInclude Include="vorbis\lsp.h" />
+    <ClInclude Include="vorbis\masking.h" />
+    <ClInclude Include="vorbis\mdct.h" />
+    <ClInclude Include="vorbis\misc.h" />
+    <ClInclude Include="vorbis\modes\floor_all.h" />
+    <ClInclude Include="vorbis\modes\psych_11.h" />
+    <ClInclude Include="vorbis\modes\psych_16.h" />
+    <ClInclude Include="vorbis\modes\psych_44.h" />
+    <ClInclude Include="vorbis\modes\psych_8.h" />
+    <ClInclude Include="vorbis\modes\residue_16.h" />
+    <ClInclude Include="vorbis\modes\residue_44.h" />
+    <ClInclude Include="vorbis\modes\residue_44p51.h" />
+    <ClInclude Include="vorbis\modes\residue_44u.h" />
+    <ClInclude Include="vorbis\modes\residue_8.h" />
+    <ClInclude Include="vorbis\modes\setup_11.h" />
+    <ClInclude Include="vorbis\modes\setup_16.h" />
+    <ClInclude Include="vorbis\modes\setup_22.h" />
+    <ClInclude Include="vorbis\modes\setup_32.h" />
+    <ClInclude Include="vorbis\modes\setup_44.h" />
+    <ClInclude Include="vorbis\modes\setup_44p51.h" />
+    <ClInclude Include="vorbis\modes\setup_44u.h" />
+    <ClInclude Include="vorbis\modes\setup_8.h" />
+    <ClInclude Include="vorbis\modes\setup_X.h" />
+    <ClInclude Include="vorbis\os.h" />
+    <ClInclude Include="vorbis\psy.h" />
+    <ClInclude Include="vorbis\registry.h" />
+    <ClInclude Include="vorbis\scales.h" />
+    <ClInclude Include="vorbis\smallft.h" />
+    <ClInclude Include="vorbis\vorbisenc.h" />
+    <ClInclude Include="vorbis\vorbisfile.h" />
+    <ClInclude Include="vorbis\window.h" />
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>
