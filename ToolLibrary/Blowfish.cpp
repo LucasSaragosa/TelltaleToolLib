@@ -426,7 +426,7 @@ void dn(Blowfish* c, unsigned long* data, int blocks)
 	}
 }
 
-unsigned int sSetKeyIndex = DEFAULT_BLOWFISH_GAME_KEY;
+thread_local int sSetKeyIndex = DEFAULT_BLOWFISH_GAME_KEY;
 //Blowfish* spBlowfish;
 
 /*

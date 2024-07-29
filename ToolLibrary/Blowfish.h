@@ -349,7 +349,7 @@ struct Blowfish {//singleton
 };*/
 
 //extern Blowfish* spBlowfish;
-extern unsigned int sSetKeyIndex;
+extern thread_local int sSetKeyIndex;
 
 const BlowfishKey sBlowfishKeys[KEY_COUNT] = {
 	{ "/", "Telltale Texas Hold'em", false,"texasholdem","" },//No key needed

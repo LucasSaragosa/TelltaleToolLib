@@ -305,7 +305,7 @@ class DataStreamContainer : public DataStream {
 
 	//page and chunk are synonymous
 
-	void GetChunk(unsigned __int64 index);
+	bool GetChunk(unsigned __int64 index);
 
 	inline unsigned __int64 GetCompressedPageSize(unsigned __int32 index);
 

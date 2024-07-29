@@ -583,6 +583,8 @@ MetaClassDescription* GetMetaClassDescription(const char* typeInfoName) {
 				continue;
 			if (!_strcmpi(typeInfoName, i->mpTypeInfoExternalName))
 				return i;
+			if (!_strcmpi(typeInfoName, i->mpTypeInfoName))
+				return i;
 		}
 	}
 	return NULL;

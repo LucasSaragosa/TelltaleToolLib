@@ -17,7 +17,7 @@
 //.SCENE FILES
 struct Scene {//only included whats serialized and needed. this is a very very big struct! (class in the engine)
 
-	static constexpr Symbol kSceneLocationInfo{ 0x0CDAB21B527F20135 };
+	static constexpr Symbol kSceneLocationInfo{ 0x0CDAB21B527F20135 };//'Scene: Location Info'
 	static constexpr Symbol kSceneStartPosKey{ 0x0A1FB3B4404D8C439 };
 	static constexpr Symbol kSceneStartRotKey{ 0x53F29BE330D2D613 };
 	static constexpr Symbol kSceneStartVisibilityKey{ 0x2AA2DE83FB51649C };

@@ -664,7 +664,7 @@ struct T3MeshBatch {
 };
 
 struct T3MeshLOD {
-	DCArray<T3MeshBatch> mBatches[2];
+	DCArray<T3MeshBatch> mBatches[2];//0 is default, 1 is shadow batch
 	DCArray<T3MeshBatch> mBatchesM;//michonne
 	BitSetBase<1> mVertexStreams;
 	BoundingBox mBoundingBox;
@@ -1176,7 +1176,7 @@ struct D3DMesh {
 				if (!mcd) {
 					//normally raise a warn (telltale just ignore the resource) if its an invalid type
 #ifdef DEBUGMODE
-					printf("Mesh internal resource type not found from symbol %llX\n", symbolCrc);
+					TTL_Log("Mesh internal resource type not found from symbol %llX\n", symbolCrc);
 #endif
 					TelltaleToolLib_RaiseError("D3DMesh internal resource type not found", ErrorSeverity::ERR);
 					return eMetaOp_Fail;
@@ -1220,7 +1220,7 @@ struct D3DMesh {
 	static METAOP_FUNC_IMPL__(SerializeAsync) {
 		CAST_METAOP(D3DMesh, mesh);
 		bool batfix = false;
-		if (false&&sSetKeyIndex == TelltaleToolLib_GetGameKeyIndex("BATMAN")) {
+		if (false && (sSetKeyIndex == TelltaleToolLib_GetGameKeyIndex("BATMAN"))) {
 			batfix = true;
 			sSetKeyIndex = TelltaleToolLib_GetGameKeyIndex("WD4");
 		}

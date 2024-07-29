@@ -29,6 +29,15 @@ public:
 		DataStream* mpStream;
 		std::string name;
 	};
+
+	struct LessRCE_p {
+
+		inline bool operator()(const ResourceCreateEntry*& lhs, const ResourceCreateEntry*& rhs){
+			return CRC64_CaseInsensitive(0, lhs->name.c_str()) < CRC64_CaseInsensitive(0, rhs->name.c_str());
+		}
+
+	};
+
 	DataStream* mpNameStream = nullptr;
 	DataStream* mpResourceStream = nullptr;
 	std::vector<TTArchive2::ResourceEntry> mResources;
@@ -38,6 +47,7 @@ public:
 	u32 mNamePageCount = 0;
 	bool mbActive;//by lib, for lib
 	DataStream* mpInStream = nullptr;//for lib
+	void* userData = 0;
 
 	//Deletes in stream when done TAKES OWNERSHIP
 	void Activate(DataStream* inArchiveStream);//nullable (assumes creation)

@@ -12,15 +12,12 @@
 
 const extern u32 MAGIC;
 
-#define USE_HDB_V2 1
-
-#if !USE_HDB_V2
 
 /*
 * A database of hashes which the library uses to search for its CRCs. Similar to RTBs, except more complex with pages of entries to make quicker searching
 * Use this to find a CRC to string mapping
 */
-class HashDatabase {
+class HashDatabase_Legacy {
 public:
 	struct Page {
 		char* pageName;
@@ -30,9 +27,9 @@ public:
 		u64 size;
 	};
 
-	~HashDatabase();
+	~HashDatabase_Legacy();
 	//TAKES OWNERSHIP OF STREAM!
-	HashDatabase(DataStream* db);
+	HashDatabase_Legacy(DataStream* db);
 	bool Open();
 	u32 NumPages();
 	u32 NumEntries();
@@ -54,21 +51,17 @@ protected:
 	Page* cached_page;
 };
 
-typedef HashDatabase::Page Page;
-
 #define SEP ,
 
-#define DB_FN(_NAME, _RETURN, _ARGS) _TTToolLib_Exp _RETURN TelltaleToolLib_HashDB_ ## _NAME(HashDatabase* pDatabase _ARGS)
+#define DB_FN(_NAME, _RETURN, _ARGS) _TTToolLib_Exp _RETURN TelltaleToolLib_HashDB_ ## _NAME(HashDatabase_Legacy* pDatabase _ARGS)
 
 DB_FN(NumPages, int);
 DB_FN(NumEntries, int);
 DB_FN(Flags, int);
-DB_FN(PageAt, Page*, SEP int index);
-DB_FN(FindPage, Page*, SEP const char* pageName);
+DB_FN(PageAt, HashDatabase_Legacy::Page*, SEP int index);
+DB_FN(FindPage, HashDatabase_Legacy::Page*, SEP const char* pageName);
 /*result must be a char[1024]*/
-DB_FN(FindEntry, void, SEP Page* pPage SEP u64 crc SEP char* result);
-
-#else
+DB_FN(FindEntry, void, SEP HashDatabase_Legacy::Page* pPage SEP u64 crc SEP char* result);
 
 class HashDatabase {
 public:
@@ -112,7 +105,5 @@ public:
 	void _SetBuffer(Page* page);
 
 };
-
-#endif
 
 #endif

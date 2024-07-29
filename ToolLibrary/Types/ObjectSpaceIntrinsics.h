@@ -14,13 +14,15 @@ template<typename T> struct Curve {//not serialized
 
 struct Vector2 {
 	union {
-		union {
-			float x;
-			float u;
-		};
-		union {
-			float y;
-			float v;
+		struct {
+			union {
+				float x;
+				float u;
+			};
+			union {
+				float y;
+				float v;
+			};
 		};
 		float array[2];
 	};

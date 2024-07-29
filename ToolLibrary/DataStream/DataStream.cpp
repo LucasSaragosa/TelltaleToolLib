@@ -23,10 +23,9 @@ HANDLE openfile_s_(const char* fp, const char* m) {
 		static const char* fmt = "Could not open file %s";
 		static const int flen = strlen(fmt);
 		int fpl = strlen(fp);
-		char* errorbuffer = new char[flen + fpl];
+		char* errorbuffer = TelltaleToolLib_Alloc_GetFixed1024ByteStringBuffer();
 		sprintf(errorbuffer, fmt, fp);
 		TelltaleToolLib_RaiseError(errorbuffer, ErrorSeverity::ERR);
-		delete[] errorbuffer;
 	}
 	return f;
 }
@@ -72,7 +71,7 @@ void DataStreamContainer::Create(DataStreamContainer::ProgressF f, DataStreamCon
 			dll = LoadLibraryA("oo2core_5_win64.dll");
 			if (!dll) {
 #ifdef _DEBUG
-				printf("COULD NOT INITIALIZE OODLE LIBRARY (DLL oo2core_5_win64.dll NOT FOUND).\n");
+				TTL_Log("COULD NOT INITIALIZE OODLE LIBRARY (DLL oo2core_5_win64.dll NOT FOUND).\n");
 #endif
 				return;
 			}
@@ -110,7 +109,7 @@ void DataStreamContainer::Create(DataStreamContainer::ProgressF f, DataStreamCon
 			if (params.mCompressionLibrary == Compression::Library::ZLIB) {
 				if (!Compression::ZlibCompress(compressed, (unsigned int*)&csize, decompressed, 0x10000)) {
 #ifdef _DEBUG
-					printf("COULD NOT COMPRESS WITH ZLIB: RETURNED FALSE! (FOR CREATING COMPRESSED .TTARCH2).\n");
+					TTL_Log("COULD NOT COMPRESS WITH ZLIB: RETURNED FALSE! (FOR CREATING COMPRESSED .TTARCH2).\n");
 #endif
 					return;
 				}
@@ -118,7 +117,7 @@ void DataStreamContainer::Create(DataStreamContainer::ProgressF f, DataStreamCon
 			else {
 				if (!Compression::OodleLZCompress(compressed, (unsigned int*)&csize, decompressed, 0x10000, dll)) {
 #ifdef _DEBUG
-					printf("COULD NOT COMPRESS WITH OODLE: RETURNED FALSE! (FOR CREATING COMPRESSED .TTARCH2).\n");
+					TTL_Log("COULD NOT COMPRESS WITH OODLE: RETURNED FALSE! (FOR CREATING COMPRESSED .TTARCH2).\n");
 #endif
 					return;
 				}
@@ -135,7 +134,7 @@ void DataStreamContainer::Create(DataStreamContainer::ProgressF f, DataStreamCon
 			if (f)
 				f(temp, pr);
 			else
-				printf(temp);
+				TTL_Log(temp);
 			FreeLibrary(dll);
 		}
 
@@ -257,8 +256,8 @@ DataStreamLegacyEncrypted::DataStreamLegacyEncrypted(DataStream* base, int versi
 bool DataStreamContainer::Serialize(char* dest, unsigned __int64 size) {
 	if (mStreamPosition + size > mStreamSize)return false;
 	if (mParams.mbCompress) {
-		if (mCurrentIndex == -1)
-			GetChunk(0);
+		if (mCurrentIndex == -1 && !GetChunk(0))
+			return false;
 		SetPosition(mStreamPosition, DataStreamSeekType::eSeekType_Begin);
 		//pos = 255, window = 100, size = 50
 		int chunkoff = mStreamPosition % mParams.mWindowSize;//55
@@ -275,18 +274,21 @@ bool DataStreamContainer::Serialize(char* dest, unsigned __int64 size) {
 		}
 		mStreamPosition += rem;
 		if (mParams.mWindowSize >= size) {
-			GetChunk(mCurrentIndex + 1);
+			if (!GetChunk(mCurrentIndex + 1))
+				return false;
 			memcpy(dest, mpCachedPage, size);
 		}
 		else {
 			int blocks = size / mParams.mWindowSize;
 			for (int i = 0; i < blocks; i++) {
-				GetChunk(mCurrentIndex + 1);
+				if (!GetChunk(mCurrentIndex + 1))
+					return false;
 				memcpy(dest + i * mParams.mWindowSize, mpCachedPage,
 					mParams.mWindowSize);
 			}
 			rem = size % mParams.mWindowSize;
-			GetChunk(mCurrentIndex + 1);
+			if (!GetChunk(mCurrentIndex + 1))
+				return false;
 			memcpy(dest + blocks * mParams.mWindowSize, mpCachedPage, rem);
 		}
 		mStreamPosition += size;
@@ -304,7 +306,9 @@ void DataStreamContainer::Read(unsigned __int64 offset, unsigned __int64* pConta
 	mParams.mpSrcStream->SetPosition(offset, DataStreamSeekType::eSeekType_Begin);
 	unsigned __int32 type = 0;
 	mStreamStart = offset;
-	mParams.mpSrcStream->Serialize((char*)&type, 4);
+	ok = false;
+	if (!mParams.mpSrcStream->Serialize((char*)&type, 4))
+		return;
 	if (type == 0x5454434E) {//TTNC telltale not compressed
 		mParams.mbCompress = false;
 		mParams.mbEncrypt = false;
@@ -327,14 +331,20 @@ void DataStreamContainer::Read(unsigned __int64 offset, unsigned __int64* pConta
 			mParams.mCompressionLibrary = Compression::Library::ZLIB;
 			break;
 		case 1414808421: //TTCe
+			mParams.mbEncrypt = 1;
 		case 1414808442: //TTCz
-			mParams.mbEncrypt = type == 1414808421;
 			unsigned __int32 libtype;
 			mParams.mpSrcStream->Serialize((char*)&libtype, 4);
-			if (libtype > 1)return;
+			if (libtype > 1){
+				sprintf(TelltaleToolLib_Alloc_GetFixed1024ByteStringBuffer(), "Invalid compression type for DataStreamContainer: 0x%X", libtype);
+				TelltaleToolLib_RaiseError(TelltaleToolLib_Alloc_GetFixed1024ByteStringBuffer(), ERR);
+				return;
+			}
 			mParams.mCompressionLibrary = (Compression::Library)libtype;
 			break;
 		default:
+			sprintf(TelltaleToolLib_Alloc_GetFixed1024ByteStringBuffer(), "Invalid header magic for DataStreamContainer: 0x%X", type);
+			TelltaleToolLib_RaiseError(TelltaleToolLib_Alloc_GetFixed1024ByteStringBuffer(), ERR);
 			return;
 		}
 	}
@@ -364,9 +374,9 @@ DataStreamContainer::~DataStreamContainer() {
 		delete mParams.mpSrcStream;
 }
 
-void DataStreamContainer::GetChunk(unsigned __int64 index) {
+bool DataStreamContainer::GetChunk(unsigned __int64 index) {
 	static HMODULE dll{};
-	if (mCurrentIndex == index)return;
+	if (mCurrentIndex == index)return true;
 	unsigned __int64 offset = mPageOffsets[index];
 	unsigned __int64 size = GetCompressedPageSize(index);
 	mParams.mpSrcStream->SetPosition(mStreamStart + offset, DataStreamSeekType
@@ -379,28 +389,38 @@ void DataStreamContainer::GetChunk(unsigned __int64 index) {
 	if (mParams.mCompressionLibrary == Compression::Library::ZLIB) {
 		unsigned int destl = mParams.mWindowSize;
 		bool r = Compression::ZlibDecompress(mpCachedPage, &destl, mpReadTransitionBuf, size);
+		if (!r) {
+			TelltaleToolLib_RaiseError("Error decompressing data stream container compressed ZLIB chunk", ERR);
+			return false;
+		}
 #if defined(_MSC_VER) && defined(_DEBUG)
-		if (destl != mParams.mWindowSize || !r)
-			printf("Decompression failed: %s %d\n", destl 
-				!= mParams.mWindowSize ? "Dest len not equal, and returned " : 
-					"ZDecompress returned ", r);
+		if (destl != mParams.mWindowSize || !r) {
+			TTL_Log("Decompression failed: %s %d\n", destl
+				!= mParams.mWindowSize ? "Dest len not equal, and returned " :
+				"ZDecompress returned ", r);
+			return false;
+		}
 #endif
-	}else if (mParams.mCompressionLibrary == Compression::Library::OODLE) {
+		}
+	else if (mParams.mCompressionLibrary == Compression::Library::OODLE) {
 		if (!dll) {
 			dll = LoadLibraryA("oo2core_5_win64.dll");
 			if (!dll) {
 #ifdef _DEBUG
-				printf("COULD NOT INITIALIZE OODLE LIBRARY (DLL oo2core_5_win64.dll NOT FOUND).\n");
+				TTL_Log("COULD NOT INITIALIZE OODLE LIBRARY (DLL oo2core_5_win64.dll NOT FOUND).\n");
 #endif
-				return;
-			}
+				return false;
 		}
+	}
 		bool r = Compression::OodleLZDecompress(mpCachedPage, mParams.mWindowSize, mpReadTransitionBuf, size, dll);
 #if defined(_MSC_VER) && defined(_DEBUG)
-		if (!r)
-			printf("Decompression failed: ZDecompress returned %d", r);
+		if (!r) {
+			TTL_Log("Decompression failed: Oodle Decompress returned %d", r);
+			return false;
+		}
 #endif
 	}
+	return true;
 }
 
 /*struct _range {
@@ -760,16 +780,32 @@ bool DataStreamFile_Win::SetPosition(signed __int64 pos, DataStreamSeekType type
 
 bool DataStreamFile_Win::Serialize(char* buf, unsigned __int64 bufsize) {
 	if (!bufsize)return true;
-	if (IsInvalid() || !buf && bufsize)return false;
+	if (IsInvalid() || !buf && bufsize) {
+		TelltaleToolLib_RaiseError("Cannot read from data stream disk: stream is invalid - file did not exist or could not be opened or parameters are invalid (buffer)", ERR);
+		return false;
+	}
 	SetFilePointer((HANDLE)mHandle, mStreamOffset, NULL, FILE_BEGIN);
 	if (IsWrite()) {
-		if (1 != WriteFile((HANDLE)mHandle, buf, bufsize, NULL, NULL)) return false;//if we couldnt write 1 element
+		if (1 != WriteFile((HANDLE)mHandle, buf, bufsize, NULL, NULL)) {
+			sprintf(TelltaleToolLib_Alloc_GetFixed1024ByteStringBuffer(), "Cannot write to data stream disk : windows WriteFile failed with %d", GetLastError());
+			TelltaleToolLib_RaiseError(TelltaleToolLib_Alloc_GetFixed1024ByteStringBuffer(), ERR);
+			return false;//if we couldnt write 1 element
+		}
 		mStreamSize += bufsize;
 		mStreamOffset += bufsize;
 	}
 	else {
-		if (mStreamOffset + bufsize > mStreamSize)return false;
-		ReadFile((HANDLE)mHandle, buf, bufsize, NULL, NULL);
+		if (mStreamOffset + bufsize > mStreamSize) {
+			sprintf(TelltaleToolLib_Alloc_GetFixed1024ByteStringBuffer(), "Cannot read from data stream: trying to read %d bytes but only %d bytes left (lower file size from Windows reads %d)", bufsize, (unsigned long)(mStreamSize - mStreamOffset)
+				, GetFileSize((HANDLE)mHandle,0));
+			TelltaleToolLib_RaiseError(TelltaleToolLib_Alloc_GetFixed1024ByteStringBuffer(), ERR);
+			return false;//if we couldnt write 1 element
+		}
+		if(1!=ReadFile((HANDLE)mHandle, buf, bufsize, NULL, NULL)) {
+			sprintf(TelltaleToolLib_Alloc_GetFixed1024ByteStringBuffer(), "Cannot read from data stream disk : windows ReadFile failed with %d", GetLastError());
+			TelltaleToolLib_RaiseError(TelltaleToolLib_Alloc_GetFixed1024ByteStringBuffer(), ERR);
+			return false;//if we couldnt write 1 element
+		}
 		mStreamOffset += bufsize;
 	}
 	return true;

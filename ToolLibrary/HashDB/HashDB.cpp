@@ -3,11 +3,9 @@
 #include <algorithm>
 #include "../HashManager.h"
 
-#if !USE_HDB_V2
-
 const u32 MAGIC = 0x54544c42;
 
-HashDatabase::HashDatabase(DataStream* stream) {
+HashDatabase_Legacy::HashDatabase_Legacy(DataStream* stream) {
 	if (!stream)throw "bad stream";
 	this->db_stream = stream;
 	this->db_pages = NULL;
@@ -17,12 +15,12 @@ HashDatabase::HashDatabase(DataStream* stream) {
 	this->bufferedPage = NULL;
 }
 
-HashDatabase::Page* HashDatabase::PageAt(int index) {
+HashDatabase_Legacy::Page* HashDatabase_Legacy::PageAt(int index) {
 	if (index >= this->NumPages())return NULL;
 	return this->db_pages ? this->db_pages[index] : NULL;
 }
 
-HashDatabase::Page** HashDatabase::Pages() {
+HashDatabase_Legacy::Page** HashDatabase_Legacy::Pages() {
 	return this->db_pages;
 }
 
@@ -38,19 +36,19 @@ DB_FN(Flags, int) {
 	return pDatabase->Flags();
 }
 
-DB_FN(PageAt, HashDatabase::Page*, SEP int index) {
+DB_FN(PageAt, HashDatabase_Legacy::Page*, SEP int index) {
 	return pDatabase->PageAt(index);
 }
 
-DB_FN(FindPage, HashDatabase::Page*, SEP const char* pageName) {
+DB_FN(FindPage, HashDatabase_Legacy::Page*, SEP const char* pageName) {
 	return pDatabase->FindPage(pageName);
 }
 
-DB_FN(FindEntry, void, SEP HashDatabase::Page* pPage SEP u64 crc SEP char* r) {
+DB_FN(FindEntry, void, SEP HashDatabase_Legacy::Page* pPage SEP u64 crc SEP char* r) {
 	return pDatabase->FindEntry(pPage, crc, r);
 }
 
-void HashDatabase::FindEntry(HashDatabase::Page* page, u64 crc, String* result) {
+void HashDatabase_Legacy::FindEntry(HashDatabase_Legacy::Page* page, u64 crc, String* result) {
 	char res[1024];
 	res[0] = 0;
 	FindEntry(page, crc, res);
@@ -59,7 +57,7 @@ void HashDatabase::FindEntry(HashDatabase::Page* page, u64 crc, String* result) 
 	result->operator=(res);
 }
 
-void HashDatabase::FindEntry(HashDatabase::Page* page, u64 crc, char* result) {
+void HashDatabase_Legacy::FindEntry(HashDatabase_Legacy::Page* page, u64 crc, char* result) {
 	if (!result || !crc)
 		return;
 	result[0] = 0;
@@ -109,7 +107,7 @@ void HashDatabase::FindEntry(HashDatabase::Page* page, u64 crc, char* result) {
 }
 
 
-void HashDatabase::DumpPage(Page* page, std::vector<String>& dest)
+void HashDatabase_Legacy::DumpPage(Page* page, std::vector<String>& dest)
 {
 	char result[1024];
 	if (page) {
@@ -156,7 +154,7 @@ void HashDatabase::DumpPage(Page* page, std::vector<String>& dest)
 	}
 }
 
-bool HashDatabase::Open() {
+bool HashDatabase_Legacy::Open() {
 	if (!this->db_stream)return false;
 	DataStream* stream = this->db_stream;
 	int magic;
@@ -165,10 +163,10 @@ bool HashDatabase::Open() {
 	stream->Serialize((char*)&flags, 1);
 	stream->Serialize((char*)&this->numPages, 4);
 	if (this->db_pages)return false;//cannot open another
-	this->db_pages = (HashDatabase::Page**)calloc(sizeof(HashDatabase::Page*), this->numPages);
+	this->db_pages = (HashDatabase_Legacy::Page**)calloc(sizeof(HashDatabase_Legacy::Page*), this->numPages);
 	if (!this->db_pages)return false;
 	for (int i = 0; i < this->numPages; i++) {
-		HashDatabase::Page* page = new Page();
+		HashDatabase_Legacy::Page* page = new Page();
 		stream->Serialize((char*)&page->count, 4);
 		stream->Serialize((char*)&page->flags, 1);
 		int len;
@@ -185,11 +183,11 @@ bool HashDatabase::Open() {
 	return true;
 }
 
-u32 HashDatabase::Flags() {
+u32 HashDatabase_Legacy::Flags() {
 	return this->flags;
 }
 
-HashDatabase::Page* HashDatabase::FindPage(const char* n) {
+HashDatabase_Legacy::Page* HashDatabase_Legacy::FindPage(const char* n) {
 	if (!this->db_pages)return NULL;
 	int pages = this->NumPages();
 	for (int i = 0; i < pages; i++) {
@@ -198,7 +196,7 @@ HashDatabase::Page* HashDatabase::FindPage(const char* n) {
 	return NULL;
 }
 
-u32 HashDatabase::NumEntries() {
+u32 HashDatabase_Legacy::NumEntries() {
 	u32 ret = 0;
 	int pages = NumPages();
 	for (int i = 0; i < pages; i++) {
@@ -207,11 +205,11 @@ u32 HashDatabase::NumEntries() {
 	return ret;
 }
 
-u32 HashDatabase::NumPages() {
+u32 HashDatabase_Legacy::NumPages() {
 	return this->numPages;
 }
 
-HashDatabase::~HashDatabase() {
+HashDatabase_Legacy::~HashDatabase_Legacy() {
 	if (this->db_stream)
 		delete db_stream;
 	for (int i = 0; i < NumPages(); i++) {
@@ -222,9 +220,8 @@ HashDatabase::~HashDatabase() {
 		free(this->db_pages);
 	if (this->bufferedPage)
 		free(bufferedPage);
-}
 
-#else
+}
 
 // DATA BASE VERSION 2
 
@@ -360,8 +357,10 @@ bool HashDatabase::Open()
 {
 	char header[4];
 	this->mpSrcStream->Serialize(header, 4);
-	if (memcmp(header, MAGIC, 4) != 0)
+	if (memcmp(header, MAGIC, 4) != 0){
+		printf("Cannot open HashDatabase. Very likely that the database is using version 1. Please check your install.");
 		return false;
+	}
 	u32 numPages{ 0 };
 	mpSrcStream->Serialize((char*)&numPages, 4);
 	mPages.reserve(numPages);
@@ -406,6 +405,16 @@ bool repl(std::string& str, const std::string& from, const std::string& to) {
 	return true;
 }
 
+inline bool iequals(const std::string& aa, const std::string& bb)
+{
+	const char* a = aa.c_str(), * b = bb.c_str();
+	for (;; a++, b++) {
+		int d = tolower((unsigned char)*a) - tolower((unsigned char)*b);
+		if (d != 0 || !*a)
+			return d;
+	}
+}
+
 bool HashDatabase::Create(const char* fp, DataStream* pOut, bool bVerbose, bool bCompress, bool bEnc)
 {
 	if (bEnc)
@@ -427,20 +436,29 @@ bool HashDatabase::Create(const char* fp, DataStream* pOut, bool bVerbose, bool 
 			break;
 		if (strlen(buf) >= 8 && !_stricmp(std::string(buf).substr(0,7).c_str(), "NEWPAGE")) {
 			if(currentPage.mPageName.length() != 0){
-			if (bVerbose)
+				if (bVerbose)
 					printf("-collected page %s: %d hashes\n", currentPage.mPageName.c_str(), (u32)cur_values.size());
 				pages.push_back(std::move(currentPage));
 				values.push_back(std::move(cur_values));
 				currentPage.mCount = currentPage.mFlags = currentPage.mStringStart = currentPage.mSymbolStart = 0;
 			}
 			currentPage.mPageName = buf + 8;
+			if (bVerbose)
+				printf("-collecting page %s\n", currentPage.mPageName.c_str());
 			repl(currentPage.mPageName, "\n", "");
 			repl(currentPage.mPageName, "\r", "");
 		}else{
 			std::string s = buf;
 			repl(s, "\n", "");
 			repl(s, "\r", "");
-			if (std::find(cur_values.begin(), cur_values.end(), s) != cur_values.end())
+			bool exit = false;
+			for(auto it = cur_values.begin(); it != cur_values.end(); it++){
+				if (!iequals(*it, s)) {
+					exit = true;
+					break;
+				}
+			}
+			if (exit)
 				continue;
 			currentPage.mFlags += (u32)s.length();
 			cur_values.push_back(std::move(s));
@@ -545,5 +563,3 @@ void HashDatabase::_SetBuffer(Page* page)
 	mpSrcStream->SetPosition(mSymbolBase + page->mSymbolStart, DataStreamSeekType::eSeekType_Begin);
 	mpSrcStream->Serialize((char*)mpBuffer, (unsigned long long)page->mCount << 3llu);
 }
-
-#endif

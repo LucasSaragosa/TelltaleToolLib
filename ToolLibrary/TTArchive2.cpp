@@ -20,8 +20,13 @@ void TTArchive2::Activate(DataStream* inArchiveStream) {
 	mpInStream = inArchiveStream;
 	u64 version{ 0 };
 	c->Read(params.mpSrcStream->GetPosition(), &version);
+	if(c->IsInvalid()){
+		mbActive = false;
+		return;
+	}
 	version = 0;
-	inArchiveStream->Serialize((char*)&version, 4);
+	if (!inArchiveStream->Serialize((char*)&version, 4))
+		return;//error handled by container
 	if (version == 1414807858) {//TTA2: Telltale Archive 2
 		version = 0;
 		goto v3;
@@ -35,15 +40,23 @@ void TTArchive2::Activate(DataStream* inArchiveStream) {
 	}
 	else if (version != 1414807860) {//if not TTA4
 		mbActive = false;
+		sprintf(TelltaleToolLib_Alloc_GetFixed1024ByteStringBuffer(), "Invalid TTARCH2 magic version - likely wrong game ID set: 0x%X!", version);
+		TelltaleToolLib_RaiseError(TelltaleToolLib_Alloc_GetFixed1024ByteStringBuffer(), ERR);
 		return;
 	}
 	else version = 2;
 	u32 namesize, resources;
 	getint(&namesize, 4);
-	if (namesize > 0x10000000)return;
+	if (namesize > 0x10000000) {
+		TelltaleToolLib_RaiseError("Name table too large", ERR);
+		return;
+	}
 	this->mNamePageCount = namesize / 0x10000;
 	getint(&resources, 4);
-	if (resources > 0xFFFFF)return;
+	if (resources > 0xFFFFF){
+		TelltaleToolLib_RaiseError("Too many resources", ERR);
+		return;
+	}
 	mResources.reserve(resources);
 	u32 u;
 	//int* buffer = version < 1 ? new int[resources] : NULL;
@@ -72,6 +85,12 @@ void TTArchive2::Activate(DataStream* inArchiveStream) {
 
 DataStream* TTArchive2::GetResourceStream(TTArchive2::ResourceEntry* entry) {
 	return new DataStreamSubStream(mpResourceStream, (unsigned __int64)entry->mSize, entry->mOffset);
+}
+
+static int _Cmp(void const* lhs, void const* rhs){
+	u64 xl = CRC64_CaseInsensitive(0,((const TTArchive2::ResourceCreateEntry*)lhs)->name.c_str());
+	u64 xr = CRC64_CaseInsensitive(0,((const TTArchive2::ResourceCreateEntry*)rhs)->name.c_str());
+	return xl > xr ? 1 : xl < xr ? -1 : 0;
 }
 
 bool TTArchive2::Create(ProgressFunc func, DataStream* pDst, TTArchive2::ResourceCreateEntry* pFiles, int pNumFiles,
@@ -111,6 +130,7 @@ bool TTArchive2::Create(ProgressFunc func, DataStream* pDst, TTArchive2::Resourc
 		func("Writing Headers", 10);
 	u64 curroff = 0;
 	u32 curnameoff = 0;
+	std::qsort(pFiles, pNumFiles, sizeof(ResourceCreateEntry*), _Cmp);
 	for (int i = 0; i < pNumFiles; i++) {
 		ResourceCreateEntry* entry = pFiles + i;
 		u64 crc = CRC64_CaseInsensitive(0, entry->name.c_str());
@@ -190,10 +210,28 @@ bool TTArchive2::HasResource(const Symbol& sym) {
 
 TTArchive2::ResourceEntry* TTArchive2::_FindResource(const Symbol& sym) {
 	if (mbActive) {
-		int i = 0;
-		for (auto it = mResources.begin(); it != mResources.end(); it++, i++) {
-			if (sym.GetCRC() == it->mNameCRC)
-				return mResources.data() + i;
+		i32 p = 0;
+		i32 r = (i32)mResources.size() - 1;
+		i32 q = (r + p) / 2;
+
+		while (p <= r)
+		{
+			if (mResources[q].mNameCRC == sym.GetCRC()) {
+				return mResources.data() + q;
+			}
+			else
+			{
+				if (mResources[q].mNameCRC < sym.GetCRC())
+				{
+					p = q + 1;
+					q = (r + p) / 2;
+				}
+				else
+				{
+					r = q - 1;
+					q = (r + p) / 2;
+				}
+			}
 		}
 	}
 	return NULL;

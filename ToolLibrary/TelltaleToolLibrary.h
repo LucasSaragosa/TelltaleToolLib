@@ -312,10 +312,12 @@ _TTToolLib_Exp i32 TelltaleToolLib_GetGameKeyIndex(const char* pGameID);
 _TTToolLib_Exp HashDatabase* TelltaleToolLib_GetGlobalHashDatabase();
 
 //If null returned then property key does not exist
-_TTToolLib_Exp void* TelltaleToolLib_GetPropertySetValue(void* prop, unsigned long long keyhash);
+_TTToolLib_Exp void* TelltaleToolLib_GetPropertySetValue(void* prop, unsigned long long keyhash, MetaClassDescription** pOptionalOutType);
 
 //Moves pInst into property set. Ownership granted from you. Returns if success. Can exist or not, if exists overriden and old value deleted.
 _TTToolLib_Exp bool TelltaleToolLib_SetPropertySetValue(void* prop, unsigned long long kh, MetaClassDescription* pType, void* pInst);
+
+_TTToolLib_Exp void TelltaleToolLib_RemovePropertySetValue(void* prop, unsigned long long keyhash);
 
 class TTArchive2;
 
@@ -340,6 +342,12 @@ _TTToolLib_Exp const char* TelltaleToolLib_GetArchive2ResourceName(TTArchive2* p
 //get the resource name at index index. Use NumResources and loop from 0 to num-1 to go through all resources.
 _TTToolLib_Exp unsigned long long TelltaleToolLib_GetArchive2Resource(TTArchive2* pArchive, int index);
 
+//Reads all remaining bytes from the given data stream and returns a malloc buffer. Use dealloc exported function to delete the buffer once done
+_TTToolLib_Exp void* TelltaleToolLib_ReadDataStream(DataStream* pReadStream, unsigned long* pOutSize);
+
+_TTToolLib_Exp void TelltaleToolLib_WriteDataStream(DataStream* pOutStream, void* pBuffer, unsigned long size);
+
+_TTToolLib_Exp unsigned long long TelltaleToolLib_CRC64CaseInsensitive(const char* pNulTermString, unsigned long long initCRC/*=0*/);
 
 enum class IntrinType {
 	U8,
@@ -379,6 +387,7 @@ enum class ContainerOp {
 	KTY,//KeyType(ignore, ignore, ignore)
 	VTY,//ValType(ignore, ignore, ignore)
 	CHK,//IsContainer(meta class, ignore , ignore) checks if container type. container is ignored.
+	CLR,//clear
 };
 
 //perform container operation. see operation enum
@@ -419,6 +428,10 @@ _TTToolLib_Exp void TelltaleToolLib_SetErrorCallback(ErrorCallbackF _Func);
 _TTToolLib_Exp void TelltaleToolLib_RaiseError(const char* _Msg, ErrorSeverity _S);
 
 _TTToolLib_Exp const char* TelltaleToolLib_GetLastError();
+
+_TTToolLib_Exp void TTL_Log(const char* const  _Fmt, ...);
+
+_TTToolLib_Exp void TelltaleToolLib_SetLoggerHook(void (*func)(const char* const fmt, va_list args));
 
 //_TTToolLib_Exp MetaOpResult
 //TelltaleToolLib_PerformMetaSerialize(MetaClassDescription* pObjectDescription, void* pObject, MetaStream* pUserData);

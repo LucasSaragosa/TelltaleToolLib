@@ -57,6 +57,192 @@ struct AnimationValueInterfaceBase {
 		eValueKind = 0xFF000000,
 	};
 
+	inline static const char* FlagToString(Flags flag) {
+		switch(flag){
+		case eDisabled:
+			return "Disabled";
+		case eTimeBehavior:
+			return "Time Behaviour";
+		case eWeightBehavior:
+			return "Weight Behaviour";
+		case eMoverAnim:
+			return "Mover Animation";
+		case ePropertyAnimation:
+			return "Property Animation";
+		case eTextureMatrixAnimation:
+			return "Texture Matrix Animation";
+		case eAudioDataAnimation:
+			return "Audio Data Animation";
+		case eDontOptimize:
+			return "Don't Optimize";
+		case eHomogeneous:
+			return "Homogeneous";
+		case eMixerScaled:
+			return "Mixer Scaled";
+		case eMixerHomogeneous:
+			return "Mixer Homogeneous";
+		case eStyleAnimation:
+			return "Style Animation";
+		case ePropForceUpdate:
+			return "Prop Force Update";
+		case eMixerOwned:
+			return "Mixer Owned";
+		case eMixerDirty:
+			return "Mixer Dirty";
+		case eAdditive:
+			return "Additive";
+		case eExternallyOwned:
+			return "Externally owned";
+		case eDontMixPausedControllers:
+			return "Don't mix paused controllers";
+		case eRuntimeAnimation:
+			return "Runtime Animation";
+		case eTransientAnimation:
+			return "Transient Animation";
+		case eToolOnly:
+			return "Tool Only";
+		case eValueKind:
+			return "Value Kind";
+		case eMixerWeightedBlend:
+			return "Mixer Weighted Blend";
+		case eKeyedAttachmentAnimation:
+			return "Keyed Attachment Animation";
+		default:
+			return "Unknown";
+		}
+	}
+
+	enum ValueType {
+		eValue_Time = 0x1,
+		eValue_Weight = 0x2,
+		eValue_Skeletal = 0x3,
+		eValue_Mover = 0x4,
+		eValue_Property = 0x5,
+		eValue_AdditiveMask = 0x6,
+		eValue_TargetedMover = 0x7,
+		eValue_SkeletonPose = 0x8,
+		eValue_SkeletonRootAnimation = 0x9,
+		eValue_Texture_Start = 0x10,
+		eValue_Texture_MoveU = 0x11,
+		eValue_Texture_MoveV = 0x12,
+		eValue_Texture_ScaleU = 0x13,
+		eValue_Texture_ScaleV = 0x14,
+		eValue_Texture_Rotate = 0x15,
+		eValue_Texture_Override = 0x16,
+		eValue_Texture_Visibility = 0x17,
+		eValue_Texture_ShearU = 0x18,
+		eValue_Texture_ShearV = 0x19,
+		eValue_Texture_ShearOriginU = 0x1A,
+		eValue_Texture_ShearOriginV = 0x1B,
+		eValue_Texture_RotateOriginU = 0x1C,
+		eValue_Texture_RotateOriginV = 0x1D,
+		eValue_Texture_ScaleOriginU = 0x1E,
+		eValue_Texture_ScaleOriginV = 0x1F,
+		eValue_Texture_End = 0x1F,
+		eValue_Audio_Start = 0x20,
+		eValue_Audio_Pan = 0x21,
+		eValue_Audio_Pitch = 0x22,
+		eValue_Audio_Reverb_Wet_Level = 0x23,
+		eValue_Audio_Reverb_Dry_Level = 0x24,
+		eValue_Audio_Low_Pass_Filter_Cutoff = 0x25,
+		eValue_Audio_High_Pass_Filter_Cutoff = 0x26,
+		eValue_Audio_Event_Parameter = 0x27,
+		eValue_Audio_Surround_Direction = 0x28,
+		eValue_Audio_Surround_Extent = 0x29,
+		eValue_Audio_LFE_Send = 0x2A,
+		eValue_Audio_LangResVolume = 0x2B,
+		eValue_Audio_End = 0x3F,
+		eValue_Vertex_Start = 0x40,
+		eValue_Vertex_Position = 0x41,
+		eValue_Vertex_Normal = 0x42,
+		eValue_Vertex_End = 0x60,
+		eValue_AutoAct = 0x61,
+		eValue_ExplicitComputeValue = 0x62,
+	};
+
+	inline static const char* GetValueType(ValueType type) {
+		if (type == eValue_Time)
+			return "Time";
+		else if (type == eValue_Weight)
+			return "Weight";
+		else if (type == eValue_Skeletal)
+			return "Skeletal";
+		else if (type == eValue_Mover)
+			return "Mover";
+		else if (type == eValue_Property)
+			return "Property";
+		else if (type == eValue_AdditiveMask)
+			return "Additive Mask";
+		else if (type == eValue_TargetedMover)
+			return "Targeted Mover";
+		else if (type == eValue_SkeletonPose)
+			return "Skeleton Pose";
+		else if (type == eValue_SkeletonRootAnimation)
+			return "Skeleton Root Animation";
+		else if (type == eValue_Texture_MoveU)
+			return "Texture Move U";
+		else if (type == eValue_Texture_MoveV)
+			return "Texture Move V";
+		else if (type == eValue_Texture_ScaleU)
+			return "Texture Scale U";
+		else if (type == eValue_Texture_ScaleV)
+			return "Texture Scale V";
+		else if (type == eValue_Texture_Rotate)
+			return "Texture Rotate";
+		else if (type == eValue_Texture_Override)
+			return "Texture Override";
+		else if (type == eValue_Texture_Visibility)
+			return "Texture Visibility";
+		else if (type == eValue_Texture_ShearU)
+			return "Texture Sheav U";
+		else if (type == eValue_Texture_ShearV)
+			return "Texture Shear V";
+		else if (type == eValue_Texture_ShearOriginU)
+			return "Texture Shear Origin U";
+		else if (type == eValue_Texture_ShearOriginV)
+			return "Texture Shear Origin V";
+		else if (type == eValue_Texture_RotateOriginU)
+			return "Texture Rotate Origin U";
+		else if (type == eValue_Texture_RotateOriginV)
+			return "Texture Rotate Origin V";
+		else if (type == eValue_Texture_ScaleU)
+			return "Texture Scale U";
+		else if (type == eValue_Texture_ScaleV)
+			return "Texture Scale V";
+		else if (type == eValue_Audio_Pan)
+			return "Audio Pan";
+		else if (type == eValue_Audio_Pitch)
+			return "Audio Pitch";
+		else if (type == eValue_Audio_Reverb_Wet_Level)
+			return "Audio Reverb Wet Level";
+		else if (type == eValue_Audio_Reverb_Dry_Level)
+			return "Audio Reverb Dry Level";
+		else if (type == eValue_Audio_Low_Pass_Filter_Cutoff)
+			return "Audio Low Pass Filter Cutoff";
+		else if (type == eValue_Audio_High_Pass_Filter_Cutoff)
+			return "Audio High Pass Filter Cutoff";
+		else if (type == eValue_Audio_Event_Parameter)
+			return "FMOD Event Parameter";
+		else if (type == eValue_Audio_Surround_Direction)
+			return "Audio Surround Direction";
+		else if (type == eValue_Audio_Surround_Extent)
+			return "Audio Surround Extent";
+		else if (type == eValue_Audio_LFE_Send)
+			return "Audio Low Freq. Effects Send";
+		else if (type == eValue_Audio_LangResVolume)
+			return "Audio Language Resource Volume";
+		else if (type == eValue_Vertex_Position)
+			return "Vertex Position";
+		else if (type == eValue_Vertex_Normal)
+			return "Vertex Normal";
+		else if (type == eValue_AutoAct)
+			return "Auto Act";
+		else if (type == eValue_ExplicitComputeValue)
+			return "Explicit Compute Value";
+		else
+			return "Unknown";
+	}
+
 	Symbol mName;
 	u32 mFlags;
 	//DO NOT TOUCH
@@ -89,8 +275,12 @@ struct AnimationValueInterfaceBase {
 		return 10'000.0f;
 	}
 
-	INLINE void SetType(int type) {
+	INLINE void SetType(ValueType type) {
 		mFlags |= (type << 24);
+	}
+
+	INLINE ValueType GetType() {
+		return (ValueType)(mFlags >> 24);
 	}
 
 	virtual MetaOpResult SerializeIn(AnimationValueSerializeContext* context, u32 version) {

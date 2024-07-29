@@ -263,7 +263,7 @@ public:
 		if (mpStorage)delete[] mpStorage;
 		mpStorage = new T[mCapacity];
 		for (int i = 0; i < mCapacity; i++) {
-			new (mpStorage + i) T(_STD move(other.mpStorage[i]));
+			new (mpStorage + i) T(other.mpStorage[i]);
 		}
 		return *this;
 	}
@@ -274,7 +274,7 @@ public:
 		if (other.mpStorage) {
 			mpStorage = new T[mCapacity];
 			for (int i = 0; i < mCapacity; i++) {
-				new (mpStorage + i) T(_STD move(other.mpStorage[i]));
+				new (mpStorage + i) T(other.mpStorage[i]);
 			}
 		}
 		else {

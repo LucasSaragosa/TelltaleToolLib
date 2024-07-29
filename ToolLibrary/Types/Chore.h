@@ -178,6 +178,11 @@ struct DependencyLoader {
 			delete mpResNames;
 	}
 
+	INLINE void EnsureAlloc(){
+		if (!mpResNames)
+			mpResNames = (DCArray<String>*)GetMetaClassDescription("DCArray<String>")->New();
+	}
+
 	static METAOP_FUNC_IMPL__(SerializeAsync) {
 		CAST_METAOP(DependencyLoader<N>, loader);
 		bool b = loader->mpResNames != NULL;
@@ -291,7 +296,9 @@ struct ChoreResource {
 		eForceInclusionOfMoverAnimation = 2,
 		eIsThisChore = 4,
 		eMoodIdlePersists = 8,
-		e_LibInterpreted_IsChoreCut = 0x1000
+		e_LibInterpreted_IsChoreCut = 0x1000,//12
+		e_LibInterpreted_Unknown = 0x2000,//13
+		eIsMasterCut = 0x4000,//14
 	};
 
 	ChoreResource() {
@@ -397,6 +404,13 @@ struct Chore {
 	constexpr static Symbol kStyleIdleBaseTransitionTime = Symbol("Style Idle Base Transition Time");
 	constexpr static Symbol kUseNewStyleIdle = Symbol("Use New Style Idles");
 
+	// BELOW 5 STRINGS SHOULD HAVE '_interface' replaced wth 'Interface' eg audio_ambienceInterface instead
+
+	constexpr static const char* saAudioAgentPrefix_Ambience = "audio_ambience_interface_";
+	constexpr static const char* saAudioAgentPrefix_Listener = "audio_listener_interface_";
+	constexpr static const char* saAudioAgentPrefix_Music = "audio_music_interface_";
+	constexpr static const char* saAudioAgentPrefix_Reverb = "audio_reverb_interface_";
+	constexpr static const char* saAudioAgentPrefix_Sfx = "audio_sfx_interface_";
 
 	String mName;
 	Flags mFlags;
@@ -434,10 +448,36 @@ struct Chore {
 		eSpillout = 0x2,
 	};
 
+	enum ChoreFlags {
+		eResetNavCamsOnExit = 1,
+		eBackgroundFade = 2,
+		eBackgroundLoop = 4,
+		eEndPause = 8,
+		eAdditive_Depreciated = 0x10,
+		eEmbedded = 0x20,
+		eChoreCut = 0x40,
+	};
+
 	struct EnumExtentsMode : EnumBase
 	{
 		ExtentsMode mVal;
 	};
+
+	INLINE float todo_ComputeLength(){
+		int resind = 0;
+		if (mPtrResources.mSize <= 0)
+			return 0.0;
+		else do {
+			if(mPtrResources[resind]->mbEnabled){
+				//add control anim get max time  
+			}
+			resind++;
+		} while (resind < mPtrResources.mSize);
+	}
+
+	INLINE int FindThisChoreAgent() {
+		return FindAgent(Symbol{ mName.c_str() });
+	}
 
 	INLINE int FindAgent(Symbol agentName) {
 		Symbol compare{};
@@ -449,7 +489,7 @@ struct Chore {
 		return -1;
 	}
 
-	u32 GetNumResources() {
+	INLINE u32 GetNumResources() {
 		return mNumResources = mPtrResources.GetSize();
 	}
 
@@ -457,31 +497,63 @@ struct Chore {
 		return 0.25f;
 	}
 
-	bool IsValidResource(int id) {
+	INLINE bool IsValidResource(int id) {
 		return id >= 0 && id < mPtrResources.GetSize();
 	}
 
-	ChoreResource* GetResource(int id) {
+	INLINE ChoreResource* GetResource(int id) {
 		return *(mPtrResources.mpStorage + id);
 	}
 
-	ChoreAgent* GetAgent(int id) {
+	INLINE ChoreAgent* GetAgent(int id) {
 		return *(mPtrAgents.mpStorage + id);
 	}
 
-	ChoreAgent* AddAgent(const String& agentName) {
+	INLINE ChoreAgent* AddAgent(const String& agentName) {
 		if (FindAgent(Symbol(agentName.c_str())) != -1)
 			return NULL;
 		ChoreAgent* agent = new ChoreAgent();
 		mPtrAgents.AddElement(0, NULL, &agent);
 		agent->SetChore(this);
 		agent->SetAgentName(agentName);
+		mNumAgents++;
 		return agent;
 	}
 
+	INLINE void RemoveAgent(int index) {
+		if (mNumAgents == 0)
+			return;
+		ChoreAgent* pAgent = mPtrAgents[index];
+
+		// Remove any resources needed
+
+		for(int i = 0; i < pAgent->GetNumResources(); i++){
+			RemoveResource(pAgent->mResources[i], pAgent);
+		}
+
+		delete pAgent;
+		mPtrAgents.RemoveElement(index);
+		mNumAgents--;
+	}
+
+	INLINE void RemoveResource(int resIndex, ChoreAgent* pOptionalIgnoreAgent = 0){
+		for(int i = 0; i < mNumAgents; i++){
+			ChoreAgent* pAgent = mPtrAgents[i];
+			if(pAgent != pOptionalIgnoreAgent){
+				for(int j = 0; j < pAgent->GetNumResources(); j++){
+					if (pAgent->mResources[j] > resIndex)
+						pAgent->mResources[j]--;
+				}
+			}
+		}
+		mNumResources--;
+		delete mPtrResources[resIndex];
+		mPtrResources.RemoveElement(resIndex);
+	}
+
 	//see flags in addresbehaviour for behaviour
-	ChoreResource* AddResource(Symbol resName, MetaClassDescription* pDesc, Flags behaviour, void* hEmbeddedData, MetaClassDescription* hEmbeddedType) {
-		ChoreResource* ret = new ChoreResource();
+	INLINE ChoreResource* AddResource(Symbol resName, MetaClassDescription* pDesc, Flags behaviour, void* hEmbeddedData, MetaClassDescription* hEmbeddedType) {
+		ChoreResource* ret = new ChoreResource();//pDesc can be null
 		mPtrResources.AddElement(0, NULL, &ret);
 		ret->SetChore(this);
 		ret->SetIsAgentResource((behaviour.mFlags & AddResBehaviour::eIsAgentResource) != 0);
@@ -493,6 +565,7 @@ struct Chore {
 		//if (((behaviour.mFlags & AddResBehaviour::eCreateAgents) != 0) && pDesc == GetMetaClassDescription<Chore>()) {
 //
 		//}
+		mNumResources++;
 		return ret;
 	}
 

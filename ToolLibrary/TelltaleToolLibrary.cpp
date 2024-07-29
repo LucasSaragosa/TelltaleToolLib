@@ -163,10 +163,11 @@ MetaOpResult TelltaleToolLib_PerformMetaSerialize(MetaClassDescription* pObjectD
 HashDatabase* sgHashDB = NULL;
 bool sInitialized = false;
 const char* s_lastError = nullptr;
+void (*printf_hook)(const char* const fmt, va_list args) = NULL;
 
 void _DefaultCallback(const char* msg, ErrorSeverity e) {
 #ifdef DEBUGMODE
-    printf("ERROR: %s: [%s]\n",msg, e == ErrorSeverity::CRITICAL_ERROR ? "CRITICAL" : e == ErrorSeverity::NOTIFY ? "NOTIFY" 
+    TTL_Log("ERROR: %s: [%s]\n",msg, e == ErrorSeverity::CRITICAL_ERROR ? "CRITICAL" : e == ErrorSeverity::NOTIFY ? "NOTIFY" 
     : e == ErrorSeverity::WARN ? "WARNING" : "ERR");
 #endif
     if (e == ErrorSeverity::CRITICAL_ERROR)exit(-1);
@@ -185,6 +186,21 @@ void TelltaleToolLib_RaiseError(const char* _Msg, ErrorSeverity _S) {
 
 _TTToolLib_Exp const char* TelltaleToolLib_GetLastError() {
     return s_lastError;
+}
+
+_TTToolLib_Exp void TTL_Log(const char* const  _Fmt, ...){
+    va_list va{};
+    va_start(va, _Fmt);
+#ifdef _DEBUG
+    vprintf_s(_Fmt, va); //print as normal
+#endif
+    if (printf_hook != NULL)
+        printf_hook(_Fmt, va);
+    va_end(va);
+}
+
+_TTToolLib_Exp void TelltaleToolLib_SetLoggerHook(void (*func)(const char* const fmt, va_list args)){
+    printf_hook = func;
 }
 
 TTEXPORT void* TelltaleToolLib_Malloc(unsigned long size) {
@@ -218,6 +234,8 @@ void TelltaleToolLib_Free() {
         if (sVersionDBs[i])
             delete sVersionDBs[i];
     }
+    printf_hook = NULL;
+    sSetKeyIndex = DEFAULT_BLOWFISH_GAME_KEY;
     memset(sVersionDBs, 0, sizeof(TelltaleVersionDatabase*) * KEY_COUNT);
     memset(sProxyState, 0, sizeof(ProxyMetaState) * KEY_COUNT);
     __ReleaseSVI_Internal();
@@ -243,7 +261,8 @@ HashDatabase* TelltaleToolLib_GetGlobalHashDatabase() {
 u8* TelltaleToolLib_EncryptLencScript(u8* data, u32 size, u32* outsize) {
     u8* ret = (u8*)malloc(size);
     memcpy(ret, data, size);
-    *outsize = size;
+    if(outsize)
+     *outsize = size;
     TelltaleToolLib_BlowfishEncrypt(ret, size, sBlowfishKeys[sSetKeyIndex].isNewEncryption, (unsigned char*)sBlowfishKeys[sSetKeyIndex].game_key);
     return ret;
 }
@@ -251,7 +270,8 @@ u8* TelltaleToolLib_EncryptLencScript(u8* data, u32 size, u32* outsize) {
 u8* TelltaleToolLib_DecryptLencScript(u8* data, u32 size, u32* outsize) {
     u8* ret = (u8*)malloc(size);
     memcpy(ret, data, size);
-    *outsize = size;
+	if (outsize)
+		*outsize = size;
     TelltaleToolLib_BlowfishDecrypt(ret, size, sBlowfishKeys[sSetKeyIndex].isNewEncryption, (unsigned char*)sBlowfishKeys[sSetKeyIndex].game_key);
     return ret;
 }
@@ -261,7 +281,8 @@ u8* TelltaleToolLib_EncryptScript(u8* data, u32 size, u32 *outsize) {
     if (*(int*)data == *(const int*)"\x1BLua") {
         u8* ret = (u8*)malloc(size);
         memcpy(ret, data, size);
-        *outsize = size;
+		if (outsize)
+			*outsize = size;
         *(int*)ret = 1850035227;//LEn
         TelltaleToolLib_BlowfishEncrypt(ret + 4, size - 4, sBlowfishKeys[sSetKeyIndex].isNewEncryption, (unsigned char*)sBlowfishKeys[sSetKeyIndex].game_key);
         return ret;
@@ -269,14 +290,16 @@ u8* TelltaleToolLib_EncryptScript(u8* data, u32 size, u32 *outsize) {
     else if (*(int*)data != *(const int*)"\x1BLEo" && *(int*)data != *(const int*)"\x1BLEn") {
         u8* ret = (u8*)malloc(size + 4);
         memcpy(ret + 4, data, size);
-        *outsize = size + 4;
+        if (outsize)
+            *outsize = size + 4;
         *(int*)ret = 1866812443;//LEo
         TelltaleToolLib_BlowfishEncrypt(ret + 4, size, sBlowfishKeys[sSetKeyIndex].isNewEncryption, (unsigned char*)sBlowfishKeys[sSetKeyIndex].game_key);
         return ret;
     }
     u8* ret = (u8*)malloc(size);
     memcpy(ret, data, size);
-    *outsize = size;
+	if (outsize)
+		*outsize = size;
     return ret;
 }
 
@@ -310,7 +333,12 @@ const char* TelltaleToolLib_GetMetaClassDescriptionName(MetaClassDescription* pO
 }
 
 DataStream* TelltaleToolLib_CreateDataStream(const char* fp, DataStreamMode mode) {
-    return new DataStreamFileDisc((FileHandle)PlatformSpecOpenFile(fp, mode), mode);
+    DataStreamFileDisc* pDisk =  new DataStreamFileDisc((FileHandle)PlatformSpecOpenFile(fp, mode), mode);
+    if(pDisk->IsInvalid()){
+        delete pDisk;
+        return nullptr;
+    }
+    return pDisk;
 }
 
 void TelltaleToolLib_DeleteDataStream(DataStream* stream) {
@@ -469,14 +497,26 @@ bool TelltaleToolLib_ReadMetaStream(DataStream* pIn, MetaClassDescription* pClas
         TelltaleToolLib_RaiseError("RMS: invalid parameters", ErrorSeverity::ERR);
 }
 
-_TTToolLib_Exp void* TelltaleToolLib_GetPropertySetValue(void* prop, unsigned long long keyhash){
+ void TelltaleToolLib_RemovePropertySetValue(void* prop, unsigned long long keyhash){
+	 PropertySet* p = (PropertySet*)prop;
+     if (p == nullptr)
+         return;
+     p->RemoveProperty(keyhash);
+ }
+
+ void* TelltaleToolLib_GetPropertySetValue(void* prop, unsigned long long keyhash, MetaClassDescription** out) {
     PropertySet* p = (PropertySet*)prop;
     if (p == nullptr)
         return nullptr;
-    return p->GetProperty(keyhash);
+	for (int i = 0; i < p->mKeyMap.GetSize(); i++)
+        if (p->mKeyMap[i].mKeyName == keyhash) {
+            *out = p->mKeyMap[i].mpValue->mpDataDescription;
+            return p->mKeyMap[i].mpValue->mpValue;
+        }
+    return nullptr;
 }
 
-_TTToolLib_Exp bool TelltaleToolLib_SetPropertySetValue(void* prop, unsigned long long kh, MetaClassDescription* pType, void* pInst){
+bool TelltaleToolLib_SetPropertySetValue(void* prop, unsigned long long kh, MetaClassDescription* pType, void* pInst){
 	PropertySet* p = (PropertySet*)prop;
     if (p == nullptr || pType == nullptr || pInst == nullptr)
         return false;
@@ -649,7 +689,7 @@ _TTToolLib_Exp void* TelltaleToolLib_Container(int op, void* container, void* ar
     if(op == ContainerOp::CHK){
         if (container == nullptr)
             return 0;
-        MetaClassDescription* clazz = (MetaClassDescription*)container;
+        MetaClassDescription* clazz = (MetaClassDescription*)arg1;
         return (void*)((clazz->mpFirstMember != nullptr && !_stricmp(clazz->mpFirstMember->mpName,"Baseclass_ContainerInterface")) ? 1 : 0);
     }
     ContainerInterface* pInterface = (ContainerInterface*)container;
@@ -670,7 +710,9 @@ _TTToolLib_Exp void* TelltaleToolLib_Container(int op, void* container, void* ar
 	}
     else if (op == ContainerOp::KTY) {
         return (void*)pInterface->GetContainerKeyClassDescription();
-	}
+	}else if(op == ContainerOp::CLR){
+        pInterface->ClearElements();
+    }
 	else if (op == ContainerOp::VTY) {
         return (void*)pInterface->GetContainerDataClassDescription();
     }else{
@@ -908,4 +950,39 @@ const char* TelltaleToolLib_GetArchive2ResourceName(TTArchive2* pArchive, unsign
 
 unsigned long long TelltaleToolLib_GetArchive2Resource(TTArchive2* pArchive, int index){
     return pArchive->mResources[index].mNameCRC;
+}
+
+void* TelltaleToolLib_ReadDataStream(DataStream* pReadStream, unsigned long* p){
+    if (pReadStream) {
+        if(!pReadStream->IsRead()){
+			TelltaleToolLib_RaiseError("Cannot read data stream: data stream is not a readable stream", ERR);
+			return nullptr;
+        }
+        unsigned long long rem = pReadStream->GetSize() - pReadStream->GetPosition();
+        if(rem > 0xFFFFFFFFL){
+            TelltaleToolLib_RaiseError("Cannot read data stream: remaining bytes is larger than 2GB (and larger than uint32 max)", ERR);
+            return nullptr;
+        }
+        void* pBuf = TelltaleToolLib_Malloc((unsigned long)rem);
+        if(!pReadStream->Serialize((char*)pBuf, rem)){
+			TelltaleToolLib_RaiseError("Cannot read data stream: data stream serialize failed", ERR);
+            TelltaleToolLib_Dealloc(pBuf);
+			return nullptr;
+        }
+        *p = (unsigned long)rem;
+        return pBuf;
+    }
+    else return nullptr;
+}
+
+void TelltaleToolLib_WriteDataStream(DataStream* pOutStream, void* pBuffer, unsigned long size){
+    if (pOutStream&&pBuffer&&size&&pOutStream->IsWrite()) {
+        pOutStream->Serialize((char*)pBuffer, size);
+    }else{
+		TelltaleToolLib_RaiseError("Cannot write data stream: invalid parameters or stream not writable", ERR);
+    }
+}
+
+_TTToolLib_Exp unsigned long long TelltaleToolLib_CRC64CaseInsensitive(const char* pBuf, unsigned long long initialCRC){
+    return CRC64_CaseInsensitive(initialCRC, pBuf);
 }

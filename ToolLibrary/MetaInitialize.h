@@ -5540,6 +5540,8 @@ namespace MetaInit {
 			DEFINEDCARRAY2(DCArray<String>, array_str);
 			DEFINEDCARRAY2(DCArray<PropertySet>, array_prop);
 			DEFINEDCARRAY(Color);
+			DEFINEDCARRAY(LocationInfo);
+			MKNAME(meta_DCArray_LocationInfo, "DCArray<LocationInfo>");
 			
 			DEFINEKEYFRAMEDVALUE(Polar, Polar, M_h2Q6dQAjy4);
 			DEFINEKEYFRAMEDVALUE(Vector4, Vector4, vec4);
