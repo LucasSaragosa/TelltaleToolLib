@@ -16,8 +16,6 @@ struct ResourceInfo {
 class TTArchive2 {
 public:
 
-	typedef void (*ProgressFunc)(const char* _Msg, float _Progress);
-
 	struct ResourceEntry {
 		u64 mNameCRC;
 		u64 mOffset;
@@ -27,8 +25,72 @@ public:
 
 	struct ResourceCreateEntry {
 		DataStream* mpStream;
+		std::string open_later;//instead of mpStream, will use this file path.
 		std::string name;
 	};
+
+	/**
+	 * Opens the archive from the given data stream. Use macros to open the data stream and pass it. You grant ownership to this class, so do not delete the stream this class will do that for you.
+	 */
+	void Activate(DataStream* inArchiveStream);
+
+	/**
+	 * Returns if this archive contains a given resource symbol name.
+	 */
+	bool HasResource(const Symbol&);
+
+	/**
+	 * Returns the name of the given resource hash.
+	 */
+	String GetResourceName(const Symbol&);
+
+	/**
+	 * Gets resource information about the given resource. The result is stored in the argument pointer. Returns if successfull.
+	 */
+	bool GetResourceInfo(const Symbol&, ResourceInfo*);
+	
+	/**
+	 * Opens a resource stream which is readable. You should delete it after use.
+	 */
+	DataStream* GetResourceStream(ResourceEntry*);
+
+	/**
+	 * Deactivate is called automatically in the destructor. Call this at any time to release all resources and pointers held by this class.
+	 */
+	void Deactivate();
+
+	/**
+	 * Function prototype for creating an archive
+	 */
+	typedef void (*ProgressFunc)(const char* _Msg, float _Progress);
+
+	/**
+	 * Creates a .TTARCH2. Returns if success. Writes to pDst stream (Ideally a file stream to disk) (does not delete this or own it). Pass in the files as an array
+	 */
+	static bool Create(ProgressFunc, DataStream* pDst, std::vector<ResourceCreateEntry>& files, bool pEncrypt,
+		bool pCompress, Compression::Library
+		pCompressionLibrary = Compression::Library::ZLIB, u32 pVersion = 2);
+
+	/**
+	 * Gets a resource entry pointer for the given resource name.
+	 */
+	ResourceEntry* _FindResource(const Symbol&);
+
+	/**
+	 * Gets the name of the resoure at the given index. Index is from 0 to NumResources() - 1
+	 */
+	inline Symbol GetResourceAtIndex(int index){
+		return mResources[index].mNameCRC;
+	}
+
+	/**
+	 * Returns the number of resources inside this archive.
+	 */
+	inline int NumResources() {
+		return (int)mResources.size();
+	}
+
+	// --------------------------------------------------------------------------------------------------------------- INTERNAL ------------------------------------------------------------------------------------------------------------------
 
 	struct LessRCE_p {
 
@@ -49,28 +111,13 @@ public:
 	DataStream* mpInStream = nullptr;//for lib
 	void* userData = 0;
 
-	//Deletes in stream when done TAKES OWNERSHIP
-	void Activate(DataStream* inArchiveStream);//nullable (assumes creation)
-	bool HasResource(const Symbol&);
-	String* GetResourceName(const Symbol&, String* result);
-	bool GetResourceInfo(const Symbol&, ResourceInfo*);
-	//Delete after use!
-	DataStream* GetResourceStream(ResourceEntry*);
-	void Deactivate();
-
-	bool Create(ProgressFunc,DataStream* pDst, ResourceCreateEntry* pFiles, int pNumFiles, bool pEncrypt,
-		bool pCompress, Compression::Library 
-		pCompressionLibrary = Compression::Library::ZLIB, u32 pVersion = 2);
-
-	TTArchive2() : mbActive(false), mpInStream(NULL), mNamePageCacheIndex(-1)
+	inline TTArchive2() : mbActive(false), mpInStream(NULL), mNamePageCacheIndex(-1)
 	, mpNamePageCache(NULL), mpNameStream(NULL), mpResourceStream(NULL) {}
 
-	~TTArchive2() {
+	inline ~TTArchive2() {
 		if (mbActive)
 			Deactivate();
 	}
-
-	ResourceEntry* _FindResource(const Symbol&);
 
 };
 

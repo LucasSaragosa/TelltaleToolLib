@@ -4,7 +4,7 @@
 // the amazing Telltale Games.
 
 //Code from blowfish from ttarchext/bruce schnieder
-#pragma warning(disable C4267 C4244 C4554 C4477)
+
 #include "Blowfish.h"
 #include <string.h>
 

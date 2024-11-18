@@ -46,6 +46,14 @@ struct ParticleSprite {
 		long mFrameCount;
 	};
 
+	inline int GetIndexForAnimation(const Symbol& name){
+		for(int i = 0; i < mAnimations.mSize; i++){
+			if (mAnimations[i].mName == name)
+				return i;
+		}
+		return -1;
+	}
+
 	String mName;
 	SArray<Handle<T3Texture>, 1> mhTexture;
 	long mTextureX;
@@ -55,8 +63,8 @@ struct ParticleSprite {
 	DCArray<ParticleSprite::Animation> mAnimations;
 
 	static METAOP_FUNC_IMPL__(SerializeAsync) {
-		return eMetaOp_Fail;
-		//return Meta::MetaOperation_SerializeAsync(pObj, pObjDescription, pContextDescription, pUserData);
+		//return eMetaOp_Fail;
+		return Meta::MetaOperation_SerializeAsync(pObj, pObjDescription, pContextDescription, pUserData);
 	}
 
 };

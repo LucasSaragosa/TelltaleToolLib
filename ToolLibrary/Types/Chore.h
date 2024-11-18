@@ -327,6 +327,13 @@ struct ChoreResource {
 			mbEmbedded = false;
 		}
 	}
+	
+	inline ~ChoreResource(){
+		if (mhObjectDesc && mhObjectEmbedded)
+			mhObjectDesc->Delete(mhObjectEmbedded);
+		mhObjectEmbedded = 0;
+		mhObjectDesc = 0;
+	}
 
 	INLINE void SetResourceHandle(void* data, MetaClassDescription* desc, bool bDeleteOldData) {
 		if (bDeleteOldData && mhObjectEmbedded && mhObjectDesc)

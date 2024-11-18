@@ -11,6 +11,7 @@
 #include "HandleObjectInfo.h"
 #include "DCArray.h"
 #include "KeyframedValue.h"
+#include "../T3/T3Effect.h"
 
 struct FlagsT3LightEnvGroupSet {
 	Flags mFlags;
@@ -71,16 +72,6 @@ struct EnumRenderMaskWrite : EnumBase
 struct EnumRenderMaskTest : EnumBase
 {
 	RenderMaskTest mVal;
-};
-
-enum T3LightEnvType
-{
-	eLightEnvType_Point = 0x0,
-	eLightEnvType_Spot = 0x1,
-	eLightEnvType_DirectionalKey = 0x2,
-	eLightEnvType_Ambient = 0x3,
-	eLightEnvType_DirectionalAmbient = 0x4,
-	eLightEnvType_Count = 0x5,
 };
 
 struct EnumT3LightEnvType {

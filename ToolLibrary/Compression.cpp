@@ -2,26 +2,22 @@
 // I do not intend to take credit for it, however; Im the author of this interpretation of 
 // the engine and require that if you use this code or library, you give credit to me and
 // the amazing Telltale Games.
-#pragma warning(disable C4267 C4244 C4554 C4477)
 #include "Compression.h"
+#include "TelltaleToolLibrary.h"
 #include <iostream>
 
-HMODULE Compression::LoadOodleLibrary(const char* pDLLName) {
-	return LoadLibraryA(pDLLName);
+LibraryHandle Compression::LoadOodleLibrary(const char* pDLLName) {
+	return TelltaleToolLib_GetLibrary(pDLLName);
 }
 
-void Compression::UnloadOodleLibrary(HMODULE mod) {
-	FreeLibrary(mod);
-}
-
-bool Compression::OodleLZCompress(void* pDst, unsigned int* dstLength, const void* pSrc, unsigned int srcLength,HMODULE l) {
+bool Compression::OodleLZCompress(void* pDst, unsigned int* dstLength, const void* pSrc, unsigned int srcLength,LibraryHandle l) {
 	OodleLZ_Compress compressor = (OodleLZ_Compress)GetProcAddress(l, "OodleLZ_Compress");
 	if (!compressor)return false;
 	*dstLength = compressor(6, pSrc, srcLength, pDst,7,0,0,0);
 	return true;
 }
 
-bool Compression::OodleLZDecompress(void* pDst, unsigned int dstLength, const void* pSrc, unsigned int srcLength, HMODULE l) {
+bool Compression::OodleLZDecompress(void* pDst, unsigned int dstLength, const void* pSrc, unsigned int srcLength, LibraryHandle l) {
 	OodleLZ_Decompress decompressor = (OodleLZ_Decompress)GetProcAddress(l, "OodleLZ_Decompress");
 	if (!decompressor)return false;
 	decompressor((void*)pSrc, srcLength, pDst, dstLength, 0, 0, 0, NULL, NULL, NULL, NULL, NULL, NULL, 3);
@@ -29,7 +25,7 @@ bool Compression::OodleLZDecompress(void* pDst, unsigned int dstLength, const vo
 }
 
 bool Compression::ZlibDecompress(void* dest, unsigned int* destLen, const void* source, unsigned int sourceLen) {
-	z_stream stream;
+	z_stream stream{};
 	int err;
 	const uInt max = (uInt)-1;
 	uLong len, left;

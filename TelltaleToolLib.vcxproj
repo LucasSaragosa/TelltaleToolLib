@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug|Win32">
@@ -141,11 +141,13 @@ copy "C:\Vunder\Telltale\Telltale Inspector\x64\Release\TelltaleToolLib.dll" "C:
     <ClCompile Include="ogg\bitwise.c" />
     <ClCompile Include="ogg\framing.c" />
     <ClCompile Include="ToolLibrary\Blowfish.cpp" />
-    <ClCompile Include="ToolLibrary\cmd.cpp" />
+    <ClCompile Include="ToolLibrary\T3\T3EffectCacheVersionDB.cpp" />
+    <ClCompile Include="ToolLibrary\_DeprecatedCmdLine.cpp" />
     <ClCompile Include="ToolLibrary\Compression.cpp" />
     <ClCompile Include="ToolLibrary\DataStream\DataStream.cpp" />
-    <ClCompile Include="ToolLibrary\FSB5.cpp" />
+    <ClCompile Include="ToolLibrary\FMOD\FSB5.cpp" />
     <ClCompile Include="ToolLibrary\HashDB\HashDB.cpp" />
+    <ClCompile Include="ToolLibrary\LargeConst.cpp" />
     <ClCompile Include="ToolLibrary\Lua\decompile.c" />
     <ClCompile Include="ToolLibrary\Lua\disassemble.c" />
     <ClCompile Include="ToolLibrary\Lua\expression.c" />
@@ -192,12 +194,14 @@ copy "C:\Vunder\Telltale\Telltale Inspector\x64\Release\TelltaleToolLib.dll" "C:
     <ClCompile Include="ToolLibrary\Lua\structs.c" />
     <ClCompile Include="ToolLibrary\Meta.cpp" />
     <ClCompile Include="ToolLibrary\MetaStream_JSON.cpp" />
-    <ClCompile Include="ToolLibrary\Shader\T3EffectCache.cpp" />
+    <ClCompile Include="ToolLibrary\T3\Render.cpp" />
+    <ClCompile Include="ToolLibrary\T3\ScenePasses.cpp" />
+    <ClCompile Include="ToolLibrary\T3\T3EffectCache.cpp" />
     <ClCompile Include="ToolLibrary\TelltaleToolLibrary.cpp" />
     <ClCompile Include="ToolLibrary\TTArchive2.cpp" />
     <ClCompile Include="ToolLibrary\Types\EventStorage.cpp" />
     <ClCompile Include="ToolLibrary\Types\T3Texture.cpp" />
-    <ClCompile Include="ToolLibrary\VorbisHeaders.cpp" />
+    <ClCompile Include="ToolLibrary\FMOD\VorbisHeaders.cpp" />
     <ClCompile Include="ToolLibrary\Zlib\adler32.c" />
     <ClCompile Include="ToolLibrary\Zlib\compress.c" />
     <ClCompile Include="ToolLibrary\Zlib\crc32.c" />
@@ -240,12 +244,17 @@ copy "C:\Vunder\Telltale\Telltale Inspector\x64\Release\TelltaleToolLib.dll" "C:
     <ClInclude Include="ogg\os_types.h" />
     <ClInclude Include="ToolLibrary\Base64.h" />
     <ClInclude Include="ToolLibrary\Blowfish.h" />
+    <ClInclude Include="ToolLibrary\Symbols.h" />
+    <ClInclude Include="ToolLibrary\T3\Camera.h" />
     <ClInclude Include="ToolLibrary\Compression.h" />
     <ClInclude Include="ToolLibrary\DataStream\DataStream.h" />
-    <ClInclude Include="ToolLibrary\FSB5.h" />
+    <ClInclude Include="ToolLibrary\FMOD\FSB5.h" />
     <ClInclude Include="ToolLibrary\HashDB\HashDB.h" />
     <ClInclude Include="ToolLibrary\HashManager.h" />
+    <ClInclude Include="ToolLibrary\LargeConst.h" />
     <ClInclude Include="ToolLibrary\LegacyTypes\D3DMeshLegacy.h" />
+    <ClInclude Include="ToolLibrary\T3\LinearHeap.h" />
+    <ClInclude Include="ToolLibrary\LinkedList.h" />
     <ClInclude Include="ToolLibrary\Lua\common.h" />
     <ClInclude Include="ToolLibrary\Lua\decompile.h" />
     <ClInclude Include="ToolLibrary\Lua\disassemble.h" />
@@ -286,7 +295,6 @@ copy "C:\Vunder\Telltale\Telltale Inspector\x64\Release\TelltaleToolLib.dll" "C:
     <ClInclude Include="ToolLibrary\MetaInitHelpers.h" />
     <ClInclude Include="ToolLibrary\MetaInitialize.h" />
     <ClInclude Include="ToolLibrary\MetaStream_JSON.hpp" />
-    <ClInclude Include="ToolLibrary\NlohmannJSON.hpp" />
     <ClInclude Include="ToolLibrary\rapidjson\allocators.h" />
     <ClInclude Include="ToolLibrary\rapidjson\cursorstreamwrapper.h" />
     <ClInclude Include="ToolLibrary\rapidjson\document.h" />
@@ -326,9 +334,16 @@ copy "C:\Vunder\Telltale\Telltale Inspector\x64\Release\TelltaleToolLib.dll" "C:
     <ClInclude Include="ToolLibrary\rapidjson\stringbuffer.h" />
     <ClInclude Include="ToolLibrary\rapidjson\uri.h" />
     <ClInclude Include="ToolLibrary\rapidjson\writer.h" />
-    <ClInclude Include="ToolLibrary\Shader\T3EffectCache.h" />
+    <ClInclude Include="ToolLibrary\T3\Render.hpp" />
+    <ClInclude Include="ToolLibrary\T3\RenderScene.h" />
+    <ClInclude Include="ToolLibrary\T3\T3EffectCache.h" />
+    <ClInclude Include="ToolLibrary\T3\T3Effect.h" />
+    <ClInclude Include="ToolLibrary\T3\T3EffectParameters.h" />
+    <ClInclude Include="ToolLibrary\T3\T3EffectUser.h" />
+    <ClInclude Include="ToolLibrary\T3\T3RenderTargets.h" />
     <ClInclude Include="ToolLibrary\TelltaleToolLibrary.h" />
     <ClInclude Include="ToolLibrary\TTArchive2.hpp" />
+    <ClInclude Include="ToolLibrary\LibraryConfig.h" />
     <ClInclude Include="ToolLibrary\Types\ActorAgentMapper.h" />
     <ClInclude Include="ToolLibrary\Types\AgentMap.h" />
     <ClInclude Include="ToolLibrary\Types\AnimatedValueInterface.h" />
@@ -387,6 +402,7 @@ copy "C:\Vunder\Telltale\Telltale Inspector\x64\Release\TelltaleToolLib.dll" "C:
     <ClInclude Include="ToolLibrary\Types\TransitionMap.h" />
     <ClInclude Include="ToolLibrary\Types\TRect.h" />
     <ClInclude Include="ToolLibrary\Types\TypeIncludes.h" />
+    <ClInclude Include="ToolLibrary\Types\UtilityTypes.h" />
     <ClInclude Include="ToolLibrary\Types\WalkBoxes.h" />
     <ClInclude Include="ToolLibrary\VersDB.h" />
     <ClInclude Include="ToolLibrary\Zlib\crc32.h" />
@@ -444,6 +460,9 @@ copy "C:\Vunder\Telltale\Telltale Inspector\x64\Release\TelltaleToolLib.dll" "C:
     <ClInclude Include="vorbis\vorbisenc.h" />
     <ClInclude Include="vorbis\vorbisfile.h" />
     <ClInclude Include="vorbis\window.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="ToolLibrary\T3\RenderTypeDescs.inl" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

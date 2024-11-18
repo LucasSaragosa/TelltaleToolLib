@@ -14,241 +14,13 @@
 #include "DCArray.h"
 #include "../DataStream/DataStream.h"
 #include "SArray.h"
-
-enum T3SamplerStateValue : unsigned int {
-	eSamplerState_WrapU_Value = 0x0,
-	eSamplerState_WrapV_Value = 0x1,
-	eSamplerState_Filtered_Value = 0x2,
-	eSamplerState_BorderColor_Value = 0x3,
-	eSamplerState_GammaCorrect_Value = 0x4,
-	eSamplerState_MipBias_Value = 0x5,
-	eSamplerState_Count = 0x6,
-};
-
-struct T3SamplerStateBlock;
-extern T3SamplerStateBlock kDefault;
-
-struct T3RenderStateBlock {
-	SArray<u32, 3> mData;
-};
-
-struct T3SamplerStateBlock {
-	unsigned int mData;
-
-	struct SamplerStateEntry {
-		unsigned int mShift;
-		unsigned int mMask;
-	};
-
-	static bool sInitialized;
-	static SamplerStateEntry smEntries[6];
-
-	static void Initialize() {
-		if (sInitialized)return;
-		smEntries[(unsigned int)T3SamplerStateValue::eSamplerState_WrapU_Value].mShift = 0x0;//0x14102C988
-		smEntries[(unsigned int)T3SamplerStateValue::eSamplerState_WrapU_Value].mMask = 0xF;//0x14102C98C, 4 bits, so a nibble of data
-		smEntries[(unsigned int)T3SamplerStateValue::eSamplerState_WrapV_Value].mShift = 0x4;//0x14102C990
-		smEntries[(unsigned int)T3SamplerStateValue::eSamplerState_WrapV_Value].mMask = 0xF0;//0x14102C994, 4 bits, so a nibble of data
-		smEntries[(unsigned int)T3SamplerStateValue::eSamplerState_Filtered_Value].mShift = 0x8;//0x14102C998
-		smEntries[(unsigned int)T3SamplerStateValue::eSamplerState_Filtered_Value].mMask = 0x100;//0x14102C99C //1 bit, so a bool
-		smEntries[(unsigned int)T3SamplerStateValue::eSamplerState_BorderColor_Value].mShift = 0x9;//0x14102C9A0
-		smEntries[(unsigned int)T3SamplerStateValue::eSamplerState_BorderColor_Value].mMask = 0x1E00;//0x14102C9A4, 4 bits, so a nibble of data
-		smEntries[(unsigned int)T3SamplerStateValue::eSamplerState_GammaCorrect_Value].mShift = 0xD;//0x14102C9A8
-		smEntries[(unsigned int)T3SamplerStateValue::eSamplerState_GammaCorrect_Value].mMask = 0x2000;//0x14102C9AC, 1 bit so a bool
-		smEntries[(unsigned int)T3SamplerStateValue::eSamplerState_MipBias_Value].mShift = 0xE;//0x14102C9B0
-		smEntries[(unsigned int)T3SamplerStateValue::eSamplerState_MipBias_Value].mMask = 0x3FC000;//0x14102C9B4, 8 bits, so a byte of data
-		kDefault.mData = (((kDefault.mData & 0xFFFFFFF0 | 1) 
-			& 0xFFFFFF0F | 0x10) & 0xFFFFFEFF | 0x100) & 0xFFC001FF;//273, filtered yes, wrap u and v are 1
-		sInitialized = true;
-	}
-
-	T3SamplerStateBlock() : mData(0) { Initialize(); }
-
-	void SetStateMask(T3SamplerStateValue state) {
-		mData |= smEntries[state].mMask;
-	}
-
-	T3SamplerStateBlock& Merge(T3SamplerStateBlock& result, 
-		T3SamplerStateBlock const& rhs, 
-		T3SamplerStateBlock const& mask) {
-		result.mData = mask.mData & rhs.mData | mData & ~mask.mData;
-		return result;
-	}
-
-	u64 InternalGetSamplerState(T3SamplerStateValue state) {
-		return (this->mData & smEntries[state].mMask) >> (smEntries[state].mShift);
-	}
-
-	void InternalSetSamplerState(T3SamplerStateValue state, unsigned int value) {
-		mData &= ~smEntries[state].mMask;
-		mData |= value << smEntries[state].mShift;
-	}
-
-	u64 DecrementMipBias(unsigned int steps) {
-		float v2 = 8.0;
-		u64 result;
-		unsigned int v3 = steps + (smEntries[5].mMask & mData) >> smEntries[5].mShift;
-		if (v3 < v2)
-			v2 = (float)v3;
-		result = (unsigned int)floorf(v2);
-		unsigned int v5 = mData & ~smEntries[5].mMask;
-		mData = v5 | (result << smEntries[5].mShift);
-		return result;
-	}
-
-};
-
-enum PlatformType {
-	ePlatform_None = 0x0,
-	ePlatform_All = 0x1,
-	ePlatform_PC = 0x2,
-	ePlatform_Wii = 0x3,
-	ePlatform_Xbox = 0x4,
-	ePlatform_PS3 = 0x5, 
-	ePlatform_Mac = 0x6,
-	ePlatform_iPhone = 0x7,
-	ePlatform_Android = 0x8,
-	ePlatform_Vita = 0x9,
-	ePlatform_Linux = 0xA,
-	ePlatform_PS4 = 0xB,
-	ePlatform_XBOne = 0xC,
-	ePlatform_WiiU = 0xD,
-	ePlatform_Win10 = 0xE,
-	ePlatform_NX = 0xF,
-	ePlatform_Count = 0x10, 
-
-};
-
-struct EnumPlatformType : EnumBase {
-	PlatformType mVal;
-};
-
-enum T3SurfaceFormat {
-	eSurface_Unknown = 0xFFFFFFFF, 
-	eSurface_ARGB8 = 0x0,
-	eSurface_ARGB16 = 0x1,
-	eSurface_RGB565 = 0x2,
-	eSurface_ARGB1555 = 0x3, 
-	eSurface_ARGB4 = 0x4, 
-	eSurface_ARGB2101010 = 0x5,
-	eSurface_R16 = 0x6,
-	eSurface_RG16 = 0x7,
-	eSurface_RGBA16 = 0x8,
-	eSurface_RG8 = 0x9, 
-	eSurface_RGBA8 = 0xA,
-	eSurface_R32 = 0xB,
-	eSurface_RG32 = 0xC,
-	eSurface_RGBA32 = 0xD,
-	eSurface_RGBA8S = 0xF,
-	eSurface_A8 = 0x10, 
-	eSurface_L8 = 0x11,
-	eSurface_AL8 = 0x12,
-	eSurface_L16 = 0x13,
-	eSurface_RG16S = 0x14,
-	eSurface_RGBA16S = 0x15,
-	eSurface_R16UI = 0x16,
-	eSurface_RG16UI = 0x17,
-	eSurface_R16F = 0x20, 
-	eSurface_RG16F = 0x21,
-	eSurface_RGBA16F = 0x22,
-	eSurface_R32F = 0x23,
-	eSurface_RG32F = 0x24,
-	eSurface_RGBA32F = 0x25,
-	eSurface_RGBA1010102F = 0x26,
-	eSurface_RGB111110F = 0x27,
-	eSurface_RGB9E5F = 0x28,
-	eSurface_DepthPCF16 = 0x30,
-	eSurface_DepthPCF24 = 0x31,
-	eSurface_Depth16 = 0x32,
-	eSurface_Depth24 = 0x33,
-	eSurface_DepthStencil32 = 0x34,
-	eSurface_Depth32F = 0x35,
-	eSurface_Depth32F_Stencil8 = 0x36,
-	eSurface_Depth24F_Stencil8 = 0x37,
-	//eSurface_BC1 = 0x40,
-	//eSurface_BC2 = 0x41
-	eSurface_DXT1 =64,
-	eSurface_DXT3 = 65,
-	eSurface_DXT5= 66,
-	eSurface_DXT5A = 67,
-	eSurface_DXTN = 68,
-	eSurface_CTX1 = 69,
-	eSurface_BC6 = 70,
-	eSurface_BC7 = 71,
-	eSurface_PVRTC2 = 80,
-	eSurface_PVRTC4 = 81,
-	eSurface_PVRTC2a = 82,
-	eSurface_PVRTC4a = 83,
-	eSurface_ATC_RGB = 96,
-	eSurface_ATC_RGB1A = 97,
-	eSurface_ATC_RGBA = 98,
-	eSurface_ETC1_RGB = 112,
-	eSurface_ETC2_RGB = 113,
-	eSurface_ETC2_RGB1A = 114,
-	eSurface_ETC2_RGBA = 115,
-	eSurface_ETC2_R = 116,
-	eSurface_ETC2_RG =117,
-	eSurface_ATSC_RGBA_4x4 = 128,
-	eSurface_R8 = 14,
-};
-
-struct T3ToonGradientRegion {
-	Color mColor;
-	float mSize;
-	float mGradientSize;
-};
-
-enum T3TextureLayout {
-	eTextureLayout_2D = 0,//slices=1
-	eTextureLayout_Cube = 1,//slices=1
-	eTextureLayout_3D = 2,//slices=depth
-	eTextureLayout_2DArray = 3,//slices=arraysize
-	eTextureLayout_CubeArray = 4,//slices=arraysize
-	eTextureLayout_Count = 5,
-	eTextureLayout_Unknown = 0xFFFFFFFF
-};
-
-enum T3SurfaceGamma {
-	eSurfaceGamma_Linear = 0,
-	eSurfaceGamma_sRGB = 1,
-	sSurfaceGamma_Unknown = 0xFFFFFFFF
-};
-
-enum T3SurfaceMultisample {
-	eSurfaceMultisample_None = 0,
-	eSurfaceMultisample_2x = 1,
-	eSurfaceMultisample_4x = 2,
-	eSurfaceMultisample_8x = 3,
-	eSurfaceMultisample_16x = 4
-};
-
-enum T3ResourceUsage {
-	eResourceUsage_Static = 0,
-	eResourceUsage_Dynamic = 1,
-	eResourceUsage_System = 2,
-	eResourceUsage_RenderTarget = 3,
-	eResourceUsage_ShaderWrite = 4
-};
-
-
-enum RenderSwizzleType : char {
-	eRenderSwizzle_X = 0x0, 
-	eRenderSwizzle_Y = 0x1,
-	eRenderSwizzle_Z = 0x2,
-	eRenderSwizzle_W = 0x3,
-	eRenderSwizzle_Zero = 0x4,
-	eRenderSwizzle_One = 0x5,
-	eRenderSwizzle_R = 0x0,
-	eRenderSwizzle_G = 0x1,
-	eRenderSwizzle_B = 0x2,
-	eRenderSwizzle_A = 0x3,
-};
+#include "../T3/T3EffectCache.h"
 
 struct RenderSwizzleParams {
 	RenderSwizzleType mSwizzle[4];
 
 	static METAOP_FUNC_IMPL__(SerializeAsync) {
-		static int _ID = TelltaleToolLib_GetGameKeyIndex("BATMAN");
+		static int _ID = TelltaleToolLib_GetGameKeyIndex("BAT");
 		RenderSwizzleParams* swiz = static_cast<RenderSwizzleParams*>(pObj);
 		MetaStream* meta = static_cast<MetaStream*>(pUserData);
 		u32 blockSize = 8;
@@ -269,7 +41,28 @@ struct RenderSwizzleParams {
 };
 
 //.D3DTX FILES
-struct T3Texture {
+struct T3Texture : T3GFXResource {
+
+	struct CreateParams
+	{
+		GFXPlatformAllocationType mAllocationType;
+		T3TextureLayout mLayout;
+		T3SurfaceFormat mFormat;
+		T3SurfaceGamma mGamma;
+		T3SurfaceMultisample mMultisample;
+		T3ResourceUsage mUsage;
+		T3SurfaceAccess mAccess;
+		u16 mWidth;
+		u16 mHeight;
+		u16 mDepth;
+		u16 mArraySize;
+		u16 mNumMipLevels;
+		u16 mbPrimaryDisplaySurface;
+		bool mbVideoTexture;
+		bool mbCPUAccessible;
+		GFXPlatformFastMemHeap mFastMemHeap;
+		Symbol mTag;
+	};
 
 	enum TextureType {
 		eTxUnknown = 0x0,
@@ -343,6 +136,7 @@ struct T3Texture {
 		~RegionStreamHeader() {
 			if (mpAsyncStream)
 				delete mpAsyncStream;
+			mpAsyncStream = 0;
 		}
 
 	};
@@ -371,10 +165,11 @@ struct T3Texture {
 	T3TextureLayout mTextureLayout;
 	T3SurfaceGamma mSurfaceGamma;
 	T3SurfaceMultisample mSurfaceMultisample;
+	T3SurfaceAccess mSurfaceAccess;
 	T3ResourceUsage mResourceUsage;
 	TextureType mType;
 	int mNormalMapFormat;//MCSM and below
-	RenderSwizzleParams mSwizzle;//MICHONNE and above
+	RenderSwizzleParams mSwizzle;//WDM and above
 	float mSpecularGlossExponent;
 	float mHDRLightmapScale;
 	float mToonGradientCutoff;
@@ -390,9 +185,15 @@ struct T3Texture {
 	DCArray<Symbol> mArrayFrameNames;
 	DCArray<T3ToonGradientRegion> mToonRegions;
 
+	u64 mLastUsedFrame = 0;
+
 	List<AuxilaryData*> mAuxilaryData;//should be linkedlist which uses pointers
 
-	T3Texture() {
+	inline bool IsValidImmediate(){
+		return mbResourceAssigned;
+	}
+
+	inline T3Texture() : T3GFXResource(eGFXPlatformResource_Texture) {
 		mImportScale = 1.0f;
 		mUVScale.x = 1.0f;
 		mUVScale.x = 1.0f;
@@ -418,7 +219,42 @@ struct T3Texture {
 		mNumSurfacesRequested = 0;
 		mNumSurfacesRequired = 0;
 		mNumMipLevelsAllocated = 0;
+		mWidth = mHeight = 1;
 	}
+
+	struct LockContext {
+		//Put in the data yourself here
+		u8* mpTextureData;
+		//Size of pTextureData
+		u32 mDataSize;
+		//Pitch of this
+		u32 mPitch;
+		//Current mip
+		u32 mMipIndex;
+		//Current face
+		u32 mFace;
+		//Current mip width
+		u32 mMipWidth;
+		//Current mip height
+		u32 mMipHeight;
+	};
+
+	//Lock the texture data and then unlock it. Ues this to upload data to the texture directly to GPU on the unlock call through the
+	//render adapters struct. This is for static uploads (not streamed or anything - not using update lists).
+	const LockContext Lock(u32 mip, u32 face);
+
+	void Unlock(const LockContext& context);
+
+	void CreateSolidTexture(Color color, T3TextureLayout layout);
+
+	void CreateHorizontalGradientTexture(Color startColor, Color endColor, int numSteps);
+
+	bool CreateRenderTarget(u32 width, u32 height, T3SurfaceFormat format, bool bPrimaryDisplaySurface, bool bVideoTexture);
+
+	//Returns number of surfaces in texture
+	u32 CreateTexture(CreateParams& params);
+
+	void SetUsedOnFrame(RenderFrameUpdateList& updateList);
 
 	bool IsCompressed() {
 		int v1 = (int)mSurfaceFormat;
@@ -474,7 +310,18 @@ struct T3Texture {
 		return NULL;
 	}
 
-	bool SetTxData(DataStream* stream, int pMipIndex, int pArrayIndex = 0) {
+	int mLoadPendingRefCount = 0;
+	int mStreamingRefCount = 0;
+
+	inline void ModifyStreamingRefCount(int v) {
+		mStreamingRefCount += v;
+	}
+
+	inline void ModifyLoadPendingRefCount(int v){
+		mLoadPendingRefCount += v;
+	}
+
+	inline bool SetTxData(DataStream* stream, int pMipIndex, int pArrayIndex = 0) {
 		if (pMipIndex >= mNumMipLevels || pArrayIndex >= mArraySize)
 			return false;
 		for (int i = 0; i < mRegionHeaders.GetSize(); i++) {
@@ -487,6 +334,20 @@ struct T3Texture {
 			}
 		}
 		return false;
+	}
+
+	inline int _GetNumSurfacesToLoad(){
+		return mTextureLayout == eTextureLayout_CubeArray ? mNumMipLevels * mArraySize * 6 : mTextureLayout == eTextureLayout_2DArray ? mNumMipLevels * mArraySize : mTextureLayout == eTextureLayout_Cube ? 6 : mNumMipLevels;
+	}
+
+	inline bool IsEmpty()
+	{
+		return (mWidth==0 && mHeight==0) || !mNumMipLevels;
+	}
+
+	inline bool IsFullyLoaded()
+	{
+		return !mRegionHeaders.mSize || mNumSurfacesLoaded == _GetNumSurfacesToLoad();
 	}
 
 	static const char* GetTextureTypeName(TextureType type) {
@@ -621,12 +482,6 @@ struct T3Texture {
 		return type >= TextureType::eTxLightmapFlatAtlas ? T3SurfaceGamma::eSurfaceGamma_sRGB: T3SurfaceGamma::eSurfaceGamma_Linear;
 	}
 
-	~T3Texture() {
-		for (auto it = mAuxilaryData.begin(); it != mAuxilaryData.end(); it++) {
-			delete* it;
-		}
-	}
-
 	struct StreamHeader {
 		int mRegionCount;
 		int mAuxDataCount;
@@ -634,6 +489,8 @@ struct T3Texture {
 	};
 
 	DCArray<RegionStreamHeader> mRegionHeaders;
+
+	~T3Texture();
 
 	static MetaOpResult MetaOperation_SerializeAsync(void* pObj, 
 		MetaClassDescription* pObjDesc, MetaMemberDescription* pCtx, void* pUserData) {

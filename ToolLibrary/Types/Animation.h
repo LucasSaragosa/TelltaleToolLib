@@ -10,6 +10,7 @@
 #include "ToolProps.h"
 #include "DCArray.h"
 #include "AnimatedValueInterface.h"
+#include "../Symbols.h"
 
 //.ANM FILES
 struct Animation {
@@ -24,7 +25,7 @@ struct Animation {
 	u32 mValueDataBufferSize;//no ser
 	void* mpValueDataBuffer;//no ser - a runtime buffer for animation data. size is serialized. might be needed for some value types
 
-	void AddValue(AnimationValueInterfaceBase* i) {
+	inline void AddValue(AnimationValueInterfaceBase* i) {
 		u16 version = i->mVersion;
 		for (int x = 0; x < mValues.GetSize(); x++) {
 			if (mValues[x]->mVersion != version)
@@ -34,7 +35,7 @@ struct Animation {
 		mValues.AddElement(0, NULL, &i);
 	}
 
-	void _DeleteData() {
+	inline void _DeleteData() {
 		for (int i = 0; i < mValues.GetSize(); i++) {
 			MetaClassDescription* c = mValues[i]->GetMetaClassDescription();
 			c->Delete(mValues[i]);
@@ -51,7 +52,7 @@ struct Animation {
 		mpValueDataBuffer = NULL;
 	}
 
-	~Animation() {
+	inline ~Animation() {
 		_DeleteData();
 	}
 
@@ -284,7 +285,7 @@ struct AnimationConstraintParameters
 	float mLockToAnimRightWrist;
 	float mLockToNodeLeftWrist;
 	float mLockToNodeRightWrist;
-	__declspec(align(16)) Transform mLockToAnimLeftWristOffset;
+	Transform mLockToAnimLeftWristOffset;
 	Transform mLockToAnimRightWristOffset;
 	Transform mLockToNodeLeftWristOffset;
 	Transform mLockToNodeRightWristOffset;

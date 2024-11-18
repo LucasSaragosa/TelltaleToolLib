@@ -86,8 +86,7 @@ struct PropertyValue {
 	PropertyValue() : mpValue(NULL), mpDataDescription(NULL) {}
 
 	~PropertyValue() {
-		if(mpDataDescription && mpValue)
-			mpDataDescription->Delete(mpValue);
+		ClearData();
 	}
 
 };
@@ -170,6 +169,9 @@ public:
 		inline bool operator==(const KeyInfo& rhs) const {
 			return mKeyName == rhs.mKeyName;
 		}
+
+		KeyInfo(KeyInfo&& rhs) = default;
+		KeyInfo& operator=(KeyInfo&& rhs) = default;
 
 	};
 
@@ -309,9 +311,11 @@ public:
 					mhParent.mHandleObjectInfo.mObjectName;
 				stream->Key("Parent Prop");
 				String str{};
-				db->FindEntry(page, sym.GetCRC(), &str);
-				if (!str.empty())
-					stream->HintSymbol(str.c_str());
+				if (db) {
+					db->FindEntry(page, sym.GetCRC(), &str);
+					if (!str.empty())
+						stream->HintSymbol(str.c_str());
+				}
 				stream->serialize_Symbol(&sym);
 			}
 			if (prop->mPropVersion == 1) {
@@ -400,7 +404,7 @@ public:
 						(typeSymbol.GetCRC());
 				if (!typeDesc) {
 #ifdef DEBUGMODE
-					printf("Property class type not found for type with symbol"
+					TTL_Log("Property class type not found for type with symbol"
 						" %llX at (default section) : %llX!\n", typeSymbol.GetCRC(),stream->GetPos());
 #endif
 					TelltaleToolLib_RaiseError("Property type in property set not supported (run in debug for to print the CRC)", ErrorSeverity::ERR);
@@ -503,6 +507,15 @@ public:
 			}
 	}
 
+	inline PropertySet::KeyInfo* GetKeyInfo(Symbol name){
+		for (int i = 0; i < mKeyMap.GetSize(); i++) {
+			if (mKeyMap[i].mKeyName == name) {
+				return &mKeyMap[i];
+			}
+		}
+		return 0;
+	}
+
 	void* GetProperty(const char* keyName) {
 		u64 crc = CRC64_CaseInsensitive(0, keyName);
 		return GetProperty(crc);
@@ -551,12 +564,14 @@ public:
 		return GetNumPropertiesOfType(desc);
 	}
 
-	void AddProperty(u64 crc, MetaClassDescription* desc, void* value) {
-		if (!desc)return;
+	void* AddProperty(u64 crc, MetaClassDescription* desc, void* value) {
+		if (!desc)return 0;
 		KeyInfo k;
 		k.mKeyName = crc;
 		k.mpValue->SetData(value, desc);
-		mKeyMap.AddElement(0, NULL, &k);
+		void* val = k.mpValue->mpValue;
+		mKeyMap.AddElementMove(0, NULL, &k);
+		return val;
 	}
 
 	bool ExistsKey(const Symbol& pKeyName, bool pSearchParents) {

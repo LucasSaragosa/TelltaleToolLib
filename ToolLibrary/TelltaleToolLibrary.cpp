@@ -1,6 +1,6 @@
 // This file was written by Lucas Saragosa. If you use this code or library,
 // I ask you to you give credit to me and the amazing Telltale Games.
-#pragma warning(disable C4267 C4244 C4554 C4477)
+
 #include "TelltaleToolLibrary.h"
 #include "Meta.hpp"
 #include "MetaInitialize.h"
@@ -10,10 +10,57 @@
 #include "TTArchive2.hpp"
 #include <vector>
 #include <filesystem>
+#include <mutex>
+
+#include "T3/T3EffectCache.h"
+#include "T3/T3Effect.h"
+#include "T3/Render.hpp"
+
+struct _LoadedLibrary {
+    LibraryHandle hLibrary;
+    const char* pName;
+};
 
 static TelltaleVersionDatabase* sVersionDBs[KEY_COUNT]{ 0 };
 static bool sbUsingStates = false;
 static ProxyMetaState sProxyState[KEY_COUNT]{ 0 };
+static std::mutex log_guard{};
+static ToolLibRenderAdapters* spRenderAdapter = 0;
+static ToolLibRenderAdapters spDefaultAdapter{};
+static std::vector<_LoadedLibrary> loadedLibraries{};
+
+void _InitializeDescs();
+
+void _T3EffectCache_Free();
+
+void T3GFXResource::OnDestroyed(){
+    if (spRenderAdapter)
+        spRenderAdapter->OnResourceDestroy(this);
+}
+
+_TTToolLib_Exp RenderConfiguration* TelltaleToolLib_GetRenderConfiguration(){
+    return &sGlobalRenderConfig;
+}
+
+void T3GFXResource::OnCreate() {
+    if (spRenderAdapter)
+        spRenderAdapter->OnResourceCreation(this);
+}
+
+_TTToolLib_Exp void TelltaleToolLib_SetRenderAdapters(ToolLibRenderAdapters* pRenderAdapterOverloads){
+    spRenderAdapter = pRenderAdapterOverloads;
+    if (spRenderAdapter == 0)
+        spRenderAdapter = &spDefaultAdapter;
+}
+
+_TTToolLib_Exp ToolLibRenderAdapters* TelltaleToolLib_GetRenderAdaptersStruct(){
+    return spRenderAdapter;
+}
+
+_TTToolLib_Exp void TelltaleToolLib_InitializeT3(ToolLibRenderAdapters* pOptionalRenderAdapterCustom) {
+	TelltaleToolLib_SetRenderAdapters(pOptionalRenderAdapterCustom);
+	T3::Initialize();
+}
 
 _TTToolLib_Exp bool TelltaleToolLib_ProxyClassesAvail(const char* pGameID)
 {
@@ -108,6 +155,35 @@ _TTToolLib_Exp ProxyMetaState* TelltaleToolLib_GetProxyMetaState(const char* pGa
     return &sProxyState[index];
 }
 
+_TTToolLib_Exp int TelltaleToolLib_SetProxyVersionDatabasesFromArchive(TTArchive2& archive){
+    if (&archive == 0)
+        return 0;
+    int nNum = 0;
+    for(int i = 0; i < KEY_COUNT; i++){
+        Symbol versName = sBlowfishKeys[i].game_id;
+        versName += ".VersDB";
+        TTArchive2::ResourceEntry* pEntry = archive._FindResource(versName);
+        if(pEntry){
+            int index = i;
+			if (sVersionDBs[index] != nullptr)
+				delete sVersionDBs[index];
+			sVersionDBs[index] = new TelltaleVersionDatabase;
+            DataStream* pStream = archive.GetResourceStream(pEntry);
+            if(!pStream || pStream->IsInvalid()){
+                TTL_Log("WARN: Could not obtain stream for VersDB: %s.VersDB", sBlowfishKeys[i].game_id);
+            }else{
+                if(!sVersionDBs[index]->SerializeIn(pStream)){
+                    TTL_Log("WARN: Could not read in VersDB: %s.VersDB! Contact me", sBlowfishKeys[i].game_id);
+                }else{
+					sProxyState[index].mpStateGameDB = sVersionDBs[index];
+					nNum++;
+                }
+            }
+        }
+    }
+    return nNum;
+}
+
 _TTToolLib_Exp int TelltaleToolLib_SetProxyVersionDatabases(const char* pFolder)
 {
     if (!pFolder || !(*pFolder))
@@ -123,13 +199,13 @@ _TTToolLib_Exp int TelltaleToolLib_SetProxyVersionDatabases(const char* pFolder)
 			std::string rawname = it.path().filename().string().substr(0, lastindex);
             int index = TelltaleToolLib_GetGameKeyIndex(rawname.c_str());
             if (index == -1) {
-                TelltaleToolLib_RaiseError("Found VersDB with a name that doesnt belong to a valid game ID! Ignoring.", ErrorSeverity::WARN);
+                TTL_Log("Found VersDB with a name that doesnt belong to a valid game ID! Ignoring: %s", rawname.c_str());
                 continue;
             }
             if (sVersionDBs[index] != nullptr)
                 delete sVersionDBs[index];
             sVersionDBs[index] = new TelltaleVersionDatabase;
-            DataStreamFile_Win in = _OpenDataStreamFromDisc_(it.path().string().c_str(), READ);
+            DataStreamFile_PlatformSpecific in = _OpenDataStreamFromDisc_(it.path().string().c_str(), READ);
             if (in.IsInvalid() || !sVersionDBs[index]->SerializeIn(&in)) {
 				TelltaleToolLib_RaiseError("Could not open or load a VersDB file", ErrorSeverity::ERR);
                 return -1;
@@ -141,7 +217,7 @@ _TTToolLib_Exp int TelltaleToolLib_SetProxyVersionDatabases(const char* pFolder)
     return nNum;
 }
 
-i32 TelltaleToolLib_GetGameKeyIndex(const char* pGameID) {
+_TTToolLib_Exp i32 TelltaleToolLib_GetGameKeyIndex(const char* pGameID) {
     if (pGameID) {
         for (int i = 0; i < KEY_COUNT; i++) {
             if (!_stricmp(sBlowfishKeys[i].game_id, pGameID)) {
@@ -175,11 +251,11 @@ void _DefaultCallback(const char* msg, ErrorSeverity e) {
 
 ErrorCallbackF sDefaultErrorCallback = _DefaultCallback;
 
-void TelltaleToolLib_SetErrorCallback(ErrorCallbackF _Func) {
+_TTToolLib_Exp void TelltaleToolLib_SetErrorCallback(ErrorCallbackF _Func) {
     sDefaultErrorCallback = _Func;
 }
 
-void TelltaleToolLib_RaiseError(const char* _Msg, ErrorSeverity _S) {
+_TTToolLib_Exp void TelltaleToolLib_RaiseError(const char* _Msg, ErrorSeverity _S) {
     sDefaultErrorCallback(_Msg, _S);
     s_lastError = _Msg;
 }
@@ -189,6 +265,7 @@ _TTToolLib_Exp const char* TelltaleToolLib_GetLastError() {
 }
 
 _TTToolLib_Exp void TTL_Log(const char* const  _Fmt, ...){
+    std::lock_guard _g(log_guard);
     va_list va{};
     va_start(va, _Fmt);
 #ifdef _DEBUG
@@ -223,7 +300,23 @@ _TTToolLib_Exp void* TelltaleToolLib_CreateClassInstance(MetaClassDescription* p
     return nullptr;
 }
 
-void TelltaleToolLib_Free() {
+_TTToolLib_Exp LibraryHandle TelltaleToolLib_GetLibrary(const char* pName) {
+    char buf[256];
+    sprintf_s(buf, "./LibBin/%s64." PLATFORM_DYLIB_EXT, pName);
+    pName = buf;
+    for(auto& it : loadedLibraries){
+        if (!memcmp(pName, it.pName, strlen(pName)))
+            return it.hLibrary;
+    }
+    LibraryHandle h = PlatformLoadLibrary(pName);
+    if (h == EMPTY_LIBRARY_HANDLE)
+        return EMPTY_LIBRARY_HANDLE;
+    loadedLibraries.push_back({ h,pName });
+    return h;
+}
+
+_TTToolLib_Exp void TelltaleToolLib_Free() {
+    T3::Shutdown();
     if (sgHashDB) {
         delete sgHashDB;
         sgHashDB = NULL;
@@ -234,19 +327,25 @@ void TelltaleToolLib_Free() {
         if (sVersionDBs[i])
             delete sVersionDBs[i];
     }
+    for(auto& val : loadedLibraries){
+        PlatformFreeLibrary(val.hLibrary);
+    }
+    loadedLibraries.clear();
+    _T3EffectCache_Free();
     printf_hook = NULL;
+    spRenderAdapter = 0;
     sSetKeyIndex = DEFAULT_BLOWFISH_GAME_KEY;
     memset(sVersionDBs, 0, sizeof(TelltaleVersionDatabase*) * KEY_COUNT);
     memset(sProxyState, 0, sizeof(ProxyMetaState) * KEY_COUNT);
     __ReleaseSVI_Internal();
 }
 
-void TelltaleToolLib_SetGlobalHashDatabaseFromStream(DataStream* stream) {
+_TTToolLib_Exp void TelltaleToolLib_SetGlobalHashDatabaseFromStream(DataStream* stream) {
     if(stream)
         TelltaleToolLib_SetGlobalHashDatabase(new HashDatabase(stream));
 }
 
-void TelltaleToolLib_SetGlobalHashDatabase(HashDatabase* db) {
+_TTToolLib_Exp void TelltaleToolLib_SetGlobalHashDatabase(HashDatabase* db) {
     if (sgHashDB)
         delete sgHashDB;
     sgHashDB = db;
@@ -254,11 +353,11 @@ void TelltaleToolLib_SetGlobalHashDatabase(HashDatabase* db) {
         db->Open();
 }
 
-HashDatabase* TelltaleToolLib_GetGlobalHashDatabase() {
+_TTToolLib_Exp HashDatabase* TelltaleToolLib_GetGlobalHashDatabase() {
     return sgHashDB;
 }
 
-u8* TelltaleToolLib_EncryptLencScript(u8* data, u32 size, u32* outsize) {
+_TTToolLib_Exp u8* TelltaleToolLib_EncryptLencScript(u8* data, u32 size, u32* outsize) {
     u8* ret = (u8*)malloc(size);
     memcpy(ret, data, size);
     if(outsize)
@@ -267,7 +366,7 @@ u8* TelltaleToolLib_EncryptLencScript(u8* data, u32 size, u32* outsize) {
     return ret;
 }
 
-u8* TelltaleToolLib_DecryptLencScript(u8* data, u32 size, u32* outsize) {
+_TTToolLib_Exp u8* TelltaleToolLib_DecryptLencScript(u8* data, u32 size, u32* outsize) {
     u8* ret = (u8*)malloc(size);
     memcpy(ret, data, size);
 	if (outsize)
@@ -276,7 +375,7 @@ u8* TelltaleToolLib_DecryptLencScript(u8* data, u32 size, u32* outsize) {
     return ret;
 }
 
-u8* TelltaleToolLib_EncryptScript(u8* data, u32 size, u32 *outsize) {
+_TTToolLib_Exp u8* TelltaleToolLib_EncryptScript(u8* data, u32 size, u32 *outsize) {
     if (!data || 8 > size)return NULL;
     if (*(int*)data == *(const int*)"\x1BLua") {
         u8* ret = (u8*)malloc(size);
@@ -303,7 +402,7 @@ u8* TelltaleToolLib_EncryptScript(u8* data, u32 size, u32 *outsize) {
     return ret;
 }
 
-u8* TelltaleToolLib_DecryptScript(u8* data, u32 size, u32* outsize) {
+_TTToolLib_Exp u8* TelltaleToolLib_DecryptScript(u8* data, u32 size, u32* outsize) {
     if (8 >= size || !data)return NULL;
     if (*(char*)data != '\x1B') {
         //plain old text version workaround
@@ -328,11 +427,11 @@ u8* TelltaleToolLib_DecryptScript(u8* data, u32 size, u32* outsize) {
     return ret;
 }
 
-const char* TelltaleToolLib_GetMetaClassDescriptionName(MetaClassDescription* pObjDesc) {
+_TTToolLib_Exp const char* TelltaleToolLib_GetMetaClassDescriptionName(MetaClassDescription* pObjDesc) {
     return pObjDesc->mpTypeInfoName;
 }
 
-DataStream* TelltaleToolLib_CreateDataStream(const char* fp, DataStreamMode mode) {
+_TTToolLib_Exp DataStream* TelltaleToolLib_CreateDataStream(const char* fp, DataStreamMode mode) {
     DataStreamFileDisc* pDisk =  new DataStreamFileDisc((FileHandle)PlatformSpecOpenFile(fp, mode), mode);
     if(pDisk->IsInvalid()){
         delete pDisk;
@@ -341,29 +440,29 @@ DataStream* TelltaleToolLib_CreateDataStream(const char* fp, DataStreamMode mode
     return pDisk;
 }
 
-void TelltaleToolLib_DeleteDataStream(DataStream* stream) {
+_TTToolLib_Exp void TelltaleToolLib_DeleteDataStream(DataStream* stream) {
     delete stream;//calls destructor
 }
 
-char* TelltaleToolLib_Alloc_GetFixed1024ByteStringBuffer() {
+_TTToolLib_Exp char* TelltaleToolLib_Alloc_GetFixed1024ByteStringBuffer() {
     static char buf[1024];
     return &buf[0];
 }
 
-char* TelltaleToolLib_Alloc_GetFixed8BytePointerBuffer() {
+_TTToolLib_Exp char* TelltaleToolLib_Alloc_GetFixed8BytePointerBuffer() {
     static char buf[8];
     return &buf[0];
 }
 
-void TelltaleToolLib_GetNextMetaClassDescription(MetaClassDescription** pObjDescPtr) {
+_TTToolLib_Exp void TelltaleToolLib_GetNextMetaClassDescription(MetaClassDescription** pObjDescPtr) {
     if (pObjDescPtr && *pObjDescPtr) *pObjDescPtr = (*pObjDescPtr)->pNextMetaClassDescription;
 }
 
-void TelltaleToolLib_GetNextMetaMemberDescription(MetaMemberDescription** pMemberDescPtr) {
+_TTToolLib_Exp void TelltaleToolLib_GetNextMetaMemberDescription(MetaMemberDescription** pMemberDescPtr) {
     if (pMemberDescPtr && *pMemberDescPtr)*pMemberDescPtr = (*pMemberDescPtr)->mpNextMember;
 }
 
-MetaClassDescription* TelltaleToolLib_FindMetaClassDescription_ByHash(u64 pHash) {
+_TTToolLib_Exp MetaClassDescription* TelltaleToolLib_FindMetaClassDescription_ByHash(u64 pHash) {
     for (MetaClassDescription* i = TelltaleToolLib_GetFirstMetaClassDescription(); i;) {
         if (i->mHash == pHash)
             return i;
@@ -372,7 +471,7 @@ MetaClassDescription* TelltaleToolLib_FindMetaClassDescription_ByHash(u64 pHash)
     return NULL;
 }
 
-MetaClassDescription* TelltaleToolLib_FindMetaClassDescription(const char* pStr, bool pIsName) {
+_TTToolLib_Exp MetaClassDescription* TelltaleToolLib_FindMetaClassDescription(const char* pStr, bool pIsName) {
     if (pIsName) {
         u64 crc = CRC64_CaseInsensitive(0, pStr);
         for (MetaClassDescription* i = TelltaleToolLib_GetFirstMetaClassDescription(); i;) {          
@@ -395,7 +494,7 @@ MetaClassDescription* TelltaleToolLib_FindMetaClassDescription(const char* pStr,
     return NULL;
 }
 
-void TelltaleToolLib_GetMetaMemberDescriptionInfo(MetaMemberDescription* pMemberDesc, void* pDest, MetaMemberDescriptionParam param) {
+_TTToolLib_Exp void TelltaleToolLib_GetMetaMemberDescriptionInfo(MetaMemberDescription* pMemberDesc, void* pDest, MetaMemberDescriptionParam param) {
     switch (param) {
     case MetaMemberDescriptionParam::eMMDP_Name:
         *static_cast<const void**>(pDest) = pMemberDesc->mpName;
@@ -425,7 +524,7 @@ void TelltaleToolLib_GetMetaMemberDescriptionInfo(MetaMemberDescription* pMember
     }
 }
 
-void TelltaleToolLib_GetMetaClassDescriptionInfo(MetaClassDescription* pObj, void* pDest, MetaClassDescriptionParam param) {
+_TTToolLib_Exp void TelltaleToolLib_GetMetaClassDescriptionInfo(MetaClassDescription* pObj, void* pDest, MetaClassDescriptionParam param) {
     switch (param) {
     case MetaClassDescriptionParam::eMCDP_Extension:
         *static_cast<const char**>(pDest) = pObj->mpExt;
@@ -459,23 +558,23 @@ void TelltaleToolLib_GetMetaClassDescriptionInfo(MetaClassDescription* pObj, voi
     }
 }
 
-MetaClassDescription* TelltaleToolLib_GetFirstMetaClassDescription() {
+_TTToolLib_Exp MetaClassDescription* TelltaleToolLib_GetFirstMetaClassDescription() {
     return spFirstMetaClassDescription;
 }
 
-const char* TelltaleToolLib_GetVersion() {
+_TTToolLib_Exp const char* TelltaleToolLib_GetVersion() {
 	return _VERSION;
 }
 
-i32 TelltaleToolLib_GetMetaTypesCount() {
+_TTToolLib_Exp i32 TelltaleToolLib_GetMetaTypesCount() {
     return sMetaTypesCount;
 }
 
-bool TelltaleToolLib_Initialized() {
+_TTToolLib_Exp bool TelltaleToolLib_Initialized() {
     return sInitialized;
 }
 
-bool TelltaleToolLib_ReadMetaStream(DataStream* pIn, MetaClassDescription* pClass, void* pDestInstance){
+_TTToolLib_Exp bool TelltaleToolLib_ReadMetaStream(DataStream* pIn, MetaClassDescription* pClass, void* pDestInstance){
     if(pIn && pClass && pDestInstance){
         MetaStream ms{};
         ms.Open(pIn, MetaStreamMode::eMetaStream_Read, {});
@@ -497,14 +596,14 @@ bool TelltaleToolLib_ReadMetaStream(DataStream* pIn, MetaClassDescription* pClas
         TelltaleToolLib_RaiseError("RMS: invalid parameters", ErrorSeverity::ERR);
 }
 
- void TelltaleToolLib_RemovePropertySetValue(void* prop, unsigned long long keyhash){
+_TTToolLib_Exp void TelltaleToolLib_RemovePropertySetValue(void* prop, unsigned long long keyhash){
 	 PropertySet* p = (PropertySet*)prop;
      if (p == nullptr)
          return;
      p->RemoveProperty(keyhash);
  }
 
- void* TelltaleToolLib_GetPropertySetValue(void* prop, unsigned long long keyhash, MetaClassDescription** out) {
+_TTToolLib_Exp void* TelltaleToolLib_GetPropertySetValue(void* prop, unsigned long long keyhash, MetaClassDescription** out) {
     PropertySet* p = (PropertySet*)prop;
     if (p == nullptr)
         return nullptr;
@@ -516,7 +615,7 @@ bool TelltaleToolLib_ReadMetaStream(DataStream* pIn, MetaClassDescription* pClas
     return nullptr;
 }
 
-bool TelltaleToolLib_SetPropertySetValue(void* prop, unsigned long long kh, MetaClassDescription* pType, void* pInst){
+_TTToolLib_Exp bool TelltaleToolLib_SetPropertySetValue(void* prop, unsigned long long kh, MetaClassDescription* pType, void* pInst){
 	PropertySet* p = (PropertySet*)prop;
     if (p == nullptr || pType == nullptr || pInst == nullptr)
         return false;
@@ -536,7 +635,6 @@ inline bool operator==(int i, IntrinType t) {
 inline bool operator==(int i, ContainerOp t) {
 	return i == (int)t;
 }
-
 
 inline bool operator==(int i, StringOp t) {
 	return i == (int)t;
@@ -690,7 +788,7 @@ _TTToolLib_Exp void* TelltaleToolLib_Container(int op, void* container, void* ar
         if (container == nullptr)
             return 0;
         MetaClassDescription* clazz = (MetaClassDescription*)arg1;
-        return (void*)((clazz->mpFirstMember != nullptr && !_stricmp(clazz->mpFirstMember->mpName,"Baseclass_ContainerInterface")) ? 1 : 0);
+        return (void*)((clazz->mpFirstMember != nullptr && !_stricmp(clazz->mpFirstMember->mpName,"Baseclass_ContainerInterface")) ? 1llu : 0llu);
     }
     ContainerInterface* pInterface = (ContainerInterface*)container;
     if (pInterface == nullptr)
@@ -721,7 +819,7 @@ _TTToolLib_Exp void* TelltaleToolLib_Container(int op, void* container, void* ar
     }
 };
 
-void* TelltaleToolLib_String(int op, void* stringInst, void* param){
+_TTToolLib_Exp void* TelltaleToolLib_String(int op, void* stringInst, void* param){
     if (stringInst == nullptr)
         return nullptr;
     if(op == StringOp::GET){
@@ -734,7 +832,7 @@ void* TelltaleToolLib_String(int op, void* stringInst, void* param){
     return nullptr;
 }
 
- MetaMemberDescription* TelltaleToolLib_FindMember(MetaClassDescription* clazz, const char* memberVarName){
+_TTToolLib_Exp MetaMemberDescription* TelltaleToolLib_FindMember(MetaClassDescription* clazz, const char* memberVarName){
      if (clazz == nullptr || memberVarName == nullptr)
          return nullptr;
      MetaMemberDescription* pMem = clazz->mpFirstMember;
@@ -746,7 +844,7 @@ void* TelltaleToolLib_String(int op, void* stringInst, void* param){
      return 0;
 }
 
-bool TelltaleToolLib_WriteMetaStream(DataStream* pOut, MetaClassDescription* pClass, void* pInstance) {
+_TTToolLib_Exp bool TelltaleToolLib_WriteMetaStream(DataStream* pOut, MetaClassDescription* pClass, void* pInstance) {
 	if (pOut && pClass && pInstance) {
 		MetaStream ms{};
 		ms.Open(pOut, MetaStreamMode::eMetaStream_Write, {});
@@ -767,8 +865,7 @@ bool TelltaleToolLib_WriteMetaStream(DataStream* pOut, MetaClassDescription* pCl
 		TelltaleToolLib_RaiseError("WMS: invalid parameters", ErrorSeverity::ERR);
 }
 
-
-bool TelltaleToolLib_SetBlowfishKey(const char* game_id) {
+_TTToolLib_Exp bool TelltaleToolLib_SetBlowfishKey(const char* game_id) {
     if (game_id) {
         for (int i = 0; i < KEY_COUNT; i++) {
             if (!_stricmp(sBlowfishKeys[i].game_id, game_id)) {
@@ -785,11 +882,11 @@ bool TelltaleToolLib_SetBlowfishKey(const char* game_id) {
     //}
 }
 
-const char* TelltaleToolLib_GetBlowfishKey() {
+_TTToolLib_Exp const char* TelltaleToolLib_GetBlowfishKey() {
     return sBlowfishKeys[sSetKeyIndex].game_id;
 }
 
-bool TelltaleToolLib_Initialize(const char* game_id) {
+_TTToolLib_Exp bool TelltaleToolLib_Initialize(const char* game_id) {
     if (sInitialized)return false;
     if (game_id) {
         const BlowfishKey* k = NULL;
@@ -810,11 +907,13 @@ bool TelltaleToolLib_Initialize(const char* game_id) {
     for (int i = 0; i < KEY_COUNT; i++) {
         sProxyState[i].mpStateGameID = sBlowfishKeys[i].game_id;
     }
+    ShadowUtil::Initialize();
+    _InitializeDescs();
     sbUsingStates = false;
     sInitialized = true;
+    spRenderAdapter = &spDefaultAdapter;
     return true;
 }
-
 
 _TTToolLib_Exp bool TelltaleToolLib_IsGameIDOld(const char* game_id)
 {
@@ -823,7 +922,7 @@ _TTToolLib_Exp bool TelltaleToolLib_IsGameIDOld(const char* game_id)
 }
 
 //I KNOW ITS BAD FOR ALLOCATIONS BUT IM SORRY I CANT BE ASKED TO CHANGE IT D:
-void TelltaleToolLib_MakeInternalTypeName(char** _StringPtr) {
+_TTToolLib_Exp void TelltaleToolLib_MakeInternalTypeName(char** _StringPtr) {
     static std::string _sRepl_A = "struct ";
     static std::string _sRepl_B = "class ";
     static std::string _sRepl_C = "enum ";
@@ -879,7 +978,6 @@ void _PrintfDumper(const char* const _Fmt, const char* _ParamA, const char* _Par
     }
 }
 
-
 void printMembers(int tabs, MetaMemberDescription* mem, DumpClassInfoF _Dumper) {
     while (mem) {
         for (int i = 0; i < tabs; i++)
@@ -891,7 +989,7 @@ void printMembers(int tabs, MetaMemberDescription* mem, DumpClassInfoF _Dumper) 
     }
 }
 
-void TelltaleToolLib_DumpClassInfo(DumpClassInfoF _Dumper) {
+_TTToolLib_Exp void TelltaleToolLib_DumpClassInfo(DumpClassInfoF _Dumper) {
     MetaClassDescription* clazz = TelltaleToolLib_GetFirstMetaClassDescription();
     for (int i = 0; i < TelltaleToolLib_GetMetaTypesCount(); i++) {
         _Dumper("Class: %s\n", clazz->mpTypeInfoName,NULL);
@@ -903,15 +1001,15 @@ void TelltaleToolLib_DumpClassInfo(DumpClassInfoF _Dumper) {
     }
 }
 
-TTArchive2* TelltaleToolLib_CreateArchive2Instance(){
+_TTToolLib_Exp TTArchive2* TelltaleToolLib_CreateArchive2Instance(){
     return new TTArchive2;
 }
 
-void TelltaleToolLib_DeleteArchive2Instance(TTArchive2* pArchive){
+_TTToolLib_Exp void TelltaleToolLib_DeleteArchive2Instance(TTArchive2* pArchive){
     delete pArchive;
 }
 
-bool TelltaleToolLib_OpenArchive2(TTArchive2* pArchive, DataStream* pOwnershipGrantedStream){
+_TTToolLib_Exp bool TelltaleToolLib_OpenArchive2(TTArchive2* pArchive, DataStream* pOwnershipGrantedStream){
     if (pArchive&&pOwnershipGrantedStream) {
         pArchive->Activate(pOwnershipGrantedStream);
         return pArchive->mbActive;
@@ -919,11 +1017,11 @@ bool TelltaleToolLib_OpenArchive2(TTArchive2* pArchive, DataStream* pOwnershipGr
     else return false;
 }
 
-bool TelltaleToolLib_Archive2HasResource(TTArchive2* pArchive, unsigned long long hash){
+_TTToolLib_Exp bool TelltaleToolLib_Archive2HasResource(TTArchive2* pArchive, unsigned long long hash){
     return pArchive->HasResource(hash);
 }
 
-DataStream* TelltaleToolLib_OpenArchive2Resource(TTArchive2* pArchive, unsigned long long hash){
+_TTToolLib_Exp DataStream* TelltaleToolLib_OpenArchive2Resource(TTArchive2* pArchive, unsigned long long hash){
     if (!pArchive)
         return 0;
     for(auto it = pArchive->mResources.begin(); it != pArchive->mResources.end(); it++){
@@ -934,25 +1032,24 @@ DataStream* TelltaleToolLib_OpenArchive2Resource(TTArchive2* pArchive, unsigned 
     return 0;
 }
 
-int TelltaleToolLib_NumArchive2Resources(TTArchive2* pArchive){
+_TTToolLib_Exp int TelltaleToolLib_NumArchive2Resources(TTArchive2* pArchive){
     return pArchive ?(int) pArchive->mResources.size() : 0;
 }
 
-const char* TelltaleToolLib_GetArchive2ResourceName(TTArchive2* pArchive, unsigned long long hash){
+_TTToolLib_Exp const char* TelltaleToolLib_GetArchive2ResourceName(TTArchive2* pArchive, unsigned long long hash){
     String name;
     if (!pArchive)
         return 0;
-    if (!pArchive->GetResourceName(hash, &name))
-        return 0;
+    name = pArchive->GetResourceName(hash);
     memcpy(TelltaleToolLib_Alloc_GetFixed1024ByteStringBuffer(), name.c_str(), name.length() + 1);
     return TelltaleToolLib_Alloc_GetFixed1024ByteStringBuffer();
 }
 
-unsigned long long TelltaleToolLib_GetArchive2Resource(TTArchive2* pArchive, int index){
+_TTToolLib_Exp unsigned long long TelltaleToolLib_GetArchive2Resource(TTArchive2* pArchive, int index){
     return pArchive->mResources[index].mNameCRC;
 }
 
-void* TelltaleToolLib_ReadDataStream(DataStream* pReadStream, unsigned long* p){
+_TTToolLib_Exp void* TelltaleToolLib_ReadDataStream(DataStream* pReadStream, unsigned long* p){
     if (pReadStream) {
         if(!pReadStream->IsRead()){
 			TelltaleToolLib_RaiseError("Cannot read data stream: data stream is not a readable stream", ERR);
@@ -975,7 +1072,7 @@ void* TelltaleToolLib_ReadDataStream(DataStream* pReadStream, unsigned long* p){
     else return nullptr;
 }
 
-void TelltaleToolLib_WriteDataStream(DataStream* pOutStream, void* pBuffer, unsigned long size){
+_TTToolLib_Exp void TelltaleToolLib_WriteDataStream(DataStream* pOutStream, void* pBuffer, unsigned long size){
     if (pOutStream&&pBuffer&&size&&pOutStream->IsWrite()) {
         pOutStream->Serialize((char*)pBuffer, size);
     }else{
@@ -986,3 +1083,7 @@ void TelltaleToolLib_WriteDataStream(DataStream* pOutStream, void* pBuffer, unsi
 _TTToolLib_Exp unsigned long long TelltaleToolLib_CRC64CaseInsensitive(const char* pBuf, unsigned long long initialCRC){
     return CRC64_CaseInsensitive(initialCRC, pBuf);
 }
+
+#define __T3EFFECTUSER_IMPL_DEFAULTS
+#include "T3/Render.hpp"
+#include "T3/T3EffectUser.h"

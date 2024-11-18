@@ -11,19 +11,6 @@
 #include "Dialog.h"
 #include "Set.h"
 
-enum RenderQualityType {
-	eRenderQuality_High = 0,
-	eRenderQuality_Mid = 1,
-	eRenderQuality_LowPlus = 2,
-	eRenderQuality_Mid2_Legacy = 2,
-	eRenderQuality_Low = 3,
-	eRenderQuality_Low_Legacy = 3,
-	eRenderQuality_Lowest = 4,
-	eRenderQuality_Count = 5,
-	eRenderQuality_Default = 0xFFFFFFFE,
-	eRenderQuality_None = 0xFFFFFFFF,
-};
-
 namespace PreloadPackage {
 
 	struct ResourceKey {

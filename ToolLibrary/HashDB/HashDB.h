@@ -7,15 +7,19 @@
 #include "../DataStream/DataStream.h"
 
 #include <vector>
+#include <mutex>
 
 #define HASHDB_EXT HashDB
 
 const extern u32 MAGIC;
 
-
 /*
 * A database of hashes which the library uses to search for its CRCs. Similar to RTBs, except more complex with pages of entries to make quicker searching
 * Use this to find a CRC to string mapping
+* 
+* FindEntry will lock so is thread safe. None other functions do. You should only concurrent access when the database isn't changing, but the database should be alive
+* for the whole program and should not change.
+* 
 */
 class HashDatabase_Legacy {
 public:
@@ -49,6 +53,7 @@ protected:
 	int flags;
 	char* bufferedPage;
 	Page* cached_page;
+	std::mutex lock;
 };
 
 #define SEP ,
@@ -81,6 +86,7 @@ public:
 	DataStreamSubStream* mpStringsSubStream;
 	DataStream* mpSrcStream;
 	u32 mSymbolBase;
+	std::mutex lock;
 
 	u64* mpBuffer;
 	Page* mpBuffered;

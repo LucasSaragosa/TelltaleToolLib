@@ -4,8 +4,7 @@
 
 #pragma once
 
-#pragma warning (disable : 4018 4244 4267 4554 6387 4099)
-
+#include "../LibraryConfig.h"
 #include "../Compression.h"
 #include <cstdio>
 #include <memory>
@@ -16,8 +15,6 @@
 #define _DATASTREAM
 
 #define DEFAULT_GROWTH_FACTOR 0x1000
-
-typedef HANDLE FileHandle;
 
 #define READ DataStreamMode::eMode_Read
 #define WRITE DataStreamMode::eMode_Write
@@ -36,21 +33,6 @@ new _OpenDataStreamFromDisc_(file_path, mode)
 //With line terminator
 #define OpenDataStreamFromDisc(file_path, mode) \
 _OpenDataStreamFromDisc(file_path, mode);
-
-HANDLE openfile_s_(const char* fp, const char* m);
-
-//this is for windows, if on POSIX then include unistd and set the platform specific truncate function to truncate
-#include <io.h>
-#define PlatformSpecTrunc(handle, newsize) SetEndOfFile((HANDLE)handle)
-#define PlatformSpecOpenFile(file_path,mode)\
- openfile_s_(file_path,mode == DataStreamMode::eMode_Write ? "wb" : "rb")
-#define PlatforSpecCloseFile(handle) CloseHandle(handle)
-
-enum class DataStreamMode : unsigned char {
-	eMode_Unset = 0,
-	eMode_Read = 1,
-	eMode_Write = 2
-};
 
 enum class DataStreamSeekType : unsigned char {
 	eSeekType_Begin = 0,
@@ -155,13 +137,14 @@ public:
 };
 
 /*
-* A data stream implementation which comes from a file on disc (specificly for Windows, implement this for other platforms if you need!).
+* A data stream implementation which comes from a file on disc (not actually specific to windows).
 * This class can be optimized a lot (using runtime buffers like Java's BufferedReader and BufferedWriter), so feel free to reimplement that.
 */
-class DataStreamFile_Win : public DataStream {
+class DataStreamFile_PlatformSpecific : public DataStream {
 public:
-	HANDLE mHandle;
-	__int64 mStreamOffset, mStreamSize;
+
+	FileHandle mHandle = EMPTY_FILE_HANDLE;
+	i64 mStreamOffset = 0, mStreamSize = 0;
 
 	bool Serialize(char*, unsigned __int64);
 	unsigned __int64 GetSize() const { return mStreamSize; }
@@ -171,21 +154,22 @@ public:
 	//cant transfer from a file, only used for memory streams
 	bool Transfer(DataStream* dst, unsigned __int64 off, unsigned __int64 size);
 
-	DataStreamFile_Win(HANDLE H, DataStreamMode);
-	DataStreamFile_Win(DataStreamFile_Win&&);
-	DataStreamFile_Win& operator=(DataStreamFile_Win&&);
-	DataStreamFile_Win(DataStreamFile_Win const&) = delete;
-	DataStreamFile_Win& operator=(DataStreamFile_Win& const) = delete;
-	virtual ~DataStreamFile_Win() { 
-		if (!IsInvalid()) {
-			PlatforSpecCloseFile((HANDLE)mHandle);
-		}
+	DataStreamFile_PlatformSpecific();
+	DataStreamFile_PlatformSpecific(FileHandle H, DataStreamMode);
+	DataStreamFile_PlatformSpecific(DataStreamFile_PlatformSpecific&&);
+	DataStreamFile_PlatformSpecific& operator=(DataStreamFile_PlatformSpecific&&);
+	DataStreamFile_PlatformSpecific(DataStreamFile_PlatformSpecific const&) = delete;
+	DataStreamFile_PlatformSpecific& operator=(DataStreamFile_PlatformSpecific& const) = delete;
+
+	inline virtual ~DataStreamFile_PlatformSpecific() { 
+		PlatforSpecCloseFile(mHandle);
 	};
 
 };
 
 class DataStreamSubStream : public DataStream {
 public:
+
 	DataStream* mpBase;
 	unsigned __int64 mOffset, mStreamOffset, mSize;
 
@@ -197,7 +181,7 @@ public:
 
 	bool SetPosition(signed __int64, DataStreamSeekType);
 
-	bool Truncate(unsigned __int64 newz) {
+	inline bool Truncate(unsigned __int64 newz) {
 		if (newz <= mSize) {
 			mSize = newz;
 			if (mOffset > mSize)
@@ -224,11 +208,10 @@ public:
 
 class DataStreamMemory : public DataStream {
 public:
-	//std::vector<char*> mPageTable;
-	//unsigned __int64 mPageSize;
-	unsigned __int64 mSize;
-	unsigned __int64 mOffset;
-	unsigned __int64 mGFact = DEFAULT_GROWTH_FACTOR;
+
+	u64 mSize;
+	u64 mOffset;
+	u64 mGFact = DEFAULT_GROWTH_FACTOR;
 	void* mMemoryBuffer;
 
 	bool Serialize(char*, unsigned __int64);
@@ -256,26 +239,32 @@ public:
 	DataStreamMemory(DataStreamMemory const&) = delete;
 	DataStreamMemory& operator=(DataStreamMemory& const) = delete;
 	~DataStreamMemory();
+
 };
 
 //*NOT COPYABLE OR MOVABLE* A legacy encrypted stream which decrypts in chunks for old games which us MBIN, MBES.
 //NOT WRITABLE, ONLY READABLE!
 class DataStreamLegacyEncrypted : public DataStream {
+
 	DataStream* mpBase;
 	unsigned int mHeader;//start pos
 	unsigned int mEncryptSize, mEncryptInterval, mEncryptSkip;
 	unsigned __int64 mSize, mOffset;
 	int mCurrentBlock;
+
 public:
+
 	char mBuf[0x100];
 
 	bool Serialize(char*, unsigned __int64);
 	unsigned __int64 GetSize() const { return mSize + mHeader; }
 	unsigned __int64 GetPosition() const { return mOffset + mHeader; }
 	bool SetPosition(signed __int64, DataStreamSeekType);
-	bool Truncate(unsigned __int64 new_size) {
+
+	inline bool Truncate(unsigned __int64 new_size) {
 		return false;
 	};
+
 	bool Transfer(DataStream* dst, unsigned __int64 off, unsigned __int64 size) { return false; }
 	DataStreamLegacyEncrypted(DataStream*,int version, unsigned int startPos);
 	DataStreamLegacyEncrypted(DataStreamLegacyEncrypted&&) = delete;
@@ -286,16 +275,17 @@ public:
 };
 
 struct DataStreamContainerParams {
-	DataStream* mpSrcStream;
-	DataStream* mpDstStream;
+
+	DataStream* mpSrcStream = 0;
+	DataStream* mpDstStream = 0;
 	//offset which to start serialing to in the destination stream
-	unsigned __int64 mDstOffset;
-	unsigned __int32 mWindowSize;
-	bool mbCompress;
-	bool mbEncrypt;
+	unsigned __int64 mDstOffset = 0;
+	unsigned __int32 mWindowSize = 0;
+	bool mbCompress = 0;
+	bool mbEncrypt = 0;
 	Compression::Library mCompressionLibrary;
 
-	DataStreamContainerParams() : mWindowSize(0x10000), mCompressionLibrary(Compression::Library::ZLIB) {}
+	inline DataStreamContainerParams() : mWindowSize(0x10000), mCompressionLibrary(Compression::Library::ZLIB) {}
 
 };
 //A compressed/encrypted data stream container used for READING data.
@@ -313,8 +303,8 @@ public:
 
 	typedef void (*ProgressF)(const char* _Msg, float _Progress);
 
-	unsigned __int64 mStreamOffset, mStreamPosition, mStreamSize;
-	unsigned __int64 mStreamStart;
+	u64 mStreamOffset, mStreamPosition, mStreamSize;
+	u64 mStreamStart;
 	DataStreamContainerParams mParams;
 	char* mpCachedPage;//0x32
 	char* mpReadTransitionBuf;
@@ -322,6 +312,19 @@ public:
 	unsigned __int64* mPageOffsets;
 	unsigned __int64 mNumPages;
 	bool ok = false;
+
+	inline static std::shared_ptr<DataStreamContainer> ReadContainer(DataStream* pSrcStream, u64 off, u64* pSizeTransferred){
+		DataStreamContainerParams params{};
+		params.mbCompress = params.mbEncrypt = false;
+		params.mDstOffset = 0;
+		params.mpDstStream = 0;
+		params.mpSrcStream = pSrcStream;
+		std::shared_ptr<DataStreamContainer> container = std::make_shared<DataStreamContainer>(params);
+		container->Read(off, pSizeTransferred);
+		return container;
+	}
+
+
 
 	//init from src stream
 	void Read(unsigned __int64 offset, unsigned __int64* pContainerSize);
@@ -336,19 +339,18 @@ public:
 	unsigned __int64 GetSize() const { return mStreamSize; }
 	unsigned __int64 GetPosition() const { return mStreamPosition; }
 
-	bool Truncate(unsigned __int64 new_size) {
+	inline bool Truncate(unsigned __int64 new_size) {
 		return false;
 	};
 
-	bool Transfer(DataStream* dst, unsigned __int64 off, unsigned __int64 size) {
+	inline bool Transfer(DataStream* dst, unsigned __int64 off, unsigned __int64 size) {
 		return Copy(dst, dst->GetPosition(), off, size);
 	}
 
-	DataStreamContainer(DataStreamContainerParams params) : mParams(params), mStreamOffset(0), /*mCacheablePages(-1),*/ mpReadTransitionBuf(NULL),
+	inline DataStreamContainer(DataStreamContainerParams params) : DataStream(DataStreamMode::eMode_Read), 
+		mParams(params), mStreamOffset(0), /*mCacheablePages(-1),*/ mpReadTransitionBuf(NULL),
 		mStreamSize(0), mStreamStart(0),
-		mCurrentIndex(-1), mStreamPosition(0), mNumPages(0), mPageOffsets(NULL), mpCachedPage(NULL)
-		, DataStream(DataStreamMode::eMode_Read) {
-	}//Create
+		mCurrentIndex(-1), mStreamPosition(0), mNumPages(0), mPageOffsets(NULL), mpCachedPage(NULL) {}//Create
 
 	~DataStreamContainer();
 
@@ -362,16 +364,14 @@ public:
 		return mParams.mbEncrypt;
 	}
 
-	DataStreamContainer(DataStreamContainer&&) = delete;
-	DataStreamContainer& operator=(DataStreamContainer&&) = delete;
+	DataStreamContainer(DataStreamContainer&&) = default;
+	DataStreamContainer& operator=(DataStreamContainer&&) = default;
+
 	DataStreamContainer(DataStreamContainer const&) = delete;
 	DataStreamContainer& operator=(DataStreamContainer& const) = delete;
 
 };
 
-/*
-* Change this to the class you want to use as the actual file reading implementation of DataStream for your platform.
-*/
-typedef DataStreamFile_Win DataStreamFileDisc;
+typedef DataStreamFile_PlatformSpecific DataStreamFileDisc;
 
 #endif

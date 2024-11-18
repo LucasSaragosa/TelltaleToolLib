@@ -75,7 +75,7 @@ public:
 		meta->BeginObject("DCArray", true);
 		MetaOpResult result = eMetaOp_Succeed;
 		if (meta->mMode == MetaStreamMode::eMetaStream_Write) {
-			char buf[40];
+			//char buf[40];
 			for (int i = 0; i < array->mSize; i++) {
 				if ((result=op(&array->mpStorage[i], vtype, NULL, pUserData)) != eMetaOp_Succeed) {
 					TelltaleToolLib_RaiseError("Type inside dynamic array was not able to be serialized", ErrorSeverity::ERR);

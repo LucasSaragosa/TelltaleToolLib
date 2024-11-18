@@ -1,34 +1,58 @@
 // This file was written by Lucas Saragosa. Im the author of this interpretation of 
 // the engine and require that if you use this code or library, you give credit to me and
 // the amazing Telltale Games.
-#pragma warning(disable C4267 C4244 C4554 C4477)
+
+
 #include "DataStream.h"
 #include <vector>
 #include <utility>
 #include "../TelltaleToolLibrary.h"
 #include "../Blowfish.h"
 
+// PLATFORM SPECIFIC OPEN FILE
+
+static LibraryHandle hLibrary = EMPTY_LIBRARY_HANDLE;
+
+static void _EnsureLib() {
+	if (!hLibrary)
+	{
+		hLibrary = TelltaleToolLib_GetLibrary("oodle");
+		if (hLibrary == EMPTY_LIBRARY_HANDLE) {
+#ifdef _DEBUG
+			TTL_Log("COULD NOT INITIALIZE OODLE LIBRARY (DLL oo2core_5_win64 NOT FOUND).\n");
+#endif
+			return;
+		}
+	}
+}
+
+#ifdef _MSC_VER
+
 HANDLE openfile_s_(const char* fp, const char* m) {
 	OFSTRUCT o{ 0 };
 	u32 acc{}, dsp{};
 	if (m[0] == 'r') {
-		dsp |= OPEN_ALWAYS;
+		dsp |= OPEN_EXISTING;
 	}
 	else {
 		dsp |= CREATE_ALWAYS;
 	}
 	acc = GENERIC_READ | GENERIC_WRITE;
 	HANDLE f = CreateFileA(fp, acc, 0, 0, dsp, FILE_ATTRIBUTE_NORMAL, 0);
-	if (!f) {
-		static const char* fmt = "Could not open file %s";
+	if (f == INVALID_HANDLE_VALUE) {
+		static const char* fmt = "Could not open file %s: %d";
 		static const int flen = strlen(fmt);
 		int fpl = strlen(fp);
 		char* errorbuffer = TelltaleToolLib_Alloc_GetFixed1024ByteStringBuffer();
-		sprintf(errorbuffer, fmt, fp);
+		sprintf(errorbuffer, fmt, fp, GetLastError());
 		TelltaleToolLib_RaiseError(errorbuffer, ErrorSeverity::ERR);
 	}
 	return f;
 }
+
+#endif
+
+// DATA STREAM FUNCTIONS
 
 bool DataStream::Copy(DataStream* pDst, unsigned __int64 pDstOffset, unsigned __int64 pSrcOffset, unsigned __int64 size) {
 	static char _CopyBuf[0x10000];
@@ -65,16 +89,9 @@ void DataStreamContainer::Create(DataStreamContainer::ProgressF f, DataStreamCon
 	DataStream* from = params.mpSrcStream;
 	to->SetPosition(params.mDstOffset, DataStreamSeekType::eSeekType_Begin);
 	if (params.mbCompress) {
-		HMODULE dll{};
 		if (params.mCompressionLibrary != Compression::Library::ZLIB) {
 			v = params.mbEncrypt ? 1414808421 : 1414808442;
-			dll = LoadLibraryA("oo2core_5_win64.dll");
-			if (!dll) {
-#ifdef _DEBUG
-				TTL_Log("COULD NOT INITIALIZE OODLE LIBRARY (DLL oo2core_5_win64.dll NOT FOUND).\n");
-#endif
-				return;
-			}
+			_EnsureLib();
 		}
 		else {
 			v = params.mbEncrypt ? 1414808389 : 1414808410;
@@ -109,15 +126,15 @@ void DataStreamContainer::Create(DataStreamContainer::ProgressF f, DataStreamCon
 			if (params.mCompressionLibrary == Compression::Library::ZLIB) {
 				if (!Compression::ZlibCompress(compressed, (unsigned int*)&csize, decompressed, 0x10000)) {
 #ifdef _DEBUG
-					TTL_Log("COULD NOT COMPRESS WITH ZLIB: RETURNED FALSE! (FOR CREATING COMPRESSED .TTARCH2).\n");
+					TTL_Log("COULD NOT COMPRESS WITH ZLIB: RETURNED FALSE!\n");
 #endif
 					return;
 				}
 			}
 			else {
-				if (!Compression::OodleLZCompress(compressed, (unsigned int*)&csize, decompressed, 0x10000, dll)) {
+				if (!Compression::OodleLZCompress(compressed, (unsigned int*)&csize, decompressed, 0x10000, hLibrary)) {
 #ifdef _DEBUG
-					TTL_Log("COULD NOT COMPRESS WITH OODLE: RETURNED FALSE! (FOR CREATING COMPRESSED .TTARCH2).\n");
+					TTL_Log("COULD NOT COMPRESS WITH OODLE: RETURNED FALSE!\n");
 #endif
 					return;
 				}
@@ -135,9 +152,7 @@ void DataStreamContainer::Create(DataStreamContainer::ProgressF f, DataStreamCon
 				f(temp, pr);
 			else
 				TTL_Log(temp);
-			FreeLibrary(dll);
 		}
-
 
 		free(decompressed);
 		free(compressed);
@@ -320,6 +335,7 @@ void DataStreamContainer::Read(unsigned __int64 offset, unsigned __int64* pConta
 		return;
 	}
 	else {
+		unsigned __int32 libtype = 0;
 		mParams.mbCompress = true;
 		switch (type) {
 		case 1414808389: //TTCE
@@ -332,8 +348,8 @@ void DataStreamContainer::Read(unsigned __int64 offset, unsigned __int64* pConta
 			break;
 		case 1414808421: //TTCe
 			mParams.mbEncrypt = 1;
+			[[fallthrough]];
 		case 1414808442: //TTCz
-			unsigned __int32 libtype;
 			mParams.mpSrcStream->Serialize((char*)&libtype, 4);
 			if (libtype > 1){
 				sprintf(TelltaleToolLib_Alloc_GetFixed1024ByteStringBuffer(), "Invalid compression type for DataStreamContainer: 0x%X", libtype);
@@ -372,10 +388,10 @@ DataStreamContainer::~DataStreamContainer() {
 		free(mpReadTransitionBuf);
 	if (mParams.mpSrcStream)
 		delete mParams.mpSrcStream;
+	mParams.mpSrcStream = 0;
 }
 
 bool DataStreamContainer::GetChunk(unsigned __int64 index) {
-	static HMODULE dll{};
 	if (mCurrentIndex == index)return true;
 	unsigned __int64 offset = mPageOffsets[index];
 	unsigned __int64 size = GetCompressedPageSize(index);
@@ -403,21 +419,16 @@ bool DataStreamContainer::GetChunk(unsigned __int64 index) {
 #endif
 		}
 	else if (mParams.mCompressionLibrary == Compression::Library::OODLE) {
-		if (!dll) {
-			dll = LoadLibraryA("oo2core_5_win64.dll");
-			if (!dll) {
-#ifdef _DEBUG
-				TTL_Log("COULD NOT INITIALIZE OODLE LIBRARY (DLL oo2core_5_win64.dll NOT FOUND).\n");
-#endif
-				return false;
-		}
-	}
-		bool r = Compression::OodleLZDecompress(mpCachedPage, mParams.mWindowSize, mpReadTransitionBuf, size, dll);
+		_EnsureLib();
+		bool r = Compression::OodleLZDecompress(mpCachedPage, mParams.mWindowSize, mpReadTransitionBuf, size, hLibrary);
 #if defined(_MSC_VER) && defined(_DEBUG)
 		if (!r) {
 			TTL_Log("Decompression failed: Oodle Decompress returned %d", r);
 			return false;
 		}
+#else
+		if (!r)
+			return false;
 #endif
 	}
 	return true;
@@ -728,7 +739,7 @@ DataStreamSubStream::~DataStreamSubStream() {
 	mpBase->mSubStreams--;
 }
 
-bool DataStreamFile_Win::Truncate(unsigned __int64 newSize) {
+bool DataStreamFile_PlatformSpecific::Truncate(unsigned __int64 newSize) {
 	static char _TruncateBuffer[0x1000];
 	if (!IsWrite())return false;
 	if (newSize == mStreamSize)return true;
@@ -753,12 +764,12 @@ bool DataStreamFile_Win::Truncate(unsigned __int64 newSize) {
 }
 
 
-bool DataStreamFile_Win::Transfer(DataStream* dst, unsigned __int64 off, unsigned __int64 size)
+bool DataStreamFile_PlatformSpecific::Transfer(DataStream* dst, unsigned __int64 off, unsigned __int64 size)
 {
 	return Copy(dst, dst->GetPosition(), off, size);
 }
 
-bool DataStreamFile_Win::SetPosition(signed __int64 pos, DataStreamSeekType type) {
+bool DataStreamFile_PlatformSpecific::SetPosition(signed __int64 pos, DataStreamSeekType type) {
 	unsigned __int64 final = 0;
 	switch (type) {
 	case DataStreamSeekType::eSeekType_Begin:
@@ -778,7 +789,7 @@ bool DataStreamFile_Win::SetPosition(signed __int64 pos, DataStreamSeekType type
 	return true;
 }
 
-bool DataStreamFile_Win::Serialize(char* buf, unsigned __int64 bufsize) {
+bool DataStreamFile_PlatformSpecific::Serialize(char* buf, unsigned __int64 bufsize) {
 	if (!bufsize)return true;
 	if (IsInvalid() || !buf && bufsize) {
 		TelltaleToolLib_RaiseError("Cannot read from data stream disk: stream is invalid - file did not exist or could not be opened or parameters are invalid (buffer)", ERR);
@@ -787,7 +798,7 @@ bool DataStreamFile_Win::Serialize(char* buf, unsigned __int64 bufsize) {
 	SetFilePointer((HANDLE)mHandle, mStreamOffset, NULL, FILE_BEGIN);
 	if (IsWrite()) {
 		if (1 != WriteFile((HANDLE)mHandle, buf, bufsize, NULL, NULL)) {
-			sprintf(TelltaleToolLib_Alloc_GetFixed1024ByteStringBuffer(), "Cannot write to data stream disk : windows WriteFile failed with %d", GetLastError());
+			sprintf(TelltaleToolLib_Alloc_GetFixed1024ByteStringBuffer(), "Cannot write to data stream disk : windows WriteFile failed with %d", (u32)GetLastError());
 			TelltaleToolLib_RaiseError(TelltaleToolLib_Alloc_GetFixed1024ByteStringBuffer(), ERR);
 			return false;//if we couldnt write 1 element
 		}
@@ -796,13 +807,13 @@ bool DataStreamFile_Win::Serialize(char* buf, unsigned __int64 bufsize) {
 	}
 	else {
 		if (mStreamOffset + bufsize > mStreamSize) {
-			sprintf(TelltaleToolLib_Alloc_GetFixed1024ByteStringBuffer(), "Cannot read from data stream: trying to read %d bytes but only %d bytes left (lower file size from Windows reads %d)", bufsize, (unsigned long)(mStreamSize - mStreamOffset)
-				, GetFileSize((HANDLE)mHandle,0));
+			sprintf(TelltaleToolLib_Alloc_GetFixed1024ByteStringBuffer(), "Cannot read from data stream: trying to read %d bytes but only %d bytes left (lower file size from Windows reads %d)", (u32)bufsize, (u32)(mStreamSize - mStreamOffset)
+				, (u32)GetFileSize((HANDLE)mHandle,0));
 			TelltaleToolLib_RaiseError(TelltaleToolLib_Alloc_GetFixed1024ByteStringBuffer(), ERR);
 			return false;//if we couldnt write 1 element
 		}
 		if(1!=ReadFile((HANDLE)mHandle, buf, bufsize, NULL, NULL)) {
-			sprintf(TelltaleToolLib_Alloc_GetFixed1024ByteStringBuffer(), "Cannot read from data stream disk : windows ReadFile failed with %d", GetLastError());
+			sprintf(TelltaleToolLib_Alloc_GetFixed1024ByteStringBuffer(), "Cannot read from data stream disk : windows ReadFile failed with %d", (u32)GetLastError());
 			TelltaleToolLib_RaiseError(TelltaleToolLib_Alloc_GetFixed1024ByteStringBuffer(), ERR);
 			return false;//if we couldnt write 1 element
 		}
@@ -811,10 +822,16 @@ bool DataStreamFile_Win::Serialize(char* buf, unsigned __int64 bufsize) {
 	return true;
 }
 
-DataStreamFile_Win::DataStreamFile_Win(HANDLE handle, DataStreamMode m) : mHandle{ handle }, DataStream(m) {
-	if (!handle) {
+DataStreamFile_PlatformSpecific::DataStreamFile_PlatformSpecific() {
+	mHandle = EMPTY_FILE_HANDLE;
+	mMode = DataStreamMode::eMode_Unset;
+	mStreamOffset = mStreamSize = 0;
+}
+
+DataStreamFile_PlatformSpecific::DataStreamFile_PlatformSpecific(FileHandle handle, DataStreamMode m) : mHandle{ handle }, DataStream(m) {
+	if (handle == EMPTY_FILE_HANDLE) {
 		mMode = DataStreamMode::eMode_Unset;
-		mHandle = NULL;
+		mHandle = EMPTY_FILE_HANDLE;
 		return;
 	}
 	DWORD hi{ 0 };
@@ -823,21 +840,21 @@ DataStreamFile_Win::DataStreamFile_Win(HANDLE handle, DataStreamMode m) : mHandl
 	mStreamOffset = 0;
 }
 
-DataStreamFile_Win& DataStreamFile_Win::operator=(DataStreamFile_Win&& o) {
+DataStreamFile_PlatformSpecific& DataStreamFile_PlatformSpecific::operator=(DataStreamFile_PlatformSpecific&& o) {
 	DataStream::operator=(std::move(o));
-	this->mHandle = o.mHandle;
-	this->mStreamOffset = o.mStreamOffset;
-	this->mStreamSize = o.mStreamSize;
+	mHandle = o.mHandle;
+	mStreamOffset = o.mStreamOffset;
+	mStreamSize = o.mStreamSize;
 	o.mHandle = NULL;
 	o.mStreamOffset = 0;
 	o.mStreamSize = 0;
 	return *this;
 }
 
-DataStreamFile_Win::DataStreamFile_Win(DataStreamFile_Win&& o) : DataStream(std::move(o))  {
-	this->mHandle = o.mHandle;
-	this->mStreamOffset = o.mStreamOffset;
-	this->mStreamSize = o.mStreamSize;
+DataStreamFile_PlatformSpecific::DataStreamFile_PlatformSpecific(DataStreamFile_PlatformSpecific&& o) : DataStream(std::move(o))  {
+	mHandle = o.mHandle;
+	mStreamOffset = o.mStreamOffset;
+	mStreamSize = o.mStreamSize;
 	o.mHandle = NULL;
 	o.mStreamOffset = 0;
 	o.mStreamSize = 0;

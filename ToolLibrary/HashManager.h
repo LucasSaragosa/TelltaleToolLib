@@ -171,7 +171,7 @@ unsigned __int32 INLINE CRC32(unsigned __int32 crc, const char* const buffer, un
 	return crc;*/
 	unsigned __int64 v3; // r10@1
 	const char* v4; // r9@1
-	__int64 result; // rax@2
+	u64 result; // rax@2
 	unsigned int v6; // ecx@3
 	unsigned __int64 v7; // r8@4
 	unsigned int v8; // edx@5
@@ -211,7 +211,7 @@ unsigned __int32 INLINE CRC32(unsigned __int32 crc, const char* const buffer, un
 	}
 	else
 	{
-		result = 0i64;
+		result = 0u;
 	}
 	return result;
 }

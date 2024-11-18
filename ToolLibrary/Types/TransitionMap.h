@@ -23,7 +23,8 @@ struct TransitionMap {
 		TransitionRemapper mRemapper;
 	};
 
-	Map<Symbol, TransitionMapInfo, Symbol::CompareCRC> mTransitionRemappers;
+	Map<Symbol, TransitionMapInfo, Symbol::CompareCRC> mTransitionRemappers_WDCAndAbove;//uses symbols instead of strings, the hash of the AG
+	Map<String, TransitionMapInfo> mTransitionRemappers_BAT2AndBelow;
 
 };
 

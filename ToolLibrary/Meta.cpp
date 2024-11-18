@@ -3,12 +3,10 @@
 // the engine and require that if you use this code or library, you give credit to me and
 // the amazing Telltale Games.
 
-#pragma warning (disable : 4018 4244 4267 4554 6387 4099)
 #include "Meta.hpp"
 #include <algorithm>
 #include "HashDB/HashDB.h"
 #include <typeinfo>
-#include <bit>
 #include "Types/DCArray.h"
 #include "Base64.h"
 #include "VersDB.h"
@@ -16,80 +14,35 @@
 
 extern TelltaleVersionDatabase* sVersionDBs[KEY_COUNT];
 
-METAOP_FUNC_IMPL_(DebugString, SerializeAsync) {
-	MetaStream* pStream = (MetaStream*)pUserData;
-	DebugString* me = (DebugString*)pObj;
-	pStream->serialize_String(me);
+// --------------------------------------------------------------------------------------- UTILITY TYPES. BINARY BUFFER ----------------------------------------------------------------------------------------
+
+MetaOpResult BinaryBuffer::MetaOperation_SerializeAsync(void* pObj, MetaClassDescription* pObjDesc,
+	MetaMemberDescription* pCtx, void* pUserData) {
+	MetaStream* stream = static_cast<MetaStream*>(pUserData);
+	BinaryBuffer* bb = static_cast<BinaryBuffer*>(pObj);
+	u32 size = bb->mDataSize;
+	stream->serialize_uint32(&size);
+	bb->mDataSize = size;
+	if (stream->mMode == MetaStreamMode::eMetaStream_Read) {
+		if (bb->mpData)
+			delete[] bb->mpData;
+		bb->mpData = (char*)_aligned_malloc(size, 4);
+		if (!bb->mpData) {
+			stream->Advance(size);
+			return eMetaOp_OutOfMemory;
+		}
+		memset(bb->mpData, 0, size);
+	}
+	stream->serialize_bytes(bb->mpData, size);
 	return eMetaOp_Succeed;
 }
 
-String MetaVersion_ConvertTypeName(const String& from)
-{
-	char* temp = (char*)malloc(from.length() + 1);
-	memcpy(temp, from.c_str(), from.length() + 1);
-	TelltaleToolLib_MakeInternalTypeName(&temp);
-	String ret{ temp };
-	free(temp);
-	return std::move(ret);
-}
-
-
-bool MetaVersion_MemberExistsInCurrentVersion(MetaMemberDescription* member, MetaStream* stream)
-{
-	bool disable = false;
-	if (!disable && member->mMinMetaVersion != -1 && member->mMinMetaVersion > stream->mStreamVersion)
-		disable = true;
-	if (member->mGameIndexVersionRange.min != -1 && member->mGameIndexVersionRange.max != -1) {
-		if (member->mGameIndexVersionRange.max >= member->mGameIndexVersionRange.min) {
-			disable = !(sSetKeyIndex >= member->mGameIndexVersionRange.min &&
-				member->mGameIndexVersionRange.max >= sSetKeyIndex || sSetKeyIndex == member->mGameIndexVersionRange.min
-				|| sSetKeyIndex == member->mGameIndexVersionRange.max);
-		}
-		else {
-			disable = !(sSetKeyIndex >= member->mGameIndexVersionRange.min || member->mGameIndexVersionRange.max >= sSetKeyIndex);
-		}
-	}
-	else {
-		if (!disable && member->mGameIndexVersionRange.min != -1)
-			disable = !(sSetKeyIndex >= member->mGameIndexVersionRange.min);
-		if (!disable && member->mGameIndexVersionRange.max != -1)
-			disable = !(member->mGameIndexVersionRange.max >= sSetKeyIndex);
-	}
-	if (!disable && member->mSkipVersion != -1)
-		disable = sSetKeyIndex == member->mSkipVersion;
-	return !disable;
-}
+// --------------------------------------------------------------------------------------- SYMBOL CONSTS. AND LOCAL ONES ----------------------------------------------------------------------------------------
 
 i32 sMetaTypesCount = 0;
 MetaClassDescription* spFirstMetaClassDescription = NULL;
 char Symbol::smSymbolBuffer[sizeof(u64) * 2 + 1];//1byte= 2 hex chars
 std::vector<const char*> sMetaFileExtensions;
-SerializedVersionInfo* pSVIs = nullptr;
-
-void __ReleaseSVI_Internal()
-{
-	SerializedVersionInfo* svi = pSVIs;
-	while (svi) {
-		
-		SerializedVersionInfo* ssvi = svi->mpNext;
-		delete svi;
-		svi = ssvi;
-	}
-	pSVIs = nullptr;
-}
-
-
-void __RegisterSVI_Internal(void* svi)
-{
-	if (pSVIs) {
-		SerializedVersionInfo* p = (SerializedVersionInfo*)svi;
-		p->mpNext = pSVIs;
-		pSVIs = p;
-	}
-	else {
-		pSVIs = (SerializedVersionInfo*)svi;
-	}
-}
 
 const Symbol Symbol::kEmptySymbol((u64)0x0);
 const Symbol Symbol::kTransitionMapKey(0x1D699F33F83B11E1);
@@ -201,6 +154,61 @@ const Symbol Symbol::sQtSymbol(0x0A4BD597513632DD6);
 const Symbol Symbol::sExportSymbol(0x805FECD924A749DB);
 const Symbol Symbol::sCoreSymbol(0x0A7C199CDCEFC0681);
 
+// Helper
+bool replace(std::string& str, const std::string& from, const std::string& to) {
+	size_t start_pos = str.find(from);
+	if (start_pos == std::string::npos)
+		return false;
+	str.replace(start_pos, from.length(), to);
+	return true;
+}
+
+// --------------------------------------------------------------------------------------- SERIALIZED VERSION INFO ----------------------------------------------------------------------------------------
+
+SerializedVersionInfo* pSVIs = nullptr;
+
+void __ReleaseSVI_Internal()
+{
+	SerializedVersionInfo* svi = pSVIs;
+	while (svi) {
+
+		SerializedVersionInfo* ssvi = svi->mpNext;
+		delete svi;
+		svi = ssvi;
+	}
+	pSVIs = nullptr;
+}
+
+
+void __RegisterSVI_Internal(void* svi)
+{
+	if (pSVIs) {
+		SerializedVersionInfo* p = (SerializedVersionInfo*)svi;
+		p->mpNext = pSVIs;
+		pSVIs = p;
+	}
+	else {
+		pSVIs = (SerializedVersionInfo*)svi;
+	}
+}
+
+SerializedVersionInfo* SerializedVersionInfo::RetrieveCompiledVersionInfo(MetaClassDescription* pObjDescription) {
+	SerializedVersionInfo* result = pObjDescription->mpCompiledVersionSerializedVersionInfo;
+	if (!result) {
+		result = new SerializedVersionInfo;
+		__RegisterSVI_Internal(result);
+		MetaOperation op = pObjDescription->GetOperationSpecialization(MetaOperationDescription::eMetaOpTwentyOne);
+		if (op) {
+			op(NULL, pObjDescription, NULL, result);
+		}
+		else {
+			Meta::MetaOperation_SerializedVersionInfo(NULL, pObjDescription, NULL, result);
+		}
+		pObjDescription->mpCompiledVersionSerializedVersionInfo = result;
+	}
+	return result;
+}
+
 void SerializedVersionInfo::RetrieveVersionInfo(const char* versFileName, DataStream* stream) {
 	MetaStream meta;
 	meta.Open(stream, MetaStreamMode::eMetaStream_Read, { 0 });
@@ -279,14 +287,6 @@ void SerializedVersionInfo::RetrieveVersionInfo(const char* versFileName, DataSt
 	}
 }
 
-bool replace(std::string& str, const std::string& from, const std::string& to) {
-	size_t start_pos = str.find(from);
-	if (start_pos == std::string::npos)
-		return false;
-	str.replace(start_pos, from.length(), to);
-	return true;
-}
-
 DataStream* SerializedVersionInfo::Save(String* name) {
 	if (mbOldVersion)
 		return nullptr;
@@ -343,6 +343,8 @@ String SerializedVersionInfo::MakeVersionFileName(const char* typeName, u32 tn)
 	free(temp);
 	return std::move(ret);
 }
+
+// --------------------------------------------------------------------------------------- META STREAM IMPLEMENTATION ----------------------------------------------------------------------------------------
 
 void MetaStream::AddVersion(const SerializedVersionInfo* version) {
 	for (int i = 0; i < mVersionInfo.size(); i++) {
@@ -590,45 +592,6 @@ MetaClassDescription* GetMetaClassDescription(const char* typeInfoName) {
 	return NULL;
 }
 
-template<typename T> MetaClassDescription* MetaClassDescription_Typed<T>::GetMetaClassDescription(const char* type) {
-	if (!sInitialized)return NULL;
-	MetaClassDescription* i = spFirstMetaClassDescription;
-	if (type == NULL) {
-		for (i; i; i = i->pNextMetaClassDescription) {
-			if (i->mbHiddenInternal)
-				continue;
-			if (!_strcmpi(typeid(T).name(), i->mpTypeInfoExternalName))
-				return i;
-		}
-	}
-	else {
-		for (i; i; i = i->pNextMetaClassDescription) {
-			if (i->mbHiddenInternal)
-				continue;
-			if (!_strcmpi(typeid(T).name(), type))
-				return i;
-		}
-	}
-	return NULL;
-}
-
-SerializedVersionInfo* SerializedVersionInfo::RetrieveCompiledVersionInfo(MetaClassDescription* pObjDescription) {
-	SerializedVersionInfo* result = pObjDescription->mpCompiledVersionSerializedVersionInfo;
-	if (!result) {
-		result = new SerializedVersionInfo;
-		__RegisterSVI_Internal(result);
-		MetaOperation op = pObjDescription->GetOperationSpecialization(MetaOperationDescription::eMetaOpTwentyOne);
-		if (op) {
-			op(NULL, pObjDescription, NULL, result);
-		}
-		else {
-			Meta::MetaOperation_SerializedVersionInfo(NULL, pObjDescription, NULL, result);
-		}
-		pObjDescription->mpCompiledVersionSerializedVersionInfo = result;
-	}
-	return result;
-}
-
 void MetaStream::BeginObject(const char* name, MetaClassDescription* pDesc, MetaMemberDescription* pContext,bool) {
 	if (!(pDesc->mFlags.mFlags & MetaFlag::MetaFlag_MetaSerializeBlockingDisabled)
 		&& !(pContext->mFlags & MetaFlag::MetaFlag_MetaSerializeBlockingDisabled))
@@ -756,13 +719,6 @@ bool MetaStream::BeginDebugSection() {
 
 void MetaStream::Advance(int numBytes) {
 	mpReadWriteStream->SetPosition(numBytes, DataStreamSeekType::eSeekType_Current);
-}
-
-Symbol MetaClassDescription::GetDescriptionSymbol() {
-	String result;
-	GetToolDescriptionName(&result);
-	Symbol nsym(result.c_str());
-	return nsym;
 }
 
 void MetaStream::serialize_Symbol(Symbol* symbol) {
@@ -1164,20 +1120,13 @@ void MetaStream::Open(DataStream* stream, MetaStreamMode mode, MetaStreamParams 
 	Attach(stream, mode, p);
 }
 
-METAOP_FUNC_IMPL_(T3VertexSampleDataBase, SerializeAsync) {
-	MetaStream* ms = static_cast<MetaStream*>(pUserData);
-	MetaOpResult result = Meta::MetaOperation_SerializeAsync(pObj, pObjDescription, pContextDescription, pUserData);
-	if (result == MetaOpResult::eMetaOp_Succeed) {
-		T3VertexSampleDataBase* db = static_cast<T3VertexSampleDataBase*>(pObj);
-		int verts_size = db->mNumVerts * db->mVertSize;
-		if (verts_size) {
-			if (ms->mMode == MetaStreamMode::eMetaStream_Read) {
-				db->mpData = (char*)malloc(verts_size);
-			}
-			ms->serialize_bytes(db->mpData, verts_size);
-		}
-	}
-	return result;
+// --------------------------------------------------------------------------------------- META MEMBER/CLASS DESCRIPTION FUNCTION IMPLS ----------------------------------------------------------------------------------------
+
+Symbol MetaClassDescription::GetDescriptionSymbol() {
+	String result;
+	GetToolDescriptionName(&result);
+	Symbol nsym(result.c_str());
+	return nsym;
 }
 
 MetaMemberDescription::~MetaMemberDescription() {
@@ -1355,6 +1304,8 @@ String* MetaClassDescription::GetToolDescriptionName(String* result) {
 	free(tmp);
 	return result;
 }
+
+// --------------------------------------------------------------------------------------- META OPERATION DEFAULT IMPLEMENTATION ----------------------------------------------------------------------------------------
 
 METAOP_FUNC_IMPL(EnumerateMembers) {
 	Meta::EnumerateMembersInfo* handle = static_cast<Meta::EnumerateMembersInfo*>(pUserData);
@@ -1708,6 +1659,13 @@ MetaOpResult PerformMetaSerializeFull(MetaStream* pStream, void* pObj, MetaClass
 	return result;
 }
 
+METAOP_FUNC_IMPL_(DebugString, SerializeAsync) {
+	MetaStream* pStream = (MetaStream*)pUserData;
+	DebugString* me = (DebugString*)pObj;
+	pStream->serialize_String(me);
+	return eMetaOp_Succeed;
+}
+
 METAOP_FUNC_IMPL(AsyncSave) {
 	return PerformMetaSerializeFull(static_cast<MetaStream*>(pUserData), pObj, pObjDescription);
 }
@@ -1800,6 +1758,83 @@ String FindSymbolName(const Symbol& m, HashDatabase::Page*& outpageref) {
 	return _NF;
 }
 
+String MetaVersion_ConvertTypeName(const String& from)
+{
+	char* temp = (char*)malloc(from.length() + 1);
+	memcpy(temp, from.c_str(), from.length() + 1);
+	TelltaleToolLib_MakeInternalTypeName(&temp);
+	String ret{ temp };
+	free(temp);
+	return std::move(ret);
+}
+
+
+bool MetaVersion_MemberExistsInCurrentVersion(MetaMemberDescription* member, MetaStream* stream)
+{
+	bool disable = false;
+	if (!disable && member->mMinMetaVersion != -1 && member->mMinMetaVersion > stream->mStreamVersion)
+		disable = true;
+	if (member->mGameIndexVersionRange.min != -1 && member->mGameIndexVersionRange.max != -1) {
+		if (member->mGameIndexVersionRange.max >= member->mGameIndexVersionRange.min) {
+			disable = !(sSetKeyIndex >= member->mGameIndexVersionRange.min &&
+				member->mGameIndexVersionRange.max >= sSetKeyIndex || sSetKeyIndex == member->mGameIndexVersionRange.min
+				|| sSetKeyIndex == member->mGameIndexVersionRange.max);
+		}
+		else {
+			disable = !(sSetKeyIndex >= member->mGameIndexVersionRange.min || member->mGameIndexVersionRange.max >= sSetKeyIndex);
+		}
+	}
+	else {
+		if (!disable && member->mGameIndexVersionRange.min != -1)
+			disable = !(sSetKeyIndex >= member->mGameIndexVersionRange.min);
+		if (!disable && member->mGameIndexVersionRange.max != -1)
+			disable = !(member->mGameIndexVersionRange.max >= sSetKeyIndex);
+	}
+	if (!disable && member->mSkipVersion != -1)
+		disable = sSetKeyIndex == member->mSkipVersion;
+	return !disable;
+}
+
+// --------------------------------------------------------------------------------------- UTIL FUNCTIONS ----------------------------------------------------------------------------------------
+
+template<typename T> MetaClassDescription* MetaClassDescription_Typed<T>::GetMetaClassDescription(const char* type) {
+	if (!sInitialized)return NULL;
+	MetaClassDescription* i = spFirstMetaClassDescription;
+	if (type == NULL) {
+		for (i; i; i = i->pNextMetaClassDescription) {
+			if (i->mbHiddenInternal)
+				continue;
+			if (!_strcmpi(typeid(T).name(), i->mpTypeInfoExternalName))
+				return i;
+		}
+	}
+	else {
+		for (i; i; i = i->pNextMetaClassDescription) {
+			if (i->mbHiddenInternal)
+				continue;
+			if (!_strcmpi(typeid(T).name(), type))
+				return i;
+		}
+	}
+	return NULL;
+}
+
 const std::vector<const char*>* GetMetaFileExtensions() {
 	return &sMetaFileExtensions;
+}
+
+METAOP_FUNC_IMPL_(T3VertexSampleDataBase, SerializeAsync) {
+	MetaStream* ms = static_cast<MetaStream*>(pUserData);
+	MetaOpResult result = Meta::MetaOperation_SerializeAsync(pObj, pObjDescription, pContextDescription, pUserData);
+	if (result == MetaOpResult::eMetaOp_Succeed) {
+		T3VertexSampleDataBase* db = static_cast<T3VertexSampleDataBase*>(pObj);
+		int verts_size = db->mNumVerts * db->mVertSize;
+		if (verts_size) {
+			if (ms->mMode == MetaStreamMode::eMetaStream_Read) {
+				db->mpData = (char*)malloc(verts_size);
+			}
+			ms->serialize_bytes(db->mpData, verts_size);
+		}
+	}
+	return result;
 }

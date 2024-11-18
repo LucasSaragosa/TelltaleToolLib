@@ -3,8 +3,6 @@
 // the engine and require that if you use this code or library, you give credit to me and
 // the amazing Telltale Games.
 
-#pragma warning (disable : 4018 4244 4267 4554 6387 4099)
-
 #include "Meta.hpp"
 #include "Types/TypeIncludes.h"
 #include "TelltaleToolLibrary.h"
@@ -979,8 +977,8 @@ namespace MetaInit {
 			NEXTMEM2(tex, mNumMipLevels, T3Texture, long, 0, mToolProps);
 			NEXTMEM2(tex, mWidth, T3Texture, long, 0, mNumMipLevels);
 			NEXTMEM2(tex, mHeight, T3Texture, long, 0, mWidth);
-			NEXTMEM4(tex, mDepth, T3Texture, long, 0, mHeight, TelltaleToolLib_GetGameKeyIndex("BATMAN"), -1);
-			NEXTMEM4(tex, mArraySize, T3Texture, long, 0, mDepth, TelltaleToolLib_GetGameKeyIndex("BATMAN"), -1);
+			NEXTMEM4(tex, mDepth, T3Texture, long, 0, mHeight, TelltaleToolLib_GetGameKeyIndex("BAT"), -1);
+			NEXTMEM4(tex, mArraySize, T3Texture, long, 0, mDepth, TelltaleToolLib_GetGameKeyIndex("BAT"), -1);
 			NEXTMEM2(tex, mSurfaceFormat, T3Texture, long, 0, mArraySize);
 			FIRSTENUM(tex, mSurfaceFormat, eSurface_Unknown, -1, 0);
 			NEXTENUM(tex, mSurfaceFormat, eSurface_ARGB8, 0, 0, eSurface_Unknown);
@@ -1060,7 +1058,7 @@ namespace MetaInit {
 			FIRSTENUM(tex, mSurfaceGamma, eSurfaceGamma_Unknown, -1, 0);
 			NEXTENUM(tex, mSurfaceGamma, eSurfaceGamma_Linear, 0, 0, eSurfaceGamma_Unknown);
 			NEXTENUM(tex, mSurfaceGamma, eSurfaceGamma_sRGB, 1, 0, eSurfaceGamma_Linear);
-			NEXTMEM4(tex, mSurfaceMultisample, T3Texture, long, 0, mSurfaceGamma, TelltaleToolLib_GetGameKeyIndex("BATMAN"), -1);
+			NEXTMEM4(tex, mSurfaceMultisample, T3Texture, long, 0, mSurfaceGamma, TelltaleToolLib_GetGameKeyIndex("BAT"), -1);
 			ADDFLAGS(tex_mSurfaceMultisample, MetaFlag::MetaFlag_EnumIntType);
 			FIRSTENUM(tex, mSurfaceMultisample, eSurfaceMultisample_None, 0, 0);
 			NEXTENUM(tex, mSurfaceMultisample, eSurfaceMultisample_2x, 1, 0, eSurfaceMultisample_None);
@@ -1116,7 +1114,7 @@ namespace MetaInit {
 			NEXTENUM(tex, mType, eTxLightmapFlatAtlas, 0x27, 0, eTxNormalXYMap);
 			NEXTENUM(tex, mType, eTxLookupXY, 0x28, 0, eTxLightmapFlatAtlas);
 			NEXTENUM(tex, mType, eTxObjectNormalMap, 0x29, 0, eTxLookupXY);
-			NEXTMEM4(tex, mSwizzle, T3Texture, swizzle, MetaFlag::MetaFlag_MetaSerializeBlockingDisabled, mType,TelltaleToolLib_GetGameKeyIndex("MICHONNE"), -1);
+			NEXTMEM4(tex, mSwizzle, T3Texture, swizzle, MetaFlag::MetaFlag_MetaSerializeBlockingDisabled, mType,TelltaleToolLib_GetGameKeyIndex("WDM"), -1);
 			NEXTMEM4(tex, mNormalMapFormat, T3Texture, int, 0, mSwizzle, -1, TelltaleToolLib_GetGameKeyIndex("MCSM"));
 			NEXTMEM2(tex, mSpecularGlossExponent, T3Texture, float, 0, mNormalMapFormat);
 			NEXTMEM2(tex, mHDRLightmapScale, T3Texture, float, 0, mSpecularGlossExponent);
@@ -1138,7 +1136,7 @@ namespace MetaInit {
 			NEXTMEM2(tex, mNumSurfacesRequested, T3Texture, long, MetaFlag::MetaFlag_MetaSerializeDisable | MetaFlag::MetaFlag_EditorHide, mNumMipLevelsAllocated);
 			NEXTMEM2(tex, mNumSurfacesRequired, T3Texture, long, MetaFlag::MetaFlag_MetaSerializeDisable | MetaFlag::MetaFlag_EditorHide, mNumSurfacesRequested);
 			NEXTMEM2(tex, mNumSurfacesLoaded, T3Texture, long, MetaFlag::MetaFlag_MetaSerializeDisable | MetaFlag::MetaFlag_EditorHide, mNumSurfacesRequired);
-			NEXTMEM4(tex, mArrayFrameNames, T3Texture, DCArray_Symbol, 0, mNumSurfacesLoaded, TelltaleToolLib_GetGameKeyIndex("BATMAN"),-1);
+			NEXTMEM4(tex, mArrayFrameNames, T3Texture, DCArray_Symbol, 0, mNumSurfacesLoaded, TelltaleToolLib_GetGameKeyIndex("BAT"),-1);
 			NEXTMEM2(tex, mToonRegions, T3Texture, DCArray_T3ToonGradientRegion, MetaFlag::MetaFlag_EditorHide, mArrayFrameNames);
 			SERIALIZER(tex, T3Texture);
 			ADD(tex);
@@ -1155,7 +1153,7 @@ namespace MetaInit {
 			NEXTMEM2(rsh, mMipCount, T3Texture::RegionStreamHeader, long, 0, mMipIndex);
 			NEXTMEM2(rsh, mDataSize, T3Texture::RegionStreamHeader, long, 0, mMipCount);
 			NEXTMEM2(rsh, mPitch, T3Texture::RegionStreamHeader, long, 0, mDataSize);
-			NEXTMEM4(rsh, mSlicePitch, T3Texture::RegionStreamHeader, long, 0, mPitch, TelltaleToolLib_GetGameKeyIndex("BATMAN"),-1);
+			NEXTMEM4(rsh, mSlicePitch, T3Texture::RegionStreamHeader, long, 0, mPitch, TelltaleToolLib_GetGameKeyIndex("BAT"),-1);
 			ADD(rsh);
 
 			DEFINET2(aux, T3Texture::AuxilaryData);
@@ -1199,9 +1197,17 @@ namespace MetaInit {
 			DEFINEMAP2(Symbol, TransitionMap::TransitionMapInfo, symbol, tmapinfo, Symbol::CompareCRC);
 			MKNAME(meta_Map_symbol_tmapinfo, "Map<Symbol,TransitionMap::TransitionMapInfo,less<Symbol>>");
 
+			DEFINEMAP2(String, TransitionMap::TransitionMapInfo, string, tmapinfo, std::less<String>);
+			MKNAME(meta_Map_string_tmapinfo, "Map<String,TransitionMap::TransitionMapInfo,less<String>>");
+
 			DEFINET2(tmap, TransitionMap);
 			EXT(tmap, tmap);
-			FIRSTMEM2(tmap, mTransitionRemappers, TransitionMap, Map_symbol_tmapinfo, 0);
+			FIRSTMEM2(tmap, mTransitionRemappers_WDCAndAbove, TransitionMap, Map_symbol_tmapinfo, 0);
+			meta_tmap_mTransitionRemappers_WDCAndAbove.mGameIndexVersionRange.min = TelltaleToolLib_GetGameKeyIndex("WDC");
+			meta_tmap_mTransitionRemappers_WDCAndAbove.mpName = "mTransitionRemappers";
+			NEXTMEM2(tmap, mTransitionRemappers_BAT2AndBelow, TransitionMap, Map_string_tmapinfo, 0, mTransitionRemappers_WDCAndAbove);
+			meta_tmap_mTransitionRemappers_BAT2AndBelow.mGameIndexVersionRange.max = TelltaleToolLib_GetGameKeyIndex("BAT2");
+			meta_tmap_mTransitionRemappers_BAT2AndBelow.mpName = "mTransitionRemappers";
 			ADD(tmap);
 
 			DEFINET2(enumbase, EnumBase);
@@ -1451,7 +1457,7 @@ namespace MetaInit {
 
 			DEFINET2(actg, ActingPaletteGroup);
 			SERIALIZER(actg, ActingPaletteGroup);
-			FIRSTMEM(actg, "Baseclass_UID::Owner", miUniqueID, ActingPaletteGroup, uidowner, 0x10, mSerializationFlags);
+			FIRSTMEM(actg, "Baseclass_UID::Owner", miUniqueID, ActingPaletteGroup, uidowner, 0x10);
 			NEXTMEM2(actg, mName, ActingPaletteGroup, string, 0x20, miUniqueID);
 			NEXTMEM2(actg, mIdle, ActingPaletteGroup, animorchore, 0, mName);
 			NEXTMEM2(actg, mTalkingIdle, ActingPaletteGroup, animorchore, 0x20, mIdle);
@@ -1770,7 +1776,7 @@ namespace MetaInit {
 			NEXTMEM2(glyph, mXOffset, Font::GlyphInfo, float, 0, mHeight);
 			NEXTMEM2(glyph, mYOffset, Font::GlyphInfo, float, 0, mXOffset);
 			NEXTMEM2(glyph, mXAdvance, Font::GlyphInfo, float, 0, mYOffset);
-			NEXTMEM4(glyph, mGradientSize, Font::GlyphInfo, float, 0, mXAdvance, -1, TelltaleToolLib_GetGameKeyIndex("MICHONNE"));
+			NEXTMEM4(glyph, mGradientSize, Font::GlyphInfo, float, 0, mXAdvance, -1, TelltaleToolLib_GetGameKeyIndex("WDM"));
 			ADD(glyph);
 
 			DEFINEMAP2(unsigned int, Font::GlyphInfo, uint,
@@ -1791,8 +1797,8 @@ namespace MetaInit {
 			NEXTMEM2(font, mHeight, Font, float, 0, mbUnicode);
 			NEXTMEM2(font, mBase, Font, float, 0, mHeight);
 			//WII SCALE, FONT SCALE
-			NEXTMEM4(font, mWiiScale, Font, float, 0, mBase, -1, TelltaleToolLib_GetGameKeyIndex("BATMAN2"));
-			NEXTMEM4(font, mFontScale, Font, float, 0, mWiiScale, -1, TelltaleToolLib_GetGameKeyIndex("BATMAN2"));
+			NEXTMEM4(font, mWiiScale, Font, float, 0, mBase, -1, TelltaleToolLib_GetGameKeyIndex("BAT2"));
+			NEXTMEM4(font, mFontScale, Font, float, 0, mWiiScale, -1, TelltaleToolLib_GetGameKeyIndex("BAT2"));
 			//-------
 			NEXTMEM2(font, mGlyphInfo, Font, Map_uint_glyphinf, 0, mFontScale);
 			NEXTMEM2(font, mTexturePages, Font, DCArray_T3Texture, 0, mGlyphInfo);
@@ -1847,7 +1853,7 @@ namespace MetaInit {
 			NEXTMEM2(reskey, mMetaClassDescriptionCrc, PreloadPackage::ResourceKey, __int64, 0, mResourceName);
 			//NEWER GAMES
 			NEXTMEM4(reskey, mRenderQualities, PreloadPackage::ResourceKey, bitsetbase1, 0x20, mMetaClassDescriptionCrc
-				,TelltaleToolLib_GetGameKeyIndex("BATMAN"),-1);
+				,TelltaleToolLib_GetGameKeyIndex("BAT"),-1);
 			NEXTMEM4(reskey, mVisible, PreloadPackage::ResourceKey, bool, 
 				0, mRenderQualities, TelltaleToolLib_GetGameKeyIndex("WD4"), -1);
 			NEXTMEM4(reskey, mPrefix, PreloadPackage::ResourceKey, string,
@@ -2215,7 +2221,7 @@ namespace MetaInit {
 			meta_cres_ALIAS.mGameIndexVersionRange.max = 
 				TelltaleToolLib_GetGameKeyIndex("MCSM");
 			meta_cres_mAAStatus.mGameIndexVersionRange.min = 
-				TelltaleToolLib_GetGameKeyIndex("MICHONNE");
+				TelltaleToolLib_GetGameKeyIndex("WDM");
 			ADD(cres);
 
 			DEFINET2(rsin, ResourceGroupInfo);
@@ -2385,7 +2391,7 @@ namespace MetaInit {
 			meta_dfolder_mChildren.mOffset = PARENT_OFFSET(DlgChildSet, DlgFolder);
 			NEXTMEM(dfolder, "Baseclass_UID::Owner", miUniqueID, DlgFolder, uidowner, 0x10, mChildren);
 			meta_dfolder_miUniqueID.mOffset = PARENT_OFFSET(UID::Owner, DlgFolder);
-			meta_dfolder_miUniqueID.mGameIndexVersionRange.max = TelltaleToolLib_GetGameKeyIndex("BATMAN2");
+			meta_dfolder_miUniqueID.mGameIndexVersionRange.max = TelltaleToolLib_GetGameKeyIndex("BAT2");
 			NEXTMEM2(dfolder, mName, DlgFolder, symbol, 0, miUniqueID);
 			NEXTMEM2(dfolder, mProdReportProps, DlgFolder, prop, 0, mName);
 			meta_dfolder_mProdReportProps.mGameIndexVersionRange.min = TelltaleToolLib_GetGameKeyIndex("BORDERLANDS");
@@ -2401,7 +2407,7 @@ namespace MetaInit {
 			meta_dnode_mDlgObjectProps.mOffset = PARENT_OFFSET(DlgObjectPropsOwner, DlgNode);
 			NEXTMEM(dnode, "Baseclass_UID::Owner", miUniqueID, DlgNode, uidowner, 0x10, mDlgObjectProps);
 			meta_dnode_miUniqueID.mOffset = PARENT_OFFSET(UID::Owner, DlgNode);
-			meta_dnode_miUniqueID.mGameIndexVersionRange.max = TelltaleToolLib_GetGameKeyIndex("BATMAN2");
+			meta_dnode_miUniqueID.mGameIndexVersionRange.max = TelltaleToolLib_GetGameKeyIndex("BAT2");
 			NEXTMEM2(dnode, mPrev, DlgNode, dlglink, 0x20, miUniqueID);
 			NEXTMEM2(dnode, mNext, DlgNode, dlglink, 0x20, mPrev);
 			NEXTMEM2(dnode, mName, DlgNode, symbol, 0x20, mNext);
@@ -2553,7 +2559,7 @@ namespace MetaInit {
 				miNextUniqueID, Dlg, uidgen, 0x10, BASE);
 			meta_dlg_BASE1.mOffset = PARENT_OFFSET(UID::Generator, Dlg);
 			meta_dlg_BASE1.mGameIndexVersionRange.max = 
-				TelltaleToolLib_GetGameKeyIndex("BATMAN2");
+				TelltaleToolLib_GetGameKeyIndex("BAT2");
 			NEXTMEM2(dlg, mName, Dlg, string, 0x20, BASE1);
 			NEXTMEM2(dlg, mVersion, Dlg, long, 0x20, mName);
 			NEXTMEM2(dlg, mDefFolderID, Dlg, dlgid, 0x20, mVersion);
@@ -3101,10 +3107,10 @@ namespace MetaInit {
 			NEXTFLAG(cp, mEaseInEndFlags, "Ease In N Close", n, 8192, m);
 			NEXTFLAG(cp, mEaseInEndFlags, "Ease In O Close", o, 0x4000, n);
 			NEXTFLAG(cp, mEaseInEndFlags, "Ease In P Close", p, 0x8000, o);
-			meta_cp_mEaseOutStartFlags.mGameIndexVersionRange.max  = TelltaleToolLib_GetGameKeyIndex("BATMAN");
-			meta_cp_mEaseInStartFlags.mGameIndexVersionRange.max  = TelltaleToolLib_GetGameKeyIndex("BATMAN");
-			meta_cp_mEaseOutEndFlags.mGameIndexVersionRange.max  = TelltaleToolLib_GetGameKeyIndex("BATMAN");
-			meta_cp_mEaseInEndFlags.mGameIndexVersionRange.max  = TelltaleToolLib_GetGameKeyIndex("BATMAN");
+			meta_cp_mEaseOutStartFlags.mGameIndexVersionRange.max  = TelltaleToolLib_GetGameKeyIndex("BAT");
+			meta_cp_mEaseInStartFlags.mGameIndexVersionRange.max  = TelltaleToolLib_GetGameKeyIndex("BAT");
+			meta_cp_mEaseOutEndFlags.mGameIndexVersionRange.max  = TelltaleToolLib_GetGameKeyIndex("BAT");
+			meta_cp_mEaseInEndFlags.mGameIndexVersionRange.max  = TelltaleToolLib_GetGameKeyIndex("BAT");
 			meta_cp_mEaseOutStartFlags.mGameIndexVersionRange.min = TelltaleToolLib_GetGameKeyIndex("MC2");
 			meta_cp_mEaseInStartFlags.mGameIndexVersionRange.min = TelltaleToolLib_GetGameKeyIndex("MC2");
 			meta_cp_mEaseOutEndFlags.mGameIndexVersionRange.min = TelltaleToolLib_GetGameKeyIndex("MC2");
@@ -3151,12 +3157,12 @@ namespace MetaInit {
 			EXT(bg, bgh);
 			SERIALIZER(bg, BlendGraph);
 			FIRSTMEM1(bg, "mNumDimensions", ALAIS, mNumDimensions, BlendGraph, long, 0x20);
-			meta_bg_ALAIS.mGameIndexVersionRange.max = TelltaleToolLib_GetGameKeyIndex("BATMAN2");
+			meta_bg_ALAIS.mGameIndexVersionRange.max = TelltaleToolLib_GetGameKeyIndex("BAT2");
 			NEXTMEM2(bg, mParameters, BlendGraph, DCArray_Symbol, 0, ALAIS);
 			NEXTMEM2(bg, mFrozenParameterNames, BlendGraph, DCArray_Symbol, 0, mParameters);
 			//NEXTMEM1(bg, "mFrozenParameterNames", WD3FUCKUP, mFrozenParameterNames, BlendGraph, DCArray_Symbol, 0, mFrozenParameterNames);
-			//meta_bg_mFrozenParameterNames.mGameIndexVersionRange.max = TelltaleToolLib_GetGameKeyIndex("BATMAN");
-			//meta_bg_WD3FUCKUP.mGameIndexVersionRange.min = TelltaleToolLib_GetGameKeyIndex("MARVEL");
+			//meta_bg_mFrozenParameterNames.mGameIndexVersionRange.max = TelltaleToolLib_GetGameKeyIndex("BAT");
+			//meta_bg_WD3FUCKUP.mGameIndexVersionRange.min = TelltaleToolLib_GetGameKeyIndex("GoG");
 			meta_bg_mFrozenParameterNames.mSkipVersion = TelltaleToolLib_GetGameKeyIndex("WD3");
 			NEXTMEM2(bg, mDampeningConstants, BlendGraph, DCArray_float, 0, mFrozenParameterNames);
 			NEXTMEM2(bg, mEntries, BlendGraph, DCArray_BlendEntry, 0, mDampeningConstants);
@@ -3192,9 +3198,9 @@ namespace MetaInit {
 			meta_bgm_mhChoredMovementStartGraph.mGameIndexVersionRange.max = TelltaleToolLib_GetGameKeyIndex("WD3");
 			meta_bgm_mhChoredMovementStopGraph.mGameIndexVersionRange.max = TelltaleToolLib_GetGameKeyIndex("WD3");
 			meta_bgm_mhChoredMovementLoopGraph.mGameIndexVersionRange.max = TelltaleToolLib_GetGameKeyIndex("WD3");
-			meta_bgm_mhChoredMovementStartGraph.mGameIndexVersionRange.min = TelltaleToolLib_GetGameKeyIndex("MARVEL");
-			meta_bgm_mhChoredMovementStopGraph.mGameIndexVersionRange.min = TelltaleToolLib_GetGameKeyIndex("MARVEL");
-			meta_bgm_mhChoredMovementLoopGraph.mGameIndexVersionRange.min = TelltaleToolLib_GetGameKeyIndex("MARVEL");
+			meta_bgm_mhChoredMovementStartGraph.mGameIndexVersionRange.min = TelltaleToolLib_GetGameKeyIndex("GoG");
+			meta_bgm_mhChoredMovementStopGraph.mGameIndexVersionRange.min = TelltaleToolLib_GetGameKeyIndex("GoG");
+			meta_bgm_mhChoredMovementLoopGraph.mGameIndexVersionRange.min = TelltaleToolLib_GetGameKeyIndex("GoG");
 			meta_bgm_mhTurnToFaceGraph.mGameIndexVersionRange.min = TelltaleToolLib_GetGameKeyIndex("WD4");
 			NEXTMEM2(bgm, mVersion, BlendGraphManager, long, 0, mhChoredMovementStopGraph);
 			NEXTMEM2(bgm, mbUseAlgorithmicHeadTurn, BlendGraphManager, bool, 0, mVersion);
@@ -3282,9 +3288,9 @@ namespace MetaInit {
 			NEXTMEM2(batch, mAdjacencyStartIndex, T3MeshBatch, long, 0, mLocalTransformIndex);
 			meta_batch_mBonePaletteIndex.mGameIndexVersionRange.max = TelltaleToolLib_GetGameKeyIndex("WD3");
 			meta_batch_mLocalTransformIndex.mGameIndexVersionRange.max = TelltaleToolLib_GetGameKeyIndex("WD3");
-			meta_batch_mAdjacencyStartIndex.mGameIndexVersionRange.min = TelltaleToolLib_GetGameKeyIndex("BATMAN");
-			meta_batch_mBaseIndex.mGameIndexVersionRange.min = TelltaleToolLib_GetGameKeyIndex("MARVEL");
-			meta_batch_mNumIndices.mGameIndexVersionRange.min = TelltaleToolLib_GetGameKeyIndex("MARVEL");
+			meta_batch_mAdjacencyStartIndex.mGameIndexVersionRange.min = TelltaleToolLib_GetGameKeyIndex("BAT");
+			meta_batch_mBaseIndex.mGameIndexVersionRange.min = TelltaleToolLib_GetGameKeyIndex("GoG");
+			meta_batch_mNumIndices.mGameIndexVersionRange.min = TelltaleToolLib_GetGameKeyIndex("GoG");
 			ADD(batch);
 
 			DEFINEDCARRAY(T3MeshBatch);
@@ -3292,12 +3298,12 @@ namespace MetaInit {
 			DEFINET2(lod, T3MeshLOD);
 			FIRSTMEM(lod, "mBatches[0]", mBatches, T3MeshLOD, DCArray_T3MeshBatch, 0);
 			NEXTMEM1(lod, "mBatches[1]", mBatches1, mBatches, T3MeshLOD, DCArray_T3MeshBatch, 0, mBatches);
-			meta_lod_mBatches.mGameIndexVersionRange.min = TelltaleToolLib_GetGameKeyIndex("BATMAN");
-			meta_lod_mBatches1.mGameIndexVersionRange.min = TelltaleToolLib_GetGameKeyIndex("BATMAN");
+			meta_lod_mBatches.mGameIndexVersionRange.min = TelltaleToolLib_GetGameKeyIndex("BAT");
+			meta_lod_mBatches1.mGameIndexVersionRange.min = TelltaleToolLib_GetGameKeyIndex("BAT");
 			meta_lod_mBatches1.mOffset += sizeof(DCArray<T3MeshBatch>);
 			NEXTMEM1(lod, "mBatches", mBatchesM, mBatchesM, T3MeshLOD, DCArray_T3MeshBatch, 0, mBatches1);
 			meta_lod_mBatchesM.mOffset = offsetof(T3MeshLOD, mBatchesM);
-			meta_lod_mBatchesM.mGameIndexVersionRange.max = TelltaleToolLib_GetGameKeyIndex("MICHONNE");
+			meta_lod_mBatchesM.mGameIndexVersionRange.max = TelltaleToolLib_GetGameKeyIndex("WDM");
 			NEXTMEM2(lod, mVertexStreams, T3MeshLOD, bitsetbase1,0, mBatchesM);
 			NEXTMEM2(lod, mBoundingBox, T3MeshLOD, bbox, 0, mVertexStreams);
 			NEXTMEM2(lod, mBoundingSphere, T3MeshLOD, sphere, 0, mBoundingBox);
@@ -3311,8 +3317,8 @@ namespace MetaInit {
 			NEXTMEM2(lod, mTextureAtlasHeight, T3MeshLOD, long, 0, mTextureAtlasWidth);
 			NEXTMEM2(lod, mPixelSize, T3MeshLOD, float, 0, mTextureAtlasHeight);
 			NEXTMEM2(lod, mDistance, T3MeshLOD, float, 0, mPixelSize);
-			meta_lod_mNumBatches.mGameIndexVersionRange.min = TelltaleToolLib_GetGameKeyIndex("BATMAN");
-			meta_lod_mNumPrimitives.mGameIndexVersionRange.min = TelltaleToolLib_GetGameKeyIndex("BATMAN");
+			meta_lod_mNumBatches.mGameIndexVersionRange.min = TelltaleToolLib_GetGameKeyIndex("BAT");
+			meta_lod_mNumPrimitives.mGameIndexVersionRange.min = TelltaleToolLib_GetGameKeyIndex("BAT");
 			meta_lod_mVertexStart.mGameIndexVersionRange.min = TelltaleToolLib_GetGameKeyIndex("WD4");
 			meta_lod_mVertexCount.mGameIndexVersionRange.min = TelltaleToolLib_GetGameKeyIndex("WD4");
 			meta_lod_mFlags.mGameIndexVersionRange.min = TelltaleToolLib_GetGameKeyIndex("WD4");
@@ -3320,7 +3326,7 @@ namespace MetaInit {
 			meta_lod_mTextureAtlasWidth.mGameIndexVersionRange.min = TelltaleToolLib_GetGameKeyIndex("WD4");
 			meta_lod_mTextureAtlasHeight.mGameIndexVersionRange.min = TelltaleToolLib_GetGameKeyIndex("WD4");
 			NEXTMEM2(lod, mBones, T3MeshLOD, DCArray_Symbol, 0, mDistance);
-			meta_lod_mBones.mGameIndexVersionRange.min = TelltaleToolLib_GetGameKeyIndex("BATMAN");
+			meta_lod_mBones.mGameIndexVersionRange.min = TelltaleToolLib_GetGameKeyIndex("BAT");
 			ADD(lod);
 
 			DEFINET2(mesht, T3MeshTexture);
@@ -3340,7 +3346,7 @@ namespace MetaInit {
 			NEXTMEM2(meshm, mBoundingBox, T3MeshMaterial, bbox, 0, mLegacyRenderTextureProperty);
 			NEXTMEM2(meshm, mBoundingSphere, T3MeshMaterial, sphere, 0, mBoundingBox);
 			NEXTMEM2(meshm, mFlags, T3MeshMaterial, flags, 0, mBoundingSphere);
-			meta_meshm_mLegacyRenderTextureProperty.mGameIndexVersionRange.min = TelltaleToolLib_GetGameKeyIndex("BATMAN");
+			meta_meshm_mLegacyRenderTextureProperty.mGameIndexVersionRange.min = TelltaleToolLib_GetGameKeyIndex("BAT");
 			ADD(meshm);
 
 			DEFINET2(over, T3MeshMaterialOverride);
@@ -3444,13 +3450,13 @@ namespace MetaInit {
 			NEXTMEM2(reqs, mInputs, T3MaterialRequirements, bitsetbase3, 0, mChannels2);
 			NEXTMEM2(reqs, mInputs2, T3MaterialRequirements, bitsetbase2, 0, mInputs);
 			NEXTMEM2(reqs, mInputs3, T3MaterialRequirements, bitsetbase1, 0, mInputs2);
-			meta_reqs_mChannels2.mGameIndexVersionRange.max = TelltaleToolLib_GetGameKeyIndex("MICHONNE");
-			meta_reqs_mChannels.mGameIndexVersionRange.min = TelltaleToolLib_GetGameKeyIndex("BATMAN");
-			meta_reqs_mInputs2.mGameIndexVersionRange.min = TelltaleToolLib_GetGameKeyIndex("BATMAN");
-			meta_reqs_mInputs3.mGameIndexVersionRange.max = TelltaleToolLib_GetGameKeyIndex("MICHONNE");
+			meta_reqs_mChannels2.mGameIndexVersionRange.max = TelltaleToolLib_GetGameKeyIndex("WDM");
+			meta_reqs_mChannels.mGameIndexVersionRange.min = TelltaleToolLib_GetGameKeyIndex("BAT");
+			meta_reqs_mInputs2.mGameIndexVersionRange.min = TelltaleToolLib_GetGameKeyIndex("BAT");
+			meta_reqs_mInputs3.mGameIndexVersionRange.max = TelltaleToolLib_GetGameKeyIndex("WDM");
 			meta_reqs_mInputs2.mpName = meta_reqs_mInputs3.mpName = "mInputs";
 			meta_reqs_mInputs.mGameIndexVersionRange.min = TelltaleToolLib_GetGameKeyIndex("WD4");
-			meta_reqs_mInputs2.mGameIndexVersionRange.max = TelltaleToolLib_GetGameKeyIndex("BATMAN2");
+			meta_reqs_mInputs2.mGameIndexVersionRange.max = TelltaleToolLib_GetGameKeyIndex("BAT2");
 			ADD(reqs);
 
 			DEFINET2(skin, T3MeshCPUSkinningData);
@@ -3510,7 +3516,7 @@ namespace MetaInit {
 			NEXTMEM2(state, mIndexBufferCount, T3GFXVertexState, long, 0, mVertexCountPerInstance);
 			NEXTMEM2(state, mVertexBufferCount, T3GFXVertexState, long, 0, mIndexBufferCount);
 			NEXTMEM2(state, mAttributeCount, T3GFXVertexState, long, 0, mVertexBufferCount);
-			meta_state_mIndexBufferCount.mGameIndexVersionRange.min = TelltaleToolLib_GetGameKeyIndex("BATMAN");
+			meta_state_mIndexBufferCount.mGameIndexVersionRange.min = TelltaleToolLib_GetGameKeyIndex("BAT");
 			ADD(state);
 
 			DEFINET2(params, GFXPlatformAttributeParams);
@@ -3555,9 +3561,9 @@ namespace MetaInit {
 			NEXTMEM2(data, mPositionScale, T3MeshData, vec3, 0, mEndianType);
 			NEXTMEM2(data, mPositionWScale, T3MeshData, vec3, 0, mPositionScale);
 			NEXTMEM2(data, mPositionOffset, T3MeshData, vec3, 0, mPositionWScale);
-			meta_data_mPositionScale.mGameIndexVersionRange.min = TelltaleToolLib_GetGameKeyIndex("MARVEL");
-			meta_data_mPositionWScale.mGameIndexVersionRange.min = TelltaleToolLib_GetGameKeyIndex("MARVEL");
-			meta_data_mPositionOffset.mGameIndexVersionRange.min = TelltaleToolLib_GetGameKeyIndex("MARVEL");
+			meta_data_mPositionScale.mGameIndexVersionRange.min = TelltaleToolLib_GetGameKeyIndex("GoG");
+			meta_data_mPositionWScale.mGameIndexVersionRange.min = TelltaleToolLib_GetGameKeyIndex("GoG");
+			meta_data_mPositionOffset.mGameIndexVersionRange.min = TelltaleToolLib_GetGameKeyIndex("GoG");
 			NEXTMEM2(data, mLightmapTexelAreaPerSurfaceArea, T3MeshData, float, 0, mPositionOffset);
 			NEXTMEM2(data, mPropertyKeyBase, T3MeshData, symbol, 0, mLightmapTexelAreaPerSurfaceArea);
 			NEXTMEM2(data, mVertexCount, T3MeshData, long, 0, mPropertyKeyBase);
@@ -3566,7 +3572,7 @@ namespace MetaInit {
 			meta_data_mMeshPreload.mGameIndexVersionRange.min =
 				TelltaleToolLib_GetGameKeyIndex("WD4");
 			meta_data_mLightmapTexelAreaPerSurfaceArea.mGameIndexVersionRange.min =
-				TelltaleToolLib_GetGameKeyIndex("BATMAN");
+				TelltaleToolLib_GetGameKeyIndex("BAT");
 			ADD(data);
 
 			DEFINEDCARRAY(HandleBase);
@@ -3594,16 +3600,16 @@ namespace MetaInit {
 			NEXTMEM2(mesh, mLightmapTexCoordVersion, D3DMesh, long, 0, mLightmapGlobalScale);
 			NEXTMEM2(mesh, mLightmapTextureWidth, D3DMesh, long, 0, mLightmapTexCoordVersion);
 			NEXTMEM2(mesh, mLightmapTextureHeight, D3DMesh, long, 0, mLightmapTextureWidth);
-			meta_mesh_mLightmapGlobalScale.mGameIndexVersionRange.min = TelltaleToolLib_GetGameKeyIndex("BATMAN");
-			meta_mesh_mLightmapTexCoordVersion.mGameIndexVersionRange.min = TelltaleToolLib_GetGameKeyIndex("BATMAN");
-			meta_mesh_mLightmapTextureWidth.mGameIndexVersionRange.min = TelltaleToolLib_GetGameKeyIndex("BATMAN");
-			meta_mesh_mLightmapUVGenerationType.mGameIndexVersionRange.min = TelltaleToolLib_GetGameKeyIndex("BATMAN");
-			meta_mesh_mLightmapTextureHeight.mGameIndexVersionRange.min = TelltaleToolLib_GetGameKeyIndex("BATMAN");
-			meta_mesh_mLightmapTexelAreaPerSurfaceArea.mGameIndexVersionRange.min = TelltaleToolLib_GetGameKeyIndex("BATMAN");
-			meta_mesh_mLightmapTextureWidth.mGameIndexVersionRange.max = TelltaleToolLib_GetGameKeyIndex("BATMAN2");
-			meta_mesh_mLightmapUVGenerationType.mGameIndexVersionRange.max = TelltaleToolLib_GetGameKeyIndex("BATMAN2");
-			meta_mesh_mLightmapTextureHeight.mGameIndexVersionRange.max = TelltaleToolLib_GetGameKeyIndex("BATMAN2");
-			meta_mesh_mLightmapTexelAreaPerSurfaceArea.mGameIndexVersionRange.max = TelltaleToolLib_GetGameKeyIndex("BATMAN2");
+			meta_mesh_mLightmapGlobalScale.mGameIndexVersionRange.min = TelltaleToolLib_GetGameKeyIndex("BAT");
+			meta_mesh_mLightmapTexCoordVersion.mGameIndexVersionRange.min = TelltaleToolLib_GetGameKeyIndex("BAT");
+			meta_mesh_mLightmapTextureWidth.mGameIndexVersionRange.min = TelltaleToolLib_GetGameKeyIndex("BAT");
+			meta_mesh_mLightmapUVGenerationType.mGameIndexVersionRange.min = TelltaleToolLib_GetGameKeyIndex("BAT");
+			meta_mesh_mLightmapTextureHeight.mGameIndexVersionRange.min = TelltaleToolLib_GetGameKeyIndex("BAT");
+			meta_mesh_mLightmapTexelAreaPerSurfaceArea.mGameIndexVersionRange.min = TelltaleToolLib_GetGameKeyIndex("BAT");
+			meta_mesh_mLightmapTextureWidth.mGameIndexVersionRange.max = TelltaleToolLib_GetGameKeyIndex("BAT2");
+			meta_mesh_mLightmapUVGenerationType.mGameIndexVersionRange.max = TelltaleToolLib_GetGameKeyIndex("BAT2");
+			meta_mesh_mLightmapTextureHeight.mGameIndexVersionRange.max = TelltaleToolLib_GetGameKeyIndex("BAT2");
+			meta_mesh_mLightmapTexelAreaPerSurfaceArea.mGameIndexVersionRange.max = TelltaleToolLib_GetGameKeyIndex("BAT2");
 			NEXTMEM2(mesh, mLODParamCRC, D3DMesh, __int64, 0, mLightmapTextureHeight);
 			meta_mesh_mLODParamCRC.mGameIndexVersionRange.min = TelltaleToolLib_GetGameKeyIndex("WD4");
 			ADD(mesh);
@@ -3638,12 +3644,12 @@ namespace MetaInit {
 			meta_matp_OFF0.mGameIndexVersionRange.max = TelltaleToolLib_GetGameKeyIndex("WD3");
 			meta_matp_OFF1.mGameIndexVersionRange.max = TelltaleToolLib_GetGameKeyIndex("WD3");
 			meta_matp_OFF2.mGameIndexVersionRange.max = TelltaleToolLib_GetGameKeyIndex("WD3");
-			meta_matp_mScalarOffset.mGameIndexVersionRange.min = TelltaleToolLib_GetGameKeyIndex("MARVEL");
+			meta_matp_mScalarOffset.mGameIndexVersionRange.min = TelltaleToolLib_GetGameKeyIndex("GoG");
 			meta_matp_OFF3.mGameIndexVersionRange.max = TelltaleToolLib_GetGameKeyIndex("WD3");
 			NEXTMEM2(matp, mNestedMaterialIndex, T3MaterialParameter, long, 0, mPreShaderScalarOffset);
 			ADD(matp);
-			meta_matp_OFF2.mGameIndexVersionRange.min = TelltaleToolLib_GetGameKeyIndex("BATMAN");
-			meta_matp_OFF3.mGameIndexVersionRange.min = TelltaleToolLib_GetGameKeyIndex("BATMAN");
+			meta_matp_OFF2.mGameIndexVersionRange.min = TelltaleToolLib_GetGameKeyIndex("BAT");
+			meta_matp_OFF3.mGameIndexVersionRange.min = TelltaleToolLib_GetGameKeyIndex("BAT");
 
 			DEFINET2(mapt, T3MaterialTransform2D);
 			FIRSTMEM2(mapt, mParameterPrefix, T3MaterialTransform2D, symbol, 0);
@@ -3665,9 +3671,9 @@ namespace MetaInit {
 			NEXTMEM1(mapt, "mScalarOffset1[1]", OOFF1, mScalarOffset1, T3MaterialTransform2D, long, 0, OOFF0);
 			NEXTMEM1(mapt, "mScalarOffset1[2]", OOFF2, mScalarOffset1, T3MaterialTransform2D, long, 0, OOFF1);
 			NEXTMEM1(mapt, "mScalarOffset1[3]", OOFF3, mScalarOffset1, T3MaterialTransform2D, long, 0, OOFF2);
-			meta_mapt_mScalarOffset0.mGameIndexVersionRange.min = TelltaleToolLib_GetGameKeyIndex("MARVEL");
-			meta_mapt_mScalarOffset1.mGameIndexVersionRange.min = TelltaleToolLib_GetGameKeyIndex("MARVEL");
-			meta_mapt_mFlags.mGameIndexVersionRange.min = TelltaleToolLib_GetGameKeyIndex("MARVEL");
+			meta_mapt_mScalarOffset0.mGameIndexVersionRange.min = TelltaleToolLib_GetGameKeyIndex("GoG");
+			meta_mapt_mScalarOffset1.mGameIndexVersionRange.min = TelltaleToolLib_GetGameKeyIndex("GoG");
+			meta_mapt_mFlags.mGameIndexVersionRange.min = TelltaleToolLib_GetGameKeyIndex("GoG");
 			meta_mapt_OOFF0.mGameIndexVersionRange.max = TelltaleToolLib_GetGameKeyIndex("WD3");
 			meta_mapt_OOFF1.mGameIndexVersionRange.max = TelltaleToolLib_GetGameKeyIndex("WD3");
 			meta_mapt_OOFF2.mGameIndexVersionRange.max = TelltaleToolLib_GetGameKeyIndex("WD3");
@@ -3675,10 +3681,10 @@ namespace MetaInit {
 			meta_mapt_OOFF1.mOffset += 4;
 			meta_mapt_OOFF2.mOffset += 8;
 			meta_mapt_OOFF3.mOffset += 12;
-			meta_mapt_OOFF2.mGameIndexVersionRange.min = TelltaleToolLib_GetGameKeyIndex("BATMAN");
-			meta_mapt_OOFF3.mGameIndexVersionRange.min = TelltaleToolLib_GetGameKeyIndex("BATMAN");
-			meta_mapt_OFF2.mGameIndexVersionRange.min = TelltaleToolLib_GetGameKeyIndex("BATMAN");
-			meta_mapt_OFF3.mGameIndexVersionRange.min = TelltaleToolLib_GetGameKeyIndex("BATMAN");
+			meta_mapt_OOFF2.mGameIndexVersionRange.min = TelltaleToolLib_GetGameKeyIndex("BAT");
+			meta_mapt_OOFF3.mGameIndexVersionRange.min = TelltaleToolLib_GetGameKeyIndex("BAT");
+			meta_mapt_OFF2.mGameIndexVersionRange.min = TelltaleToolLib_GetGameKeyIndex("BAT");
+			meta_mapt_OFF3.mGameIndexVersionRange.min = TelltaleToolLib_GetGameKeyIndex("BAT");
 
 			NEXTMEM2(mapt, mPreShaderScalarOffset0, T3MaterialTransform2D, long,0, OOFF3);
 			NEXTMEM2(mapt, mPreShaderScalarOffset1, T3MaterialTransform2D, long, 0, mPreShaderScalarOffset0);
@@ -3712,20 +3718,20 @@ namespace MetaInit {
 			NEXTENUM2(matsh, mValueType, "Channels", f5, 4, 0, f4);
 			NEXTENUM2(matsh, mValueType, "None", f6, 0xFFFFFFFF, 0, f5);
 			NEXTMEM2(matsh, mFlags, T3MaterialPreShader, long, 0, mValueType);
-			meta_matsh_mFlags.mGameIndexVersionRange.min = TelltaleToolLib_GetGameKeyIndex("MARVEL");
+			meta_matsh_mFlags.mGameIndexVersionRange.min = TelltaleToolLib_GetGameKeyIndex("GoG");
 			NEXTMEM2(matsh, mPreShaderOffset, T3MaterialPreShader, long, 0, mFlags);
 			NEXTMEM2(matsh, mScalarParameterOffset, T3MaterialPreShader, long, 0, mPreShaderOffset);
 			NEXTMEM1(matsh, "mScalarParameterOffset[0]", OFF0, mScalarParameterOffset, T3MaterialPreShader, long, 0, mScalarParameterOffset);
 			NEXTMEM1(matsh, "mScalarParameterOffset[1]", OFF1, mScalarParameterOffset, T3MaterialPreShader, long, 0, OFF0);
 			NEXTMEM1(matsh, "mScalarParameterOffset[2]", OFF2, mScalarParameterOffset, T3MaterialPreShader, long, 0, OFF1);
 			NEXTMEM1(matsh, "mScalarParameterOffset[3]", OFF3, mScalarParameterOffset, T3MaterialPreShader, long, 0, OFF2);
-			meta_matsh_mScalarParameterOffset.mGameIndexVersionRange.min = TelltaleToolLib_GetGameKeyIndex("MARVEL");
+			meta_matsh_mScalarParameterOffset.mGameIndexVersionRange.min = TelltaleToolLib_GetGameKeyIndex("GoG");
 			meta_matsh_OFF0.mGameIndexVersionRange.max = TelltaleToolLib_GetGameKeyIndex("WD3");
 			meta_matsh_OFF1.mGameIndexVersionRange.max = TelltaleToolLib_GetGameKeyIndex("WD3");
 			meta_matsh_OFF2.mGameIndexVersionRange.max = TelltaleToolLib_GetGameKeyIndex("WD3");
 			meta_matsh_OFF3.mGameIndexVersionRange.max = TelltaleToolLib_GetGameKeyIndex("WD3");
-			meta_matsh_OFF2.mGameIndexVersionRange.min = TelltaleToolLib_GetGameKeyIndex("BATMAN");
-			meta_matsh_OFF3.mGameIndexVersionRange.min = TelltaleToolLib_GetGameKeyIndex("BATMAN");
+			meta_matsh_OFF2.mGameIndexVersionRange.min = TelltaleToolLib_GetGameKeyIndex("BAT");
+			meta_matsh_OFF3.mGameIndexVersionRange.min = TelltaleToolLib_GetGameKeyIndex("BAT");
 
 			meta_matsh_OFF1.mOffset += 4;
 			meta_matsh_OFF2.mOffset += 8;
@@ -3823,13 +3829,13 @@ namespace MetaInit {
 			meta_com_mShaderInputs2.mpName = "mShaderInputs";
 			NEXTMEM2(com, mSceneTextures, T3MaterialCompiledData, bitsetbase1, 0, mShaderInputs3);
 			meta_com_mShaderInputs3.mpName = "mShaderInputs";
-			meta_com_c2.mGameIndexVersionRange.max = TelltaleToolLib_GetGameKeyIndex("MICHONNE");
-			meta_com_mMaterialChannels.mGameIndexVersionRange.min = TelltaleToolLib_GetGameKeyIndex("BATMAN");
+			meta_com_c2.mGameIndexVersionRange.max = TelltaleToolLib_GetGameKeyIndex("WDM");
+			meta_com_mMaterialChannels.mGameIndexVersionRange.min = TelltaleToolLib_GetGameKeyIndex("BAT");
 			meta_com_mSceneTextures.mGameIndexVersionRange.min = TelltaleToolLib_GetGameKeyIndex("WD4");
 			meta_com_mShaderInputs.mGameIndexVersionRange.min = TelltaleToolLib_GetGameKeyIndex("WD4");
-			meta_com_mShaderInputs2.mGameIndexVersionRange.max = TelltaleToolLib_GetGameKeyIndex("BATMAN2");
-			meta_com_mShaderInputs2.mGameIndexVersionRange.min = TelltaleToolLib_GetGameKeyIndex("BATMAN");
-			meta_com_mShaderInputs3.mGameIndexVersionRange.max = TelltaleToolLib_GetGameKeyIndex("MICHONNE");
+			meta_com_mShaderInputs2.mGameIndexVersionRange.max = TelltaleToolLib_GetGameKeyIndex("BAT2");
+			meta_com_mShaderInputs2.mGameIndexVersionRange.min = TelltaleToolLib_GetGameKeyIndex("BAT");
+			meta_com_mShaderInputs3.mGameIndexVersionRange.max = TelltaleToolLib_GetGameKeyIndex("WDM");
 			NEXTMEM2(com, mOptionalPropertyTypes, T3MaterialCompiledData, bitsetbase1, 0, mSceneTextures);
 			NEXTMEM2(com, mPreShaderBuffer, T3MaterialCompiledData, bb, 0, mOptionalPropertyTypes);
 			NEXTMEM2(com, mFlags, T3MaterialCompiledData, flags, 0, mPreShaderBuffer);
@@ -3846,8 +3852,8 @@ namespace MetaInit {
 			meta_com_ALAIS2.mOffset = offsetof(T3MaterialCompiledData, mParameterBufferScalarSize) + 12;
 			meta_com_ALAIS1.mGameIndexVersionRange.max = TelltaleToolLib_GetGameKeyIndex("WD3");
 			meta_com_ALAIS2.mGameIndexVersionRange.max = TelltaleToolLib_GetGameKeyIndex("WD3");
-			meta_com_ALAIS1.mGameIndexVersionRange.min = TelltaleToolLib_GetGameKeyIndex("BATMAN");
-			meta_com_ALAIS2.mGameIndexVersionRange.min = TelltaleToolLib_GetGameKeyIndex("BATMAN");
+			meta_com_ALAIS1.mGameIndexVersionRange.min = TelltaleToolLib_GetGameKeyIndex("BAT");
+			meta_com_ALAIS2.mGameIndexVersionRange.min = TelltaleToolLib_GetGameKeyIndex("BAT");
 			NEXTMEM2(com, mPreShaderParameterBufferScalarSize, T3MaterialCompiledData, long, 0, ALAIS2);
 			ADD(com);
 
@@ -5539,6 +5545,10 @@ namespace MetaInit {
 			DEFINEDCARRAY2(Handle<AnimOrChore>, hanorch);
 			DEFINEDCARRAY2(DCArray<String>, array_str);
 			DEFINEDCARRAY2(DCArray<PropertySet>, array_prop);
+			DEFINEDCARRAY2(DCArray<Handle<D3DMesh>>, hmesh);
+			MKNAME(meta_DCArray_hmesh, "DCArray<Handle<D3DMesh>>");
+			MKNAME(meta_DCArray_array_str, "DCArray<String>");
+			MKNAME(meta_DCArray_array_prop, "DCArray<PropertySet>");
 			DEFINEDCARRAY(Color);
 			DEFINEDCARRAY(LocationInfo);
 			MKNAME(meta_DCArray_LocationInfo, "DCArray<LocationInfo>");
@@ -5638,7 +5648,7 @@ namespace MetaInit {
 			FIRSTMEM2(snode, mNode, SklNodeData, nd, 0);
 			ADD(snode);
 
-			DEFINEDCARRAY(SklNodeData, SklNodeData);
+			DEFINEDCARRAY(SklNodeData);
 
 			// LEGACY D3DMESH 
 
@@ -5858,9 +5868,28 @@ namespace MetaInit {
 			EXT(dlgr, "dlg");
 			ADD(dlgr);
 
+			DEFINET2(ppropsAnmParam, ParticleProperties::AnimationParams);
+			FIRSTMEM2(ppropsAnmParam, mPositionMin, ParticleProperties::AnimationParams, vec3, 0);
+			NEXTMEM2(ppropsAnmParam, mPositionMax, ParticleProperties::AnimationParams, vec3, 0, mPositionMin);
+			ADD(ppropsAnmParam);
+
+			DEFINET2(ppropsAnm, ParticleProperties::Animation);
+			FIRSTMEM2(ppropsAnm, mName, ParticleProperties::Animation, symbol, 0);
+			NEXTMEM2(ppropsAnm, mParams, ParticleProperties::Animation, ppropsAnmParam, 0, mName);
+			NEXTMEM2(ppropsAnm, mDataFlags, ParticleProperties::Animation, int, 0, mParams);
+			ADD(ppropsAnm);
+
+			DEFINET2(pprops, ParticleProperties);
+			FIRSTMEM2(pprops, mName, ParticleProperties, string, 0);
+			NEXTMEM2(pprops, mTextureFlags, ParticleProperties, int, 0, mName);
+			NEXTMEM2(pprops, mTextureCount, ParticleProperties, int, 0, mTextureFlags);
+			NEXTMEM2(pprops, mAnimations, ParticleProperties, DCArray_propanm, 0, mTextureCount);
+			SERIALIZER(pprops, ParticleProperties);
+			EXT(pprops,particle);
+			ADD(pprops);
+
 			//TODO BUNDLE FILES
 			// OLD DIALOG, DIALOGRESOURCE (OLDER GAMES)
-			// PARTICLE PROPERTIES (sEE THE HEADER) .particle
 			// CLASS AUDIODATA (.aud), legacy, has mFilename str followed by mLength  float thats it, check older game
 			//TODO ADD ALL KEYS FROM SEARCH IN IDA ::CreateModuleProps AND ::CreatePrefs ::CreateToolPrefs
 			//TODO ALL SingleValue<T> (make the templaet class) and also CompressedKeys... and CompressedKeys<T>

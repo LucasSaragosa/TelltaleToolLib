@@ -7,6 +7,7 @@
 #define _COMPRESSION
 
 #include "Zlib/zlib.h"
+#include "LibraryConfig.h"
 //Windows platform specific DLL loading for OODLE
 #include <Windows.h>
 
@@ -24,17 +25,15 @@ namespace Compression {
 		ZLIB = 0, OODLE = 1, END_LIBRARY = 2
 	};
 
-	TTEXPORT void UnloadOodleLibrary(HMODULE mod);
-
-	TTEXPORT HMODULE LoadOodleLibrary(const char* pDLLName);
+	TTEXPORT LibraryHandle LoadOodleLibrary(const char* pDLLName);
 
 	TTEXPORT bool ZlibDecompress(void* pDst, unsigned int* pDstLength, const void* pSrc, unsigned int srcLength);
 
 	TTEXPORT bool ZlibCompress(void* pDst, unsigned int* pDstLength, const void* pSrc, unsigned int srcLength);
 
-	TTEXPORT bool OodleLZCompress(void* pDst, unsigned int* dstLength, const void* pSrc, unsigned int srcLength, HMODULE);
+	TTEXPORT bool OodleLZCompress(void* pDst, unsigned int* dstLength, const void* pSrc, unsigned int srcLength, LibraryHandle);
 
-	TTEXPORT bool OodleLZDecompress(void* pDst, unsigned int dstLength, const void* pSrc, unsigned int srcLength, HMODULE);
+	TTEXPORT bool OodleLZDecompress(void* pDst, unsigned int dstLength, const void* pSrc, unsigned int srcLength, LibraryHandle);
 
 }
 

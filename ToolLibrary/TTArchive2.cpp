@@ -1,5 +1,6 @@
-#pragma warning(disable C4267 C4244 C4554 C4477)
+#include "LibraryConfig.h"
 #include "TTArchive2.hpp"
+#include <algorithm>
 
 bool TTArchive2::GetResourceInfo(const Symbol& s, ResourceInfo* i) {
 	if (!i)return false;
@@ -40,7 +41,7 @@ void TTArchive2::Activate(DataStream* inArchiveStream) {
 	}
 	else if (version != 1414807860) {//if not TTA4
 		mbActive = false;
-		sprintf(TelltaleToolLib_Alloc_GetFixed1024ByteStringBuffer(), "Invalid TTARCH2 magic version - likely wrong game ID set: 0x%X!", version);
+		sprintf(TelltaleToolLib_Alloc_GetFixed1024ByteStringBuffer(), "Invalid TTARCH2 magic version - likely wrong game ID set: 0x%llX!", version);
 		TelltaleToolLib_RaiseError(TelltaleToolLib_Alloc_GetFixed1024ByteStringBuffer(), ERR);
 		return;
 	}
@@ -84,16 +85,24 @@ void TTArchive2::Activate(DataStream* inArchiveStream) {
 }
 
 DataStream* TTArchive2::GetResourceStream(TTArchive2::ResourceEntry* entry) {
-	return new DataStreamSubStream(mpResourceStream, (unsigned __int64)entry->mSize, entry->mOffset);
+	return entry ? new DataStreamSubStream(mpResourceStream, (unsigned __int64)entry->mSize, entry->mOffset) : 0;
 }
 
-static int _Cmp(void const* lhs, void const* rhs){
-	u64 xl = CRC64_CaseInsensitive(0,((const TTArchive2::ResourceCreateEntry*)lhs)->name.c_str());
-	u64 xr = CRC64_CaseInsensitive(0,((const TTArchive2::ResourceCreateEntry*)rhs)->name.c_str());
-	return xl > xr ? 1 : xl < xr ? -1 : 0;
+static bool _Cmp(const TTArchive2::ResourceCreateEntry& lhs, const TTArchive2::ResourceCreateEntry& rhs){
+	u64 xl = CRC64_CaseInsensitive(0,lhs.name.c_str());
+	u64 xr = CRC64_CaseInsensitive(0,rhs.name.c_str());
+	return xl < xr;
 }
 
-bool TTArchive2::Create(ProgressFunc func, DataStream* pDst, TTArchive2::ResourceCreateEntry* pFiles, int pNumFiles,
+__int64 FileSizeA(const char* name)
+{
+	struct _stat64i32 buf{0};
+	if (_stat(name, &buf) != 0)
+		return -1;
+	return buf.st_size;
+}
+
+bool TTArchive2::Create(ProgressFunc func, DataStream* pDst, std::vector<ResourceCreateEntry>& entries,
 	bool pEncrypt, bool pCompress, Compression::Library
 	pCompressionLibrary, u32 pVersion) {
 #define writeint(i,size) out.Serialize((char*)i,size);
@@ -119,27 +128,29 @@ bool TTArchive2::Create(ProgressFunc func, DataStream* pDst, TTArchive2::Resourc
 		writeint(&i, 4);
 	}
 	i = 0;
-	for (int x = 0; x < pNumFiles; x++) {
-		i += (u32)(pFiles + x)->name.length() + 1;
-	}
+	for (auto& it : entries)
+		i += 1 + it.name.length();
 	u32 ntz = i;
 	i += 0x10000 - (i % 0x10000);
 	writeint(&i, 4);
-	writeint(&pNumFiles, 4);
+	i = (u32)entries.size();
+	writeint(&i, 4);
 	if(func)
 		func("Writing Headers", 10);
 	u64 curroff = 0;
+	u64 size = 0;
 	u32 curnameoff = 0;
-	std::qsort(pFiles, pNumFiles, sizeof(ResourceCreateEntry*), _Cmp);
-	for (int i = 0; i < pNumFiles; i++) {
-		ResourceCreateEntry* entry = pFiles + i;
+	std::sort(entries.begin(), entries.end(), _Cmp);
+	for (i = 0; i < entries.size(); i++) {
+		ResourceCreateEntry* entry = &entries[i];
 		u64 crc = CRC64_CaseInsensitive(0, entry->name.c_str());
 		writeint(&crc, 8);
 		writeint(&curroff, 8);
 		crc = 0;
 		if(pVersion < 1)
 			writeint(&crc, 4);
-		crc = entry->mpStream->GetSize();
+		size = entry->mpStream == 0 ? FileSizeA(entry->open_later.c_str()) : entry->mpStream->GetSize();
+		crc = size;
 		writeint(&crc, 4);
 		crc = 0;
 		writeint(&crc, 4);
@@ -148,12 +159,12 @@ bool TTArchive2::Create(ProgressFunc func, DataStream* pDst, TTArchive2::Resourc
 		crc = curnameoff % 0x10000;
 		writeint(&crc, 2);
 		curnameoff += (u32)entry->name.length() + 1;
-		curroff += entry->mpStream->GetSize();
+		curroff += size;
 	}
 	float pr = 10;
-	float incr = 10 / pNumFiles;
-	for (int x = 0; x < pNumFiles; x++) {
-		out.SerializeWrite((pFiles + x)->name.c_str(), (u32)(pFiles + x)->name.length() + 1);
+	float incr = 10.0f / (float)entries.size();
+	for (int x = 0; x < (int)entries.size(); x++) {
+		out.SerializeWrite(entries[x].name.c_str(), (u32)entries[x].name.length() + 1);
 		//func(NULL, pr);
 		pr += incr;
 	}
@@ -161,11 +172,17 @@ bool TTArchive2::Create(ProgressFunc func, DataStream* pDst, TTArchive2::Resourc
 	char* temp = (char*)calloc(1, rem);
 	out.Serialize(temp, rem);
 	free(temp);
-	incr = 60 / pNumFiles;
-	for (int x = 0; x < pNumFiles; x++) {
-		(pFiles + x)->mpStream->Copy(&out, out.GetPosition(), 0, (pFiles + x)->mpStream->GetSize());
+	incr = 60.0f / (float)entries.size();
+	for (int x = 0; x < (int)entries.size(); x++) {
+		if(entries[x].open_later.length() != 0 && entries[x].mpStream == 0){
+			DataStreamFileDisc fileStream = _OpenDataStreamFromDisc_(entries[x].open_later.c_str(), READ);
+			fileStream.Copy(&out, out.GetPosition(), 0, fileStream.GetSize());
+		}
+		else {
+			entries[x].mpStream->Copy(&out, out.GetPosition(), 0, entries[x].mpStream->GetSize());
+		}
 		if (func)
-			func((pFiles+x)->name.c_str(), pr);
+			func(entries[x].name.c_str(), pr);
 		pr += incr;
 	}
 	pr = 80;//in case
@@ -186,7 +203,7 @@ bool TTArchive2::Create(ProgressFunc func, DataStream* pDst, TTArchive2::Resourc
 	return true;
 }
 
-String* TTArchive2::GetResourceName(const Symbol& name, String* result) {
+String TTArchive2::GetResourceName(const Symbol& name) {
 	if (!mbActive)return NULL;
 	TTArchive2::ResourceEntry* e = _FindResource(name);
 	if (!e)return NULL;
@@ -200,8 +217,7 @@ String* TTArchive2::GetResourceName(const Symbol& name, String* result) {
 		mpNameStream->Serialize(mpNamePageCache, 0x10000);
 		mNamePageCacheIndex = e->mNamePageIndex;
 	}
-	result->assign(mpNamePageCache + e->mNamePageOffset);
-	return result;
+	return String{ mpNamePageCache + e->mNamePageOffset };
 }
 
 bool TTArchive2::HasResource(const Symbol& sym) {
@@ -238,18 +254,20 @@ TTArchive2::ResourceEntry* TTArchive2::_FindResource(const Symbol& sym) {
 }
 
 void TTArchive2::Deactivate() {
-	if (mbActive) {
-		mNamePageCacheIndex = -1;
-		if (mpResourceStream)
-			delete mpResourceStream;
-		if (mpNameStream)
-			delete mpNameStream;
-		if (mResources.size())
-			mResources.clear();
-		if (mpInStream)
-			delete mpInStream;
-		if (mpNamePageCache)
-			free(mpNamePageCache);
-		mbActive = false;
-	}
+	mNamePageCacheIndex = -1;
+	if (mpResourceStream)
+		delete mpResourceStream;
+	if (mpNameStream)
+		delete mpNameStream;
+	if (mResources.size())
+		mResources.clear();
+	if (mpInStream)
+		delete mpInStream;
+	if (mpNamePageCache)
+		free(mpNamePageCache);
+	mpResourceStream = 0;
+	mpNameStream = 0;
+	mpInStream = 0;
+	mpNamePageCache = 0;
+	mbActive = false;
 }

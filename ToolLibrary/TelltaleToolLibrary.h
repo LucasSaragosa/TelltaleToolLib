@@ -5,50 +5,92 @@
 #ifndef _TTToolLib
 #define _TTToolLib
 
-/*SPECIAL VERSION FOR UI*/
-#define _VERSION "8.0.0"
+#include "LibraryConfig.h"
 
 #include <type_traits>
 #include <string>
 #include "DataStream/DataStream.h"
 #include "Blowfish.h"
+#include <memory>
+#include <sstream>
+#include <iomanip>
 
-//64 BIT! ONLY!
-
-#ifdef _MSC_VER
-#ifdef _DEBUG
-#define DEBUGMODE
-#else
-#define RELEASEMODE
-#endif
-#else
-#error "Please implement debug macro check for this compiler!"
-#endif
-
-#define INLINE __inline
-#define FORCE_INLINE __forceinline
-
-#define _TTToolLib_Exp extern "C" __declspec(dllexport)
-
-#define TTEXPORT _TTToolLib_Exp
+// ============================================================= TYPE DEFINITIONS =============================================================
 
 #define _TTTLib_PrintMetaClasses() TelltaleToolLib_DumpClassInfo(_PrintfDumper)
 
-typedef std::make_unsigned<__int64>::type u64;
-typedef std::make_unsigned<__int32>::type u32;
-typedef std::make_unsigned<__int16>::type u16;
-typedef std::make_unsigned<__int8> ::type u8;
-typedef __int8  i8;
-typedef __int16 i16;
-typedef __int32 i32;
-typedef __int64 i64;
-typedef std::basic_string<i8,std::char_traits<i8>, std::allocator<i8>> String;
 struct Flags;
 template<typename T> class Ptr;
 struct MetaClassDescription;
 struct MetaMemberDescription;
 enum MetaOpResult;
+struct RenderConfiguration;
+class ToolLibRenderAdapters;
 class MetaStream;
+class HashDatabase;
+class TTArchive2;
+class DataStream;
+class MetaClassDescription;
+class TelltaleVersionDatabase;
+
+enum ErrorSeverity {
+	NOTIFY,
+	WARN,
+	ERR,
+	CRITICAL_ERROR
+};
+
+//Tool library Error callback function proto. You can set your own callback which will be called with any errors so you can log it to wherever.
+typedef void (*ErrorCallbackF)(const char* _Msg, ErrorSeverity _Severity);
+
+typedef void (*DumpClassInfoF)(const char* const _Fmt, const char* _ParamA, const char* _ParamB);
+
+void _PrintfDumper(const char* const _Fmt, const char* _ParamA, const char* _ParamB);
+
+// ============================================================= EXPORTED LIBRARY FUNCTION HELPER ENUMS =============================================================
+
+enum class StringOp {
+	SET,//param new value. no return (0)
+	GET,//get value, param ignored.
+	CLR,//clear, param and return ignore.
+};
+
+enum class IntrinType {
+	U8,
+	I8,
+	U16,
+	I16,
+	I32,
+	U32,
+	I64,
+	U64,
+	STR,//STRING(8)
+	SYM,//SYMBOL(8)
+	FLG,//FLAGS(4)
+	FLT,//FLOAT(4)
+	DBL,//DOUBLE(8)
+	BLN,//BOOL(1)
+	VC2,//VEC2(8)
+	VC3,//VEC3(12)
+	VC4,//VEC4(16)
+	QUA,//QUAT(16)
+	COL,//COLOR(16) RGBA
+	RGI,//TRANGE<INT>(8)
+	RGF,//TRANGE<INT>(8)
+	RCF,//TRECT<FLOAT>(16) bottom top right left
+	SPR,//SPHERE(16) center xyz (f), radius
+};
+
+enum class ContainerOp {
+	GET,//GetElement(index, ignore, ignore)
+	ADD,//AddElement(index, key (Or 0), moved element)
+	REM,//RemoveElement(index, index - in map index is still index), ignore).
+	CNT,//GetSize(ignore, ignore, ignore)
+	KTY,//KeyType(ignore, ignore, ignore)
+	VTY,//ValType(ignore, ignore, ignore)
+	CHK,//IsContainer(meta class, ignore , ignore) checks if container type. container is ignored.
+	CLR,//clear
+};
 
 enum MetaMemberDescriptionParam {
 	eMMDP_Name = 1,//stores 8 bytes (ptr)
@@ -58,6 +100,56 @@ enum MetaMemberDescriptionParam {
 	eMMDP_MemberClassDesc = 5,//stores 8 bytes (ptr)
 	eMMDP_NextMember = 6,//stores 8 bytes (ptr)
 	eMMDP_GameVersionRange = 7,//stores 12 bytes, first is skip version, second are min and max for game range this member is in (else -1 for all 3 ints)
+};
+
+enum GFXPlatformShaderType
+{
+	eGFXPlatformShader_None = 0xFFFFFFFF,
+	eGFXPlatformShader_Vertex = 0x0,
+	eGFXPlatformShader_Pixel = 0x1,
+	eGFXPlatformShader_Geometry = 0x2,
+	eGFXPlatformShader_Count = 0x3,
+	eGFXPlatformShader_Compute = 0x3,
+	eGFXPlatformShader_CountIncludingCompute = 0x4,
+};
+
+//Modified. Telltale renderer is layered: platform layer (GFXPlatform class prefix) and T3 (telltale 3D) later (T3GFX prefix). This is combination.
+enum GFXPlatformResourceType
+{
+	eGFXPlatformResource_Shader = 0x0,
+	eGFXPlatformResource_Program = 0x1,
+	eGFXPlatformResource_Buffer = 0x2,
+	eGFXPlatformResource_VertexState = 0x3,
+	eGFXPlatformResource_Texture = 0x4,
+	eGFXPlatformResource_Count = 0x5,
+};
+
+enum GFXPlatformAllocationType
+{
+	eGFXPlatformAllocation_Unknown = 0x0,
+	eGFXPlatformAllocation_RenderTarget = 0x1,
+	eGFXPlatformAllocation_ShadowMap = 0x2,
+	eGFXPlatformAllocation_DiffuseTexture = 0x3,
+	eGFXPlatformAllocation_NormalmapTexture = 0x4,
+	eGFXPlatformAllocation_LightmapTexture = 0x5,
+	eGFXPlatformAllocation_DetailTexture = 0x6,
+	eGFXPlatformAllocation_AmbientOcclusionTexture = 0x7,
+	eGFXPlatformAllocation_FontTexture = 0x8,
+	eGFXPlatformAllocation_ParticleTexture = 0x9,
+	eGFXPlatformAllocation_MiscTexture = 0xA,
+	eGFXPlatformAllocation_StaticMesh = 0xB,
+	eGFXPlatformAllocation_TextMesh = 0xC,
+	eGFXPlatformAllocation_NPRLineMesh = 0xD,
+	eGFXPlatformAllocation_BokehMesh = 0xE,
+	eGFXPlatformAllocation_DynamicMesh = 0xF,
+	eGFXPlatformAllocation_GenericBuffer = 0x10,
+	eGFXPlatformAllocation_ParticleMesh = 0x11,
+	eGFXPlatformAllocation_Effect = 0x12,
+	eGFXPlatformAllocation_EffectShader = 0x13,
+	eGFXPlatformAllocation_Uniform = 0x14,
+	eGFXPlatformAllocation_StreamingUniform = 0x15,
+	eGFXPlatformAllocation_AmbientOcclusion = 0x16,
+	eGFXPlatformAllocation_Count = 0x17,
 };
 
 enum MetaClassDescriptionParam {
@@ -72,8 +164,219 @@ enum MetaClassDescriptionParam {
 	eMCDP_SerializeAccel = 9, //stores 8 bytes (ptr)
 };
 
-class MetaClassDescription;
-class TelltaleVersionDatabase;
+/**
+ * Binary buffer help type. Holds ownership semantics, deletes when not used.
+ */
+struct BinaryBuffer {
+
+	char* mpData;
+	int mDataSize;
+
+	inline BinaryBuffer() : mpData(NULL), mDataSize(0) {}
+
+	inline ~BinaryBuffer() {
+		if (mpData)
+			delete[] mpData;
+	}
+
+	inline bool SetData(int dataSize, const void* pData, int align = 4) {
+		if (mpData)
+			delete[] mpData;
+		if (dataSize > 0) {
+			mpData = (char*)_aligned_malloc(dataSize, align);
+			if (mpData) {
+				mDataSize = dataSize;
+				if (pData)
+					memcpy(mpData, pData, mDataSize);
+				else
+					memset(mpData, 0, mDataSize);
+			}
+			else return false;
+		}
+		return true;
+	}
+
+	inline void Memset(char v) {
+		if (mpData)
+			memset(mpData, v, mDataSize);
+	}
+
+	inline void Swap(BinaryBuffer& other) {
+		char* my = mpData;
+		mpData = other.mpData;
+		other.mpData = my;
+	}
+
+	inline void Clear() {
+		if (mpData)
+			free(mpData);
+		mpData = 0;
+	}
+
+	inline bool AllocData(/*u64*/ int dataSize, int align = 4) {
+		if (mpData)
+			delete[] mpData;
+		if (dataSize > 0) {
+			mpData = (char*)_aligned_malloc(dataSize, align);
+			if (mpData) {
+				mDataSize = dataSize;
+			}
+			else return false;
+		}
+		return true;
+	}
+
+	inline BinaryBuffer(const BinaryBuffer& other) {
+		mpData = NULL;
+		mDataSize = 0;
+		SetData(other.mDataSize, other.mpData);
+	}
+
+	inline BinaryBuffer& operator=(const BinaryBuffer& other) {
+		AllocData(other.mDataSize);
+		if (mpData && other.mpData)
+			memcpy(mpData, other.mpData, mDataSize);
+		return *this;
+	}
+
+	inline BinaryBuffer(BinaryBuffer&& rhs) noexcept {
+		mpData = rhs.mpData;
+		mDataSize = rhs.mDataSize;
+		rhs.mDataSize = 0;
+		rhs.mpData = 0;
+	}
+
+	inline BinaryBuffer& operator=(BinaryBuffer&& rhs) noexcept {
+		mpData = rhs.mpData;
+		mDataSize = rhs.mDataSize;
+		rhs.mDataSize = 0;
+		rhs.mpData = 0;
+		return *this;
+	}
+
+	static MetaOpResult MetaOperation_SerializeAsync(void* pObj, MetaClassDescription* pObjDesc,
+		MetaMemberDescription* pCtx, void* pUserData);
+
+};
+
+// ============================================================= GFX RESOURCE BASE =============================================================
+
+//Eg in opengl GLuint handle
+struct T3GFXResource {
+
+	GFXPlatformResourceType mResourceType;
+	u32 mbResourceAssigned = false;
+	u64 mFrameUsed = 0;
+	void* mpRenderPlatformHandle;
+
+	inline u32 GetRenderPlatformHandle_UInt(){
+		return ((u32*)(&mpRenderPlatformHandle))[0];
+	}
+
+	inline u32 GetRenderPlatformHandle_HI_UInt() {
+		return ((u32*)(&mpRenderPlatformHandle))[1];
+	}
+
+	inline void SetUsedOnFrame(u64 frame){
+		mFrameUsed = frame;
+	}
+
+	inline void SetRenderPlatformHandle_UInt(u32 v){
+		((u32*)(&mpRenderPlatformHandle))[0] = v;
+		mbResourceAssigned = true;
+	}
+
+	inline void SetRenderPlatformHandle_HI_UInt(u32 v) {
+		((u32*)(&mpRenderPlatformHandle))[1] = v;
+		mbResourceAssigned = true;
+	}
+	
+	inline T3GFXResource(GFXPlatformResourceType type) : mpRenderPlatformHandle(0llu), mResourceType(type) {
+		OnCreate();
+	}
+
+	void OnDestroyed();
+
+	void OnCreate();
+
+};
+
+struct GFXPlatformVertexAttributeSet
+{
+	unsigned __int64 mAttributes;
+};
+
+struct GFXPlatformShader : T3GFXResource {
+
+	inline GFXPlatformShader() : T3GFXResource(eGFXPlatformResource_Shader) {}
+
+	struct ParameterHeader
+	{
+		u16 mScalarSize = 0;
+		char mLocation = (char)-1;
+		char mSamplerLocation = (char)-1;
+		char mBindType = 0;
+	};
+
+	GFXPlatformShaderType mShaderType;
+	GFXPlatformVertexAttributeSet mAttributes;
+	BinaryBuffer mShaderProgram;
+	ParameterHeader mParameters[150];
+
+};
+
+struct GFXPlatformProgram : T3GFXResource {
+
+	struct ParameterHeader
+	{
+		u16 mVertexScalarSize = 0;
+		u16 mPixelScalarSize = 0;
+		u16 mGeometryScalarSize = 0;
+		char mVertexLocation = (char)-1;
+		char mVertexSamplerLocation = (char)-1;
+		char mGeometryLocation = (char)-1;
+		char mGeometrySamplerLocation = (char)-1;
+		char mPixelLocation = (char)-1;
+		char mPixelSamplerLocation = (char)-1;
+		char mPixelBindType = 0;
+	};
+
+	inline GFXPlatformProgram() : T3GFXResource(eGFXPlatformResource_Program) {}
+
+	std::shared_ptr<GFXPlatformShader> mpVertexShader;
+	std::shared_ptr<GFXPlatformShader> mpPixelShader;
+	std::shared_ptr<GFXPlatformShader> mpGeometryShader;
+
+	ParameterHeader mParameters[150];
+
+};
+
+enum GFXPlatformCapability
+{
+	eGFXPlatformCap_ResourceThread = 0x0,
+	eGFXPlatformCap_BindProgramBuffer = 0x1,
+	eGFXPlatformCap_BindProgramBufferData = 0x2,
+	eGFXPlatformCap_BindProgramGenericBuffer = 0x3,
+	eGFXPlatformCap_ShaderClipPlanes = 0x4,
+	eGFXPlatformCap_VertexStateKeyIsProgram = 0x5,
+	eGFXPlatformCap_VertexStateKeyIsVertexShader = 0x6,
+	eGFXPlatformCap_ComputeShader = 0x7,
+	eGFXPlatformCap_AsyncCompute = 0x8,
+	eGFXPlatformCap_GeometryShader = 0x9,
+	eGFXPlatformCap_Depth16 = 0xA,
+	eGFXPlatformCap_PreloadDraw = 0xB,
+	eGFXPlatformCap_SaveProgramBinary = 0xC,
+	eGFXPlatformCap_DrawBaseIndex = 0xD,
+	eGFXPlatformCap_SampleGather4 = 0xE,
+	eGFXPlatformCap_ZeroStrideVertexBuffer = 0xF,
+	eGFXPlatformCap_ThreadSafeBuffers = 0x10,
+	eGFXPlatformCap_Count = 0x11,
+};
+
+//plain .BIN T3EffectCache_<gameid>.bin
+struct T3EffectCacheVersionDatabase;
+
+// ============================================================= EXPORTED FUNCTION DECLARATIONS. HERE FIND THE DOCS =============================================================
 
 /*Used to manage the state of loading older classes from older games and engine versions.*/
 /*You are strongly advised NOT to modify any of these variables, use the functions and if you really*/
@@ -132,15 +435,22 @@ _TTToolLib_Exp void TelltaleToolLib_ResetProxyMetaState(ProxyMetaState* pState);
  * 
  */
 _TTToolLib_Exp ProxyMetaState* TelltaleToolLib_GetProxyMetaState(const char* pGameID = nullptr);
-
-typedef void (*DumpClassInfoF)(const char* const _Fmt, const char* _ParamA, const char* _ParamB);
-
-void _PrintfDumper(const char* const _Fmt, const char* _ParamA, const char* _ParamB);
-
 /*
 * Gets the version of the TelltaleTool library as a string.
 */
 _TTToolLib_Exp const char* TelltaleToolLib_GetVersion();
+
+/**
+ * Loads the effect cache enumerations BIN files from the given folder
+ */
+_TTToolLib_Exp void TelltaleToolLib_LoadEffectCaches(const char* pFolder);
+
+/**
+ * Loads the effect cache enumerations BIN files from the given archive
+ */
+_TTToolLib_Exp void TelltaleToolLib_LoadEffectCachesFromArchive(TTArchive2& archive);
+
+_TTToolLib_Exp T3EffectCacheVersionDatabase* TelltaleToolLib_GetEffectCacheDB(const char* pGameID);
 
 /*
 * Dumps class information in a tabbed format
@@ -164,6 +474,10 @@ _TTToolLib_Exp void TelltaleToolLib_MakeInternalTypeName(char**);
 */
 _TTToolLib_Exp int TelltaleToolLib_SetProxyVersionDatabases(const char* pFolder);
 
+//See the normal version. This searches the archive for all files in format GAMEID.VersDB (GAMEID is any game id) and then loads them.
+//You can delete the archive or whatever after, it reads in and don't hold onto anything from it.
+_TTToolLib_Exp int TelltaleToolLib_SetProxyVersionDatabasesFromArchive(TTArchive2& archive);
+
 /*
 * Initialize the library. This must be called before you call any file reading and writing functions.
 * Must pass a game id for the game that you are going to be working with files from. This is used for decryption keys.
@@ -175,6 +489,11 @@ _TTToolLib_Exp bool TelltaleToolLib_Initialize(const char* game_id);
 
 /*Returns true if the given game id is an old telltale game (.ttarch, not .ttarch2 etc). Used for different file saving types*/
 _TTToolLib_Exp bool TelltaleToolLib_IsGameIDOld(const char* game_id);
+
+/**
+ * Finds a member variable in the given Meta class. If it exists it is returned. These are all static memory so no need to free.
+ */
+_TTToolLib_Exp MetaMemberDescription* TelltaleToolLib_FindMember(MetaClassDescription* clazz, const char* memberVarName);
 
 /*
 * Returns the first meta class description in the list of all meta class description types.
@@ -212,8 +531,14 @@ _TTToolLib_Exp bool TelltaleToolLib_SetBlowfishKey(const char* game_id);
 */
 _TTToolLib_Exp const char* TelltaleToolLib_GetBlowfishKey();
 
+/**
+ * Create a class instance using the Meta reflection system of the given type.
+ */
 _TTToolLib_Exp void* TelltaleToolLib_CreateClassInstance(MetaClassDescription* pClass);
 
+/**
+ * See CreateClassInstance, this deletes it safely from memory. This calls its destructor.
+ */
 _TTToolLib_Exp void TelltaleToolLib_DeleteClassInstance(MetaClassDescription* pClass, void* pInstance);
 
 /*
@@ -241,6 +566,11 @@ _TTToolLib_Exp i32 TelltaleToolLib_GetMetaTypesCount();
 * Returns if this library is initialized yet.
 */
 _TTToolLib_Exp bool TelltaleToolLib_Initialized();
+
+/**
+ * Gets the loaded dynamic library by name, without extension (done by platform), eg for windows oo2core_5 as the parameter loads LibBin/oo2_core64.dll (Always 64), dll for win
+ */
+_TTToolLib_Exp LibraryHandle TelltaleToolLib_GetLibrary(const char* pName);
 
 /*
 * Reads a meta stream from the given data stream source. Must have pClass serialized first. If correct then the dest instance will contain the data from the file. 
@@ -285,24 +615,23 @@ _TTToolLib_Exp u8* TelltaleToolLib_DecryptScript(u8* data, u32 size, u32* outsiz
 _TTToolLib_Exp u8* TelltaleToolLib_EncryptLencScript(u8* data, u32 size, u32 *outsize);
 _TTToolLib_Exp u8* TelltaleToolLib_DecryptLencScript(u8* data, u32 size, u32* outsize);
 
-class HashDatabase;
-class DataStream;
-
 /*
 * Sets the global hash database used to search CRCs. It is very important that its set before you read or write most types (eg PropertySet)
-* If one is already set, then this deletes the old use using operator delete. Can be set to NULL.
+* You grant ownership, so don't ever delete this! must be allocated with new. Can be set to NULL.
+* You should always set this after initialization. It may work without but older files may fail on serialize!
 */
 _TTToolLib_Exp void TelltaleToolLib_SetGlobalHashDatabase(HashDatabase*);
 
 /*
 * Does the same as the normal set global hash db, but creates it for you. Pass in the reading file stream to it. This stream 
 * is deleted by the library so DONT DELETE IT!
+* You should always set this after initialization. It may work without but older files may fail on serialize!
 */
 _TTToolLib_Exp void TelltaleToolLib_SetGlobalHashDatabaseFromStream(DataStream*);
 
 /*
 * Gets the game index of the given game id. This is used to match when a game is released with others. Used internally make sure the 
-* current file is being read correctly with the correct version range
+* current file is being read correctly with the correct version range.
 */
 _TTToolLib_Exp i32 TelltaleToolLib_GetGameKeyIndex(const char* pGameID);
 
@@ -319,9 +648,9 @@ _TTToolLib_Exp bool TelltaleToolLib_SetPropertySetValue(void* prop, unsigned lon
 
 _TTToolLib_Exp void TelltaleToolLib_RemovePropertySetValue(void* prop, unsigned long long keyhash);
 
-class TTArchive2;
+// ---------------------- ARCHIVE 2 FUNCTION EXPORTS
 
-// THIS CURRENT VERSION DOES NOT SUPPORT WRITING ARCHIVES.
+// THIS CURRENT VERSION DOES NOT SUPPORT WRITING ARCHIVES. YOU WILL HAVE TO USE THE CXX API AND THEN WRITE YOUR OWN. ITS SIMPLE THOUGH, SEE TTARCHIVE2::CREATE
 
 _TTToolLib_Exp TTArchive2* TelltaleToolLib_CreateArchive2Instance();
 
@@ -342,6 +671,8 @@ _TTToolLib_Exp const char* TelltaleToolLib_GetArchive2ResourceName(TTArchive2* p
 //get the resource name at index index. Use NumResources and loop from 0 to num-1 to go through all resources.
 _TTToolLib_Exp unsigned long long TelltaleToolLib_GetArchive2Resource(TTArchive2* pArchive, int index);
 
+// ---------------------- UTIL FUNCTIONS: DATA STREAMS, CRC64, RENDER ADAPTERS.
+
 //Reads all remaining bytes from the given data stream and returns a malloc buffer. Use dealloc exported function to delete the buffer once done
 _TTToolLib_Exp void* TelltaleToolLib_ReadDataStream(DataStream* pReadStream, unsigned long* pOutSize);
 
@@ -349,76 +680,48 @@ _TTToolLib_Exp void TelltaleToolLib_WriteDataStream(DataStream* pOutStream, void
 
 _TTToolLib_Exp unsigned long long TelltaleToolLib_CRC64CaseInsensitive(const char* pNulTermString, unsigned long long initCRC/*=0*/);
 
-enum class IntrinType {
-	U8,
-	I8,
-	U16,
-	I16,
-	I32,
-	U32,
-	I64,
-	U64,
-	STR,//STRING(8)
-	SYM,//SYMBOL(8)
-	FLG,//FLAGS(4)
-	FLT,//FLOAT(4)
-	DBL,//DOUBLE(8)
-	BLN,//BOOL(1)
-	VC2,//VEC2(8)
-	VC3,//VEC3(12)
-	VC4,//VEC4(16)
-	QUA,//QUAT(16)
-	COL,//COLOR(16) RGBA
-	RGI,//TRANGE<INT>(8)
-	RGF,//TRANGE<INT>(8)
-	RCF,//TRECT<FLOAT>(16) bottom top right left
-	SPR,//SPHERE(16) center xyz (f), radius
-};
+//See T3EffectUser.h. Does not deallocate any old ones
+_TTToolLib_Exp void TelltaleToolLib_SetRenderAdapters(ToolLibRenderAdapters* pRenderAdapterOverloads);
 
+/**
+ * Gets the user render adapters struct. Defaults to a dead implementation.
+ */
+_TTToolLib_Exp ToolLibRenderAdapters* TelltaleToolLib_GetRenderAdaptersStruct();
+
+/**
+ * Call to initialize the render library which you can hook into your render API using the adapter (which will actually communicate with gpu).
+ */
+_TTToolLib_Exp void TelltaleToolLib_InitializeT3(ToolLibRenderAdapters* pOptionalRenderAdapterCustom);
+
+/**
+ * Gets the render configuration for T3.
+ */
+_TTToolLib_Exp RenderConfiguration* TelltaleToolLib_GetRenderConfiguration();
 
 //see IntrinType. delete with deleteclassinstance.
 _TTToolLib_Exp void* TelltaleToolLib_CreateIntrinsicInstance(int intrin, char data[16], MetaClassDescription** pOutTypeOptional);
 
-enum class ContainerOp {
-	GET,//GetElement(index, ignore, ignore)
-	ADD,//AddElement(index, key (Or 0), moved element)
-	REM,//RemoveElement(index, index - in map index is still index), ignore).
-	CNT,//GetSize(ignore, ignore, ignore)
-	KTY,//KeyType(ignore, ignore, ignore)
-	VTY,//ValType(ignore, ignore, ignore)
-	CHK,//IsContainer(meta class, ignore , ignore) checks if container type. container is ignored.
-	CLR,//clear
-};
-
-//perform container operation. see operation enum
+/**
+ * Perform a container operation for the given ContainerInterface (DCArray, Set, Map...). See ContainerOp
+ */
 _TTToolLib_Exp void* TelltaleToolLib_Container(int op, void* container, void* arg1, void* arg2, void* arg3);
 
-enum class StringOp {
-	SET,//param new value. no return (0)
-	GET,//get value, param ignored.
-	CLR,//clear, param and return ignore.
-};
-
+/**
+ * Peform a string operation of the given String type. See StringOp.
+ */
 _TTToolLib_Exp void* TelltaleToolLib_String(int op, void* stringInst, void* param);
-
-_TTToolLib_Exp MetaMemberDescription* TelltaleToolLib_FindMember(MetaClassDescription* clazz, const char* memberVarName);
 
 /*
 * Frees all non-static memory related to this library. 
 */
 _TTToolLib_Exp void TelltaleToolLib_Free();
 
+// ================ MEMORY HELPER EXPORTS
+
 TTEXPORT void* TelltaleToolLib_Malloc(unsigned long size);
 TTEXPORT void TelltaleToolLib_Dealloc(void*);
 
-enum ErrorSeverity {
-	NOTIFY,
-	WARN,
-	ERR,
-	CRITICAL_ERROR
-};
-
-typedef void (*ErrorCallbackF)(const char* _Msg, ErrorSeverity _Severity);
+// ================ ERROR THROWING HELPERS AND LOGGING
 
 /*
 * Sets the error callback which will be called when any error occurs.
@@ -433,8 +736,7 @@ _TTToolLib_Exp void TTL_Log(const char* const  _Fmt, ...);
 
 _TTToolLib_Exp void TelltaleToolLib_SetLoggerHook(void (*func)(const char* const fmt, va_list args));
 
-//_TTToolLib_Exp MetaOpResult
-//TelltaleToolLib_PerformMetaSerialize(MetaClassDescription* pObjectDescription, void* pObject, MetaStream* pUserData);
+// ====================== UTILITY TYPES FROM TELLTALE
 
 extern bool sInitialized;
 
@@ -444,6 +746,10 @@ struct Flags {
 	Flags(u32 i) : mFlags(i) {}
 
 	Flags() {}
+
+	INLINE bool IsSet(u32 bitIndex){
+		return (mFlags & (1u << bitIndex)) != 0;
+	}
 
 	INLINE Flags& operator=(u32 i) {
 		mFlags = i;
@@ -477,9 +783,33 @@ namespace Geo {
 
 }
 
-template<typename T> void PtrModifyRefCount(T*, int delta) {}//deprecated in engine/not needed for shipping
+INLINE bool starts_with(const char* pre, const char* str)
+{
+	return strncmp(pre, str, strlen(pre)) == 0;
+}
 
-//telltale impl of pointers, mainly its calls to the ref count . this doesnt work lol
+INLINE bool ends_with(const std::string& value, std::string ending)
+{
+	if (ending.size() > value.size()) return false;
+	return std::equal(ending.rbegin(), ending.rend(), value.rbegin());
+}
+
+template< typename T >
+std::string to_symbol(T i)
+{
+	std::stringstream stream;
+	stream << "Symbol<"
+		<< std::setfill('0') << std::setw(sizeof(T) * 2)
+		<< std::hex << i << ">";
+	return stream.str();
+}
+
+
+// ========================= BASIC BASIC PTR IMPLEMENTATION
+
+template<typename T> void PtrModifyRefCount(T*, int delta) {}//Not actually a template in the engine but the classes using Ptr must have this overriden for their type in the global NS.
+
+//THIS DOES NOT WORK! Its only designed to placehold. You can have ownership semantics but std::shared_ptr is used when available. Destructor does NOT all DeleteObject!
 template<typename T>
 class Ptr {
 public:

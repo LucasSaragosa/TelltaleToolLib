@@ -153,7 +153,7 @@
     <ClCompile Include="ToolLibrary\Lua\structs.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="ToolLibrary\Shader\T3EffectCache.cpp">
+    <ClCompile Include="ToolLibrary\T3\T3EffectCache.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="ToolLibrary\Types\EventStorage.cpp">
@@ -198,13 +198,13 @@
     <ClCompile Include="ToolLibrary\Blowfish.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="ToolLibrary\cmd.cpp">
+    <ClCompile Include="ToolLibrary\_DeprecatedCmdLine.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="ToolLibrary\Compression.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="ToolLibrary\FSB5.cpp">
+    <ClCompile Include="ToolLibrary\FMOD\FSB5.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="ToolLibrary\Meta.cpp">
@@ -219,7 +219,7 @@
     <ClCompile Include="ToolLibrary\TTArchive2.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="ToolLibrary\VorbisHeaders.cpp">
+    <ClCompile Include="ToolLibrary\FMOD\VorbisHeaders.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="ogg\bitwise.c">
@@ -295,6 +295,18 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="vorbis\window.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="ToolLibrary\LargeConst.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="ToolLibrary\T3\Render.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="ToolLibrary\T3\ScenePasses.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="ToolLibrary\T3\T3EffectCacheVersionDB.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -533,7 +545,7 @@
     <ClInclude Include="ToolLibrary\rapidjson\writer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="ToolLibrary\Shader\T3EffectCache.h">
+    <ClInclude Include="ToolLibrary\T3\T3EffectCache.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="ToolLibrary\Types\ActorAgentMapper.h">
@@ -752,7 +764,7 @@
     <ClInclude Include="ToolLibrary\Compression.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="ToolLibrary\FSB5.h">
+    <ClInclude Include="ToolLibrary\FMOD\FSB5.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="ToolLibrary\HashManager.h">
@@ -768,9 +780,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="ToolLibrary\MetaStream_JSON.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="ToolLibrary\NlohmannJSON.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="ToolLibrary\TelltaleToolLibrary.h">
@@ -929,5 +938,49 @@
     <ClInclude Include="vorbis\window.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="ToolLibrary\T3\T3Effect.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ToolLibrary\T3\T3EffectUser.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ToolLibrary\T3\Camera.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ToolLibrary\T3\Render.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ToolLibrary\T3\T3EffectParameters.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ToolLibrary\T3\T3RenderTargets.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ToolLibrary\LargeConst.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ToolLibrary\T3\LinearHeap.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ToolLibrary\LinkedList.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ToolLibrary\T3\RenderScene.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ToolLibrary\Types\UtilityTypes.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ToolLibrary\Symbols.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ToolLibrary\LibraryConfig.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="ToolLibrary\T3\RenderTypeDescs.inl">
+      <Filter>Header Files</Filter>
+    </None>
   </ItemGroup>
 </Project>

@@ -13,6 +13,49 @@
 #include "List.h"
 #include "DCArray.h"
 #include "T3Texture.h"
+#include "PreloadPackage.h"
+#include "LightProbeData.h"
+#include "../T3/Camera.h"
+#include "../Symbols.h"
+
+struct PreloadTimer
+{
+	float mTime;
+	unsigned int mRef;
+};
+
+struct RenderWindParams
+{
+	Vector3 mDirection;
+	float mSpeed;
+	float mIdleStrength;
+	float mIdleSpacialFrequency;
+	float mGustSpeed;
+	float mGustStrength;
+	float mGustSpacialFrequency;
+	float mGustIdleStrengthMultiplier;
+	float mGustSeparationExponent;
+};
+
+struct RenderTonemapFilmicRGBParams
+{
+	Vector3 mBlackPoints;
+	Vector3 mWhitePoints;
+	Vector3 mPivots;
+	Vector3 mShoulderIntensities;
+	Vector3 mToeIntensities;
+	bool mbInvertCurves[3];
+};
+
+struct RenderTonemapFilmicParams
+{
+	float mBlackPoint;
+	float mWhitePoint;
+	float mPivot;
+	float mShoulderIntensity;
+	float mToeIntensity;
+	bool mbInvertCurve;
+};
 
 //.SCENE FILES
 struct Scene {//only included whats serialized and needed. this is a very very big struct! (class in the engine)
@@ -29,6 +72,7 @@ struct Scene {//only included whats serialized and needed. this is a very very b
 	static constexpr Symbol kSceneUseDeprecatedChoreCameraLayers{ 0x6961EFFDCDAE4D59 };
 
 	struct AgentInfo {
+
 		void* mpAgent;//no need for agent
 		String mAgentName;
 		PropertySet mAgentSceneProps;
@@ -46,14 +90,213 @@ struct Scene {//only included whats serialized and needed. this is a very very b
 	};
 
 	//these 2 are not serialized
-	float mTimeScale;
-	bool mbActive;
+	float mTimeScale = 1.0f;
+	bool mbActive = false;
 
-	bool mbHidden;
+	bool mbHidden = false;
 	String mName;
 	DCArray<HandleLock<Scene>> mReferencedScenes;
 	//only add values to this using operator new! takes ownership
 	List<AgentInfo*> mAgentList;
+
+	//By the library. if auto focus is enabled, these are which you calculate the auto focus near and far, eg for a specific set of meshes.
+	float mFXAutoFocus_Near = 0.f;
+	float mFXAutoFocus_Far = 0.f;
+
+	PreloadTimer mTimer;
+	bool mbInputEnabled;
+	bool mbShuttingDown;
+	bool mbPreloadable;
+	bool mbPreloadShaders;
+	Flags mSceneFlags;
+	Color mAmbient;
+	Color mShadowColor;
+	int mPriority;
+	int mRenderLayer = 0;
+	int mAgentPriority;
+	//set to current camera in scene to render
+	std::shared_ptr<Camera> mpViewCamera;
+	Vector3 mPrevCameraPosition;
+	Vector3 mPrevCameraDirection;
+	Matrix4 mPrevCameraViewMatrix;
+	Matrix4 mPrevCameraProjMatrix;
+	u64 mCameraCutFrameIndex;
+	int mShadowLayerBits;
+	int mRenderObjectFeatureCount[3];
+	Symbol mSceneAudioListenerAgentName;
+	Symbol mSceneAudioPlayerOriginAgentName;
+	std::weak_ptr<Agent> mpAudioListenerAgent;
+	std::weak_ptr<Agent> mpAudioPlayerOriginAgent;
+	//Ptr<ParticleManager> mpParticleManager;
+	//Ptr<LightManager> mpLightManager;
+	//Ptr<PhysicsManager> mpPhysicsManager;
+	std::shared_ptr<PreloadPackage::RuntimeDataScene> mhPreloadPackage;
+	bool mbAfterEffectEnabled;
+	Color mGlowClearColor;
+	float mGlowSigmaScale;
+	bool mbGenerateNPRLines;
+	float mNPRLineFalloff;
+	float mNPRLineBias;
+	float mNPRLineAlphaFalloff;
+	float mNPRLineAlphaBias;
+	//T3DepthReductionContext mDepthReductionContext;
+	bool mbFXAntialias;
+	bool mFXColorActive;
+	Color mFXColor;
+	float mFXColorOpacity;
+	bool mCameraFXColorActive;
+	Color mCameraFXColor;
+	float mCameraFXColorOpacity;
+	bool mFXSharpShadowsActive;
+	bool mFXLevelsActive;
+	float mFXLevelsBlack;
+	float mFXLevelsWhite;
+	float mFXLevelsIntensity;
+	float mFXLevelsBlackHDR;
+	float mFXLevelsWhiteHDR;
+	float mFXLevelsIntensityHDR;
+	TonemapType mFXTonemapType;
+	bool mFXTonemapActive;
+	bool mbFXTonemapDOFEnable;
+	float mFXTonemapIntensity;
+	RenderTonemapFilmicParams mFXTonemapFilmicParams;
+	RenderTonemapFilmicParams mFXTonemapFilmicFarParams;
+	bool mbFXTonemapFilmicRGBActive;
+	bool mbFXTonemapFilmicRGBDOFEnable;
+	RenderTonemapFilmicRGBParams mFXTonemapRGBParams;
+	RenderTonemapFilmicRGBParams mFXTonemapRGBFarParams;
+	float mFXBloomThreshold;
+	float mFXBloomIntensity;
+	bool mFXAmbientOcclusionActive;
+	float mFXAmbientOcclusionIntensity;
+	float mFXAmbientOcclusionFalloff;
+	float mFXAmbientOcclusionRadius;
+	float mFXAmbientOcclusionLightmap;
+	bool mHDRLightmaps;
+	float mHDRLightmapIntensity;
+	bool mbFXBrushDOFEnable;
+	bool mbFXBrushOutlineEnable;
+	bool mbFXBrushOutlineFilterEnable;
+	float mFXBrushOutlineSize;
+	float mFXBrushOutlineThreshold;
+	float mFXBrushOutlineColorThreshold;
+	float mFXBrushOutlineFalloff;
+	float mFXBrushOutlineScale;
+	float mFXBrushFar;
+	float mFXBrushFarFalloff;
+	float mFXBrushFarMaxScale;
+	float mFXBrushNearScale;
+	float mFXBrushNearDetail;
+	float mFXBrushFarScale;
+	float mFXBrushFarDetail;
+	float mFXBrushFarScaleBoost;
+	std::shared_ptr<T3Texture> mhBrushNearTexture;
+	std::shared_ptr<T3Texture> mhBrushFarTexture;
+	bool mFXDOFEnabled;
+	bool mbFXDOFFieldOfViewAdjustEnabled;
+	bool mFXDOFAutoFocusEnabled;
+	float mFXDOFNear;
+	float mFXDOFNearFalloff;
+	float mFXDOFFar;
+	float mFXDOFFarFalloff;
+	float mFXDOFNearMax;
+	float mFXDOFFarMax;
+	float mFXForceLinearDepthOffset;
+	float mFXDOFDebug;
+	float mFXDOFCoverageBoost;
+	float mFXDOFVignetteMax;
+	bool mFXVignetteTintEnabled;
+	bool mFXVignetteDOFEnabled;
+	Color mFXVignetteTint;
+	float mFXVignetteFallOff;
+	float mFXVignetteStart;
+	float mFXVignetteEnd;
+	float mFXTAAWeight;
+	float mFXNoiseScale;
+	bool mbHBAOEnabled;
+	bool mbHBAODebug;
+	float mHBAORadius;
+	float mHBAOMaxRadiusPercent;
+	float mHBAOHemisphereBias;
+	float mHBAOIntensity;
+	float mHBAOOcclusionScale;
+	float mHBAOLuminanceScale;
+	float mHBAOMaxDistance;
+	float mHBAODistanceFalloff;
+	float mHBAOBlurSharpness;
+	bool mbSSLinesEnabled;
+	Color mSSLineColor;
+	float mSSLineThickness;
+	float mSSLineDepthFadeNear;
+	float mSSLineDepthFadeFar;
+	float mSSLineDepthMagnitude;
+	float mSSLineDepthExponent;
+	Vector3 mSSLineLightDirection;
+	float mSSLineLightMagnitude;
+	float mSSLineLightExponent;
+	int mSSLineDebug;
+	bool mbLightEnvBakeEnabled;
+	bool mbLightEnvReflectionEnabled;
+	bool mbLightEnvEnabled;
+	std::shared_ptr<T3Texture> mhLightEnvReflectionTexture;
+	std::shared_ptr<LightProbeData> mhEnvLightProbeData;
+	Color mLightEnvReflectionTint;
+	float mLightEnvReflectionIntensity;
+	Color mLightEnvTint;
+	float mLightEnvIntensity;
+	float mLightEnvSaturation;
+	Color mLightEnvBackgroundColor;
+	float mLightEnvProbeDensityX;
+	float mLightEnvProbeDensityY;
+	float mLightEnvShadowMomentBias;
+	float mLightEnvShadowDepthBias;
+	float mLightEnvShadowPositionOffsetBias;
+	float mLightEnvShadowLightBleedReduction;
+	float mLightEnvShadowMinDistance;
+	float mLightEnvShadowMaxDistance;
+	float mLightEnvDynamicShadowMaxDistance;
+	float mLightEnvShadowCascadeLambda;
+	float mLightEnvReflectionIntensityShadow;
+	float mLightShadowTraceMaxDistance;
+	int mLightEnvShadowMaxUpdates;
+	bool mbLightEnvShadowAutoDepthBounds;
+	Vector3 mLightEnvStaticShadowMin;
+	Vector3 mLightEnvStaticShadowMax;
+	std::shared_ptr<T3Texture> mhEnvLightShadowGoboTexture;
+	bool mFogEnabled;
+	Color mFogColor;
+	float mFogAlpha;
+	float mFogMinDistance;
+	float mFogMaxDistance;
+	float mGraphicBlackThreshold;
+	float mGraphicBlackSoftness;
+	float mGraphicBlackAlpha;
+	float mGraphicBlackNear;
+	float mGraphicBlackFar;
+	float mHDR_PaperWhiteNits;
+	RenderWindParams mWindParams;
+	float mCameraCutPositionThreshold;
+	float mCameraCutRotationThreshold;
+	bool mSpecMultEnabled;
+	float mSpecMultColor;
+	float mSpecMultIntensity;
+	float mSpecMultExponent;
+	bool mOverrideFrameBufferScaleFactor;
+	float mFrameBufferScaleFactor;
+	unsigned int mRenderDirty;
+	bool mbShadowLayerDirty;
+	float mMaterialTime;
+	float mMaterialPrevTime;
+	float mViewportScissorLeft;
+	float mViewportScissorTop;
+	float mViewportScissorRight;
+	float mViewportScissorBottom;
+	Symbol mAudioAmbienceAgentName;
+	Symbol mAudioMusicAgentName;
+	Symbol mAudioReverbAgentName;
+	Symbol mAudioListenerAgentName;
+	Symbol mAudioSfxAgentName;
+	Symbol mAudioEventPreloadAgentName;
 
 	Scene() = default;
 

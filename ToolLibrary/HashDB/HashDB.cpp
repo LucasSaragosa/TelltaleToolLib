@@ -1,9 +1,8 @@
-#pragma warning(disable C4267 C4244 C4554 C4477)
-#include "HashDB.h"#
+#include "HashDB.h"
 #include <algorithm>
 #include "../HashManager.h"
 
-const u32 MAGIC = 0x54544c42;
+const u32 MAGIC = 0x54544c42;//TTLB
 
 HashDatabase_Legacy::HashDatabase_Legacy(DataStream* stream) {
 	if (!stream)throw "bad stream";
@@ -62,6 +61,7 @@ void HashDatabase_Legacy::FindEntry(HashDatabase_Legacy::Page* page, u64 crc, ch
 		return;
 	result[0] = 0;
 	if (page) {
+		std::lock_guard _g(lock);
 		if (!(cached_page && cached_page == page)) {
 			this->db_stream->SetPosition(page->offset, DataStreamSeekType::eSeekType_Begin);
 			if (bufferedPage)free(bufferedPage);
@@ -111,6 +111,7 @@ void HashDatabase_Legacy::DumpPage(Page* page, std::vector<String>& dest)
 {
 	char result[1024];
 	if (page) {
+		std::lock_guard _g(lock);
 		if (!(cached_page && cached_page == page)) {
 			this->db_stream->SetPosition(page->offset, DataStreamSeekType::eSeekType_Begin);
 			if (bufferedPage)free(bufferedPage);
@@ -293,47 +294,50 @@ void HashDatabase::FindEntry(Page* page, u64 crc, char* result)
 	if (page == 0) {
 		//search all
 		result[0] = 0;
-		for(int i = 0; i < mPages.size(); i++){
+		for (int i = 0; i < mPages.size(); i++) {
 			FindEntry(mPages.data() + i, crc, result);
 			if (result[0] != 0)
 				break;
 		}
 		return;
 	}
-	if (crc == 0)
-		return;
-	_SetBuffer(page);
-	i32 p = 0;
-	i32 r = page->mCount - 1;
-	i32 q = (r + p) / 2;
-	i32 counter = 0;
-
-	while (p <= r)
-	{
-		counter++;
-		if (mpBuffer[q] == crc){
-			// FOUND HASH
-			mpStringsStream->SetPosition(page->mStringStart + (q << 2), DataStreamSeekType::eSeekType_Begin);
-			u32 off[2]{ 0,0 };
-			//there is always another string, the empty crc string footer (crc != 0)
-			mpStringsStream->Serialize((char*)off, 8);
-			mpStringsStream->SetPosition(page->mStringStart + ((page->mCount+1) << 2) + off[0], DataStreamSeekType::eSeekType_Begin);
-			u32 len = off[1] - off[0];
-			mpStringsStream->Serialize(result, len);
-			result[len] = 0;
+	else {
+		if (crc == 0)
 			return;
-		}
-		else
+		std::lock_guard _g(lock);
+		_SetBuffer(page);
+		i32 p = 0;
+		i32 r = page->mCount - 1;
+		i32 q = (r + p) / 2;
+		i32 counter = 0;
+
+		while (p <= r)
 		{
-			if (mpBuffer[q] < crc)
-			{
-				p = q + 1;
-				q = (r + p) / 2;
+			counter++;
+			if (mpBuffer[q] == crc) {
+				// FOUND HASH
+				mpStringsStream->SetPosition(page->mStringStart + (q << 2), DataStreamSeekType::eSeekType_Begin);
+				u32 off[2]{ 0,0 };
+				//there is always another string, the empty crc string footer (crc != 0)
+				mpStringsStream->Serialize((char*)off, 8);
+				mpStringsStream->SetPosition(page->mStringStart + ((page->mCount + 1) << 2) + off[0], DataStreamSeekType::eSeekType_Begin);
+				u32 len = off[1] - off[0];
+				mpStringsStream->Serialize(result, len);
+				result[len] = 0;
+				return;
 			}
 			else
 			{
-				r = q - 1;
-				q = (r + p) / 2;
+				if (mpBuffer[q] < crc)
+				{
+					p = q + 1;
+					q = (r + p) / 2;
+				}
+				else
+				{
+					r = q - 1;
+					q = (r + p) / 2;
+				}
 			}
 		}
 	}
@@ -341,6 +345,9 @@ void HashDatabase::FindEntry(Page* page, u64 crc, char* result)
 
 void HashDatabase::DumpPage(Page* page, std::vector<String>& dest)
 {
+	if (!page)
+		return;
+	std::lock_guard _g(lock);
 	dest.reserve(page->mCount);
 	u32* offs = new u32[page->mCount + 1];
 	mpStringsStream->SetPosition(page->mStringStart, DataStreamSeekType::eSeekType_Begin);
@@ -358,7 +365,7 @@ bool HashDatabase::Open()
 	char header[4];
 	this->mpSrcStream->Serialize(header, 4);
 	if (memcmp(header, MAGIC, 4) != 0){
-		printf("Cannot open HashDatabase. Very likely that the database is using version 1. Please check your install.");
+		TTL_Log("Cannot open HashDatabase. Very likely that the database is using version 1. Please check your install.");
 		return false;
 	}
 	u32 numPages{ 0 };
@@ -437,14 +444,14 @@ bool HashDatabase::Create(const char* fp, DataStream* pOut, bool bVerbose, bool 
 		if (strlen(buf) >= 8 && !_stricmp(std::string(buf).substr(0,7).c_str(), "NEWPAGE")) {
 			if(currentPage.mPageName.length() != 0){
 				if (bVerbose)
-					printf("-collected page %s: %d hashes\n", currentPage.mPageName.c_str(), (u32)cur_values.size());
+					TTL_Log("-collected page %s: %d hashes\n", currentPage.mPageName.c_str(), (u32)cur_values.size());
 				pages.push_back(std::move(currentPage));
 				values.push_back(std::move(cur_values));
 				currentPage.mCount = currentPage.mFlags = currentPage.mStringStart = currentPage.mSymbolStart = 0;
 			}
 			currentPage.mPageName = buf + 8;
 			if (bVerbose)
-				printf("-collecting page %s\n", currentPage.mPageName.c_str());
+				TTL_Log("-collecting page %s\n", currentPage.mPageName.c_str());
 			repl(currentPage.mPageName, "\n", "");
 			repl(currentPage.mPageName, "\r", "");
 		}else{
@@ -474,12 +481,12 @@ bool HashDatabase::Create(const char* fp, DataStream* pOut, bool bVerbose, bool 
 	write = (u32)pages.size();
 	pOut->Serialize((char*)&write, 4);
 	if (bVerbose)
-		printf("-sorting string and hashes\n");
+		TTL_Log("-sorting string and hashes\n");
 	for (auto x = values.begin(); x != values.end(); x++) {
 		std::sort(x->begin(), x->end(), &sorter);
 	}
 	if (bVerbose)
-		printf("-writing headers\n");
+		TTL_Log("-writing headers\n");
 	for(auto it = pages.begin(); it != pages.end(); it++,i++){
 		it->mCount = (u32)values[i].size();
 		it->mSymbolStart = symbolStart;
@@ -502,7 +509,7 @@ bool HashDatabase::Create(const char* fp, DataStream* pOut, bool bVerbose, bool 
 	i = 0;
 	fclose(stream);
 	if (bVerbose)
-		printf("-writing hashes\n");
+		TTL_Log("-writing hashes\n");
 	for(auto it = pages.begin(); it != pages.end(); it++,i++){
 		std::vector<std::string>& hashes = values[i];
 		for(auto s = hashes.begin();s!=hashes.end();s++){
@@ -510,11 +517,11 @@ bool HashDatabase::Create(const char* fp, DataStream* pOut, bool bVerbose, bool 
 			pOut->Serialize((char*)&hash, 8);
 		}
 		if (bVerbose)
-			printf("\t-written hashes for %s\n", it->mPageName.c_str());
+			TTL_Log("\t-written hashes for %s\n", it->mPageName.c_str());
 	}
 	DataStreamMemory stringMemoryStream{stringStart + 0x10000};
 	if (bVerbose)
-		printf("-writing strings\n");
+		TTL_Log("-writing strings\n");
 	i = 0;
 	for (auto it = pages.begin(); it != pages.end(); it++, i++) {
 		std::vector<std::string>& hashes = values[i];
@@ -528,12 +535,12 @@ bool HashDatabase::Create(const char* fp, DataStream* pOut, bool bVerbose, bool 
 			stringMemoryStream.Serialize((char*)s->c_str(), s->length());
 		}
 		if (bVerbose)
-			printf("\t-written strings for %s\n", it->mPageName.c_str());
+			TTL_Log("\t-written strings for %s\n", it->mPageName.c_str());
 	}
 	pages.clear();
 	values.clear();
 	if (bVerbose)
-		printf("-compiling into container\n");
+		TTL_Log("-compiling into container\n");
 	DataStreamContainerParams params{};
 	params.mbCompress = bCompress;
 	params.mCompressionLibrary = Compression::Library::ZLIB;
@@ -546,7 +553,7 @@ bool HashDatabase::Create(const char* fp, DataStream* pOut, bool bVerbose, bool 
 	stringMemoryStream.SetPosition(0, DataStreamSeekType::eSeekType_Begin);
 	stringMemoryStream.SetMode(DataStreamMode::eMode_Read);
 	DataStreamContainer::Create(0, params, sSize);
-	printf("-done\n");
+	TTL_Log("-done\n");
 	return true;
 }
 
